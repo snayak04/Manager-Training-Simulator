@@ -6,5 +6,5 @@
 - npm update
 - Import the workspace file from training and upload it to IBM Watson Assitant.
 - edit the .env.example and fill with the credentials from your IBM account.
-- Time to run the server!  ##node server.js
+- Time to run the server... <strong> node server.js</strong>
 
