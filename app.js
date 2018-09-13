@@ -19,7 +19,6 @@
 var express = require('express'); // app server
 var bodyParser = require('body-parser'); // parser for post requests
 var AssistantV1 = require('watson-developer-cloud/assistant/v1'); // watson sdk
-var TextToSpeechV1 = require('watson-developer-cloud/text-to-speech/v1');
 
 var app = express();
 
@@ -33,13 +32,6 @@ var assistant = new AssistantV1({
   version: '2018-07-10'
 });
 
-
-
-var textToSpeech = new TextToSpeechV1({
-  username: process.env.ASSISTANT_USERNAME,
-  password: process.env.ASSISTANT_PASSWORD,
-  url: 'https://stream.watsonplatform.net/text-to-speech/api/'
-});
 // Endpoint to be call from the client side
 app.post('/api/message', function (req, res) {
   var workspace = process.env.WORKSPACE_ID || '<workspace-id>';
@@ -74,10 +66,6 @@ app.post('/api/message', function (req, res) {
         // to the response.
         for(var i = 0; i < generic.length; i++) {
           if (generic[i].hasOwnProperty('text')) {
-            textToSpeech.synthesize({
-              text: generic[i].text,
-              accept: 'audio/wav'
-            });
             data.output.text.push(generic[i].text);
           } else if (generic[i].hasOwnProperty('title')) {
             data.output.text.push(generic[i].title);
