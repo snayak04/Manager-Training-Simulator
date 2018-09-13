@@ -4,7 +4,7 @@ sudo: required
 node_js: 
 - "node"
 script:
-- npm server.js
+- node server.js
 
 cache:
   directories:
