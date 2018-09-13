@@ -1,18 +1,32 @@
 {
   "name": "Manager-Training-Simulator",
-  "description": "Simple Travis-CI check for JSHint (Code Linting)",
-  "author": "your name here :-)",
-  "version": "0.0.1",
+  "description": "Attempt to test CI.",
+  "version": "0.1.1",
+  "main": "server.js",
+  "scripts": {
+    "test": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/snayak04/Manager-Training-Simulator.git"
+  },
+  "license": "Apache-2.0",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "dotenv": "^6.0.0",
+    "express": "^4.16.3",
+    "watson-developer-cloud": "^3.7.0"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
   "devDependencies": {
     "babel-eslint": "^8.2.6",
     "casperjs": "^1.1.4",
     "codecov": "^3.0.4",
-    "eslint": "^5.1.0",
     "jest": "^23.4.1",
     "phantomjs-prebuilt": "^2.1.16",
     "supertest": "^3.1.0"
-  },
-  "scripts": {
-    "test": "node server.js"
   }
 }
