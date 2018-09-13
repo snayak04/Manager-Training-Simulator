@@ -4,15 +4,9 @@ sudo: required
 node_js: 
 - "node"
 script:
-- npm run test
+- npm server.js
 
 cache:
   directories:
   - node_modules
-env:
-  global:
-  - BX_APP=watson-assistant-simple
-  - BX_API=https://api.ng.bluemix.net
-  - BX_ORGANIZATION=WatsonPlatformServices
-  - BX_SPACE=demos
 
