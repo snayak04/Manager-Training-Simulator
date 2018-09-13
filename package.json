@@ -1,5 +1,5 @@
 {
-  "name": "@NotAGame-TryingTravis",
+  "name": "Manager-Training-Simulator",
   "description": "Attempt to test CI.",
   "version": "0.1.1",
   "main": "server.js",
