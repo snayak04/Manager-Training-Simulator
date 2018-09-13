@@ -33,24 +33,7 @@ var assistant = new AssistantV1({
   version: '2018-07-10'
 });
 
-const getFileExtension = (acceptQuery) => {
-  const accept = acceptQuery || '';
-  switch (accept) {
-    case 'audio/ogg;codecs=opus':
-    case 'audio/ogg;codecs=vorbis':
-      return 'ogg';
-    case 'audio/wav':
-      return 'wav';
-    case 'audio/mpeg':
-      return 'mpeg';
-    case 'audio/webm':
-      return 'webm';
-    case 'audio/flac':
-      return 'flac';
-    default:
-      return 'mp3';
-  }
-};
+
 
 var textToSpeech = new TextToSpeechV1({
   username: process.env.ASSISTANT_USERNAME,
