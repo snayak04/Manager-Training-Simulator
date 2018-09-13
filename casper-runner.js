@@ -16,11 +16,11 @@
 
 require('dotenv').config({ silent: true });
 
-// if (!process.env.WORKSPACE_ID) {
-//   // eslint-disable-next-line
-//   console.warn('Skipping casper tests because WORKSPACE_ID is null');
-//   return;
-// }
+if (!process.env.WORKSPACE_ID) {
+  // eslint-disable-next-line
+  console.warn('Skipping casper tests because WORKSPACE_ID is null');
+  return;
+}
 
 var spawn = require('child_process').spawn;
 var app = require('./app');
