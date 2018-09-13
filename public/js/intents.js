@@ -7,15 +7,19 @@ module.exports = {
 		return 'WAIT INTENT'
 	},
 	
-	tasks: function () {
+	taskInfo: function () {
 		return 'TASKS INTENT'
 	},
 	
-	project: function () {
+	projectInfo: function () {
 		return 'PROJECT INTENT'
 	},
 	
-	myEmployees: function () {
+	employeeInfo: function () {
 		return 'EMPLOYEES INTENT'
+	},
+	
+	assignTask: function () {
+		return 'ASSIGN TASK INTENT'
 	}
 };

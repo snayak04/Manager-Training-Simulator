@@ -127,16 +127,21 @@ function updateMessage(input, response) {
 		case "Wait":
 			responseText = intentHandlers.wait();
 			break;
-		case "Tasks":
-			responseText = intentHandlers.tasks();
+		case "TaskInfo":
+			responseText = intentHandlers.taskInfo();
 			break;
-		case "Project":
-			responseText = intentHandlers.project();
+		case "ProjectInfo":
+			responseText = intentHandlers.projectInfo();
 			break;
-		case "MyEmployees":
-			responseText = intentHandlers.myEmployees();
+		case "EmployeeInfo":
+			responseText = intentHandlers.employeeInfo();
 			break;
-		
+		case "AssignTask":
+			responseText = intentHandlers.assignTask();
+			break;
+		default:
+			responseText = "I don't understand that. Could you try rephrasing?"
+			break;
 		
 	}
 
