@@ -19,6 +19,10 @@ module.exports = {
 		return 'EMPLOYEES INTENT'
 	},
 	
+	singleEmployeeInfo: function () {
+		return 'SINGLE EMPLOYEE INTENT'
+	},
+	
 	assignTask: function () {
 		return 'ASSIGN TASK INTENT'
 	}

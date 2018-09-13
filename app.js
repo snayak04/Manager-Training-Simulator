@@ -136,6 +136,9 @@ function updateMessage(input, response) {
 		case "EmployeeInfo":
 			responseText = intentHandlers.employeeInfo();
 			break;
+		case "SingleEmployeeInfo":
+			responseText = intentHandlers.singleEmployeeInfo();
+			break;
 		case "AssignTask":
 			responseText = intentHandlers.assignTask();
 			break;
