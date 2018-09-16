@@ -17,7 +17,6 @@ module.exports = {
   },
     
   employeeInfo: function () {
-    assistant.getEmployees();
     return 'EMPLOYEE INTENT';
   },
 	
