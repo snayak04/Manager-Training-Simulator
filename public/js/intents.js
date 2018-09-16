@@ -3,27 +3,27 @@
 
 
 module.exports = {
-    wait: function () {
-        return 'WAIT INTENT';
-    },
+  wait: function () {
+    return 'WAIT INTENT';
+  },
     
-    taskInfo: function () {
-        return 'TASKS INTENT';
-    },
+  taskInfo: function () {
+    return 'TASKS INTENT';
+  },
     
-    projectInfo: function () {
-        return 'PROJECT INTENT';
-    },
+  projectInfo: function () {
+    return 'PROJECT INTENT';
+  },
     
-    employeeInfo: function () {
-        return 'EMPLOYEES INTENT';
-    },
+  employeeInfo: function () {
+    return 'EMPLOYEES INTENT';
+  },
 	
-    singleEmployeeInfo: function () {
-        return 'SINGLE EMPLOYEE INTENT';
-    },
+  singleEmployeeInfo: function () {
+    return 'SINGLE EMPLOYEE INTENT';
+  },
 	
-    assignTask: function () {
-        return 'ASSIGN TASK INTENT';
-    }
+  assignTask: function () {
+    return 'ASSIGN TASK INTENT';
+  }
 };

@@ -1,11 +1,11 @@
 //Defines a class for managing employee objects
 
 function Employee(){
-    //who knows
+  //who knows
 }
 
 
 
 module.exports = {
-    Employee: Employee;
-}
+  Employee: Employee
+};
