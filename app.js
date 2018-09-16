@@ -127,7 +127,6 @@ function updateMessage(input, response) {
       break;
   }
 
-  }
   response.output.text = responseText;
   return response;
 }
