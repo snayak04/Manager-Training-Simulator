@@ -93,8 +93,15 @@ function updateMessage(input, response) {
   if (!response.output) {
     response.output = {};
   } 
+  
+  var intent;
   if (response.intents && response.intents[0]) {
-    var intent = response.intents[0];
+    intent = response.intents[0];
+  } else {
+    response.output.text = 'I don\'t understand that. Could you try rephrasing?';
+    return response;
+  }
+  
 	
   switch(intent.intent){
     case 'Wait':
