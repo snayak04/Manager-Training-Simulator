@@ -1,6 +1,6 @@
 {
-  "name": "@ibm-watson/assistant-simple",
-  "description": "A simple Node.js based web app which shows how to use the Watson Assistant API to recognize user intents.",
+  "name": "Manager-Training-Simulator",
+  "description": "Attempt to test CI.",
   "version": "0.1.1",
   "main": "server.js",
   "scripts": {
@@ -15,7 +15,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/watson-developer-cloud/assistant-simple.git"
+    "url": "https://github.com/snayak04/Manager-Training-Simulator.git"
   },
   "license": "Apache-2.0",
   "dependencies": {
