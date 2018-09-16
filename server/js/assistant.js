@@ -32,7 +32,7 @@ function addEmployee(newEmployee){
 
 //Remove an employee from the assistant
 function removeEmployee(employee){
-   var params = {
+  var params = {
     workspace_id: workspace,
     entity: 'employees',
     value: employee
