@@ -10,7 +10,7 @@ var assistant = new watson.AssistantV1({
 
 var workspace = process.env.WORKSPACE_ID || '<workspace-id>';
 if (!workspace || workspace === '<workspace-id>') {
-  console.error( 'The app has not been configured with a <b>WORKSPACE_ID</b> environment variable. Please refer to the ' + '<a href="https://github.com/watson-developer-cloud/assistant-simple">README</a> documentation on how to set this variable. <br>' + 'Once a workspace has been defined the intents may be imported from ' + '<a href="https://github.com/watson-developer-cloud/assistant-simple/blob/master/training/car_workspace.json">here</a> in order to get a working application.');
+  //TODO: Handle this error somehow?
 }
 
 //Add an employee to the assistant
@@ -25,13 +25,14 @@ function addEmployee(newEmployee){
     if (err) {
       //TODO: Figure out how to pass out the error later
     }
+    return response;
   });
   
 }
 
 //Remove an employee from the assistant
 function removeEmployee(employee){
-    var params = {
+   var params = {
     workspace_id: workspace,
     entity: 'employees',
     value: employee
@@ -41,6 +42,7 @@ function removeEmployee(employee){
     if (err) {
       //TODO: Figure out how to pass out the error later
     }
+    return response;
   });
 }
 
@@ -56,13 +58,14 @@ function addTask(newTask){
     if (err) {
       //TODO: Figure out how to pass out the error later
     }
+    return response;
   });
   
 }
 
 //Remove a task from the assistant
 function removeTask(task){
-var params = {
+  var params = {
     workspace_id: workspace,
     entity: 'tasks',
     value: task
@@ -72,6 +75,7 @@ var params = {
     if (err) {
       //TODO: Figure out how to pass out the error later
     }
+    return response;
   });
 }
 
