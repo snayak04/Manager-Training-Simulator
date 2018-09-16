@@ -22,6 +22,7 @@ var AssistantV1 = require('watson-developer-cloud/assistant/v1'); // watson sdk
 var TextToSpeechV1 = require('watson-developer-cloud/text-to-speech/v1');
 var intentHandlers = require('./public/js/intents')
 
+
 var app = express();
 
 // Bootstrap application settings
@@ -34,30 +35,6 @@ var assistant = new AssistantV1({
   version: '2018-07-10'
 });
 
-const getFileExtension = (acceptQuery) => {
-  const accept = acceptQuery || '';
-  switch (accept) {
-    case 'audio/ogg;codecs=opus':
-    case 'audio/ogg;codecs=vorbis':
-      return 'ogg';
-    case 'audio/wav':
-      return 'wav';
-    case 'audio/mpeg':
-      return 'mpeg';
-    case 'audio/webm':
-      return 'webm';
-    case 'audio/flac':
-      return 'flac';
-    default:
-      return 'mp3';
-  }
-};
-
-var textToSpeech = new TextToSpeechV1({
-  username: process.env.ASSISTANT_USERNAME,
-  password: process.env.ASSISTANT_PASSWORD,
-  url: 'https://stream.watsonplatform.net/text-to-speech/api/'
-});
 // Endpoint to be call from the client side
 app.post('/api/message', function (req, res) {
   var workspace = process.env.WORKSPACE_ID || '<workspace-id>';
@@ -92,10 +69,6 @@ app.post('/api/message', function (req, res) {
         // to the response.
         for(var i = 0; i < generic.length; i++) {
           if (generic[i].hasOwnProperty('text')) {
-            textToSpeech.synthesize({
-              text: generic[i].text,
-              accept: 'audio/wav'
-            });
             data.output.text.push(generic[i].text);
           } else if (generic[i].hasOwnProperty('title')) {
             data.output.text.push(generic[i].title);
