@@ -1,7 +1,7 @@
 // This is where the backend handler for each intent is defined.
 // These are called from app.js after the most likely intent is determined.
 
-var assistant = require('./assistant.js');
+//var assistant = require('./assistant.js');
 
 module.exports = {
   wait: function () {
