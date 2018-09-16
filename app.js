@@ -20,7 +20,7 @@ var express = require('express'); // app server
 var bodyParser = require('body-parser'); // parser for post requests
 var AssistantV1 = require('watson-developer-cloud/assistant/v1'); // watson sdk
 //var TextToSpeechV1 = require('watson-developer-cloud/text-to-speech/v1');
-var intentHandlers = require('./public/js/intents');
+var intentHandlers = require('./server/js/intents');
 
 
 var app = express();

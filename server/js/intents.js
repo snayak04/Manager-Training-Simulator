@@ -1,6 +1,7 @@
 // This is where the backend handler for each intent is defined.
 // These are called from app.js after the most likely intent is determined.
 
+var assistant = require('./assistant.js');
 
 module.exports = {
   wait: function () {
@@ -16,7 +17,8 @@ module.exports = {
   },
     
   employeeInfo: function () {
-    return 'EMPLOYEES INTENT';
+    assistant.getEmployees();
+    return 'EMPLOYEE INTENT';
   },
 	
   singleEmployeeInfo: function () {
@@ -26,4 +28,5 @@ module.exports = {
   assignTask: function () {
     return 'ASSIGN TASK INTENT';
   }
+  
 };
