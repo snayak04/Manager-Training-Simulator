@@ -19,8 +19,8 @@
 var express = require('express'); // app server
 var bodyParser = require('body-parser'); // parser for post requests
 var AssistantV1 = require('watson-developer-cloud/assistant/v1'); // watson sdk
-var TextToSpeechV1 = require('watson-developer-cloud/text-to-speech/v1');
-var intentHandlers = require('./public/js/intents')
+//var TextToSpeechV1 = require('watson-developer-cloud/text-to-speech/v1');
+var intentHandlers = require('./public/js/intents');
 
 
 var app = express();
@@ -96,30 +96,30 @@ function updateMessage(input, response) {
   if (response.intents && response.intents[0]) {
     var intent = response.intents[0];
 	
-	switch(intent.intent){
-		case "Wait":
-			responseText = intentHandlers.wait();
-			break;
-		case "TaskInfo":
-			responseText = intentHandlers.taskInfo();
-			break;
-		case "ProjectInfo":
-			responseText = intentHandlers.projectInfo();
-			break;
-		case "EmployeeInfo":
-			responseText = intentHandlers.employeeInfo();
-			break;
-		case "SingleEmployeeInfo":
-			responseText = intentHandlers.singleEmployeeInfo();
-			break;
-		case "AssignTask":
-			responseText = intentHandlers.assignTask();
-			break;
-		default:
-			responseText = "I don't understand that. Could you try rephrasing?"
-			break;
-		
-	}
+    switch(intent.intent){
+        case 'Wait':
+            responseText = intentHandlers.wait();
+            break;
+        case 'TaskInfo':
+            responseText = intentHandlers.taskInfo();
+            break;
+        case 'ProjectInfo':
+            responseText = intentHandlers.projectInfo();
+            break;
+        case 'EmployeeInfo':
+            responseText = intentHandlers.employeeInfo();
+            break;
+        case 'SingleEmployeeInfo':
+            responseText = intentHandlers.singleEmployeeInfo();
+            break;
+        case 'AssignTask':
+            responseText = intentHandlers.assignTask();
+            break;
+        default:
+            responseText = 'I don\'t understand that. Could you try rephrasing?';
+            break;
+        
+    }
 
   }
   response.output.text = responseText;
