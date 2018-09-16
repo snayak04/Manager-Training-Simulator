@@ -104,27 +104,27 @@ function updateMessage(input, response) {
   
 	
   switch(intent.intent){
-    case 'Wait':
-      responseText = intentHandlers.wait();
-      break;
-    case 'TaskInfo':
-      responseText = intentHandlers.taskInfo();
-      break;
-    case 'ProjectInfo':
-      responseText = intentHandlers.projectInfo();
-      break;
-    case 'EmployeeInfo':
-      responseText = intentHandlers.employeeInfo();
-      break;
-    case 'SingleEmployeeInfo':
-      responseText = intentHandlers.singleEmployeeInfo();
-      break;
-    case 'AssignTask':
-      responseText = intentHandlers.assignTask();
-      break;
-    default:
-      responseText = 'I don\'t understand that. Could you try rephrasing?';
-      break;
+  case 'Wait':
+    responseText = intentHandlers.wait();
+    break;
+  case 'TaskInfo':
+    responseText = intentHandlers.taskInfo();
+    break;
+  case 'ProjectInfo':
+    responseText = intentHandlers.projectInfo();
+    break;
+  case 'EmployeeInfo':
+    responseText = intentHandlers.employeeInfo();
+    break;
+  case 'SingleEmployeeInfo':
+    responseText = intentHandlers.singleEmployeeInfo();
+    break;
+  case 'AssignTask':
+    responseText = intentHandlers.assignTask();
+    break;
+  default:
+    responseText = 'I don\'t understand that. Could you try rephrasing?';
+    break;
   }
 
   response.output.text = responseText;
