@@ -21,8 +21,40 @@ var bodyParser = require('body-parser'); // parser for post requests
 var AssistantV1 = require('watson-developer-cloud/assistant/v1'); // watson sdk
 var TextToSpeechV1 = require('watson-developer-cloud/text-to-speech/v1');
 var intentHandlers = require('./public/js/intents')
+var MongoClient = require('mongodb').MongoClient;
+var mongoose = require('mongoose');
 
 var app = express();
+
+var mongoDB = 'mongodb://localhost:27017/example';
+mongoose.connect(mongoDB);
+mongoose.Promise = global.Promise;
+var db = mongoose.connection;
+db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+
+db.once('open', function() {
+  
+  var kittySchema = new mongoose.Schema({
+    name: String
+  });
+
+  var Kitten = mongoose.model('Kitten', kittySchema);
+
+  var silence = new Kitten({ name: 'Silence' });
+  console.log(silence.name); // 'Silence'
+
+  var fluffy = new Kitten({ name: 'fluffy' });
+
+  fluffy.save(function (err, fluffy) {
+    if (err) return console.error(err);
+  });
+
+  Kitten.find(function (err, kittens) {
+  if (err) return console.error(err);
+  console.log(kittens);
+  });
+
+});
 
 // Bootstrap application settings
 app.use(express.static('./public')); // load UI from public folder
@@ -122,7 +154,8 @@ function updateMessage(input, response) {
   } 
   if (response.intents && response.intents[0]) {
     var intent = response.intents[0];
-	
+  
+
 	switch(intent.intent){
 		case "Wait":
 			responseText = intentHandlers.wait();
@@ -143,7 +176,8 @@ function updateMessage(input, response) {
 			responseText = intentHandlers.assignTask();
 			break;
 		default:
-			responseText = "I don't understand that. Could you try rephrasing?"
+			responseText = "I don't understand that. Could you try rephrasing?";
+
 			break;
 		
 	}
