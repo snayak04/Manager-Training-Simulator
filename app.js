@@ -19,13 +19,15 @@
 var express = require('express'); // app server
 var bodyParser = require('body-parser'); // parser for post requests
 var AssistantV1 = require('watson-developer-cloud/assistant/v1'); // watson sdk
-var TextToSpeechV1 = require('watson-developer-cloud/text-to-speech/v1');
-var intentHandlers = require('./public/js/intents')
+//var TextToSpeechV1 = require('watson-developer-cloud/text-to-speech/v1');
+var intentHandlers = require('./server/js/intents');
+// Databases
 var MongoClient = require('mongodb').MongoClient;
 var mongoose = require('mongoose');
 
 var app = express();
 
+//database connection test code *****************************
 var mongoDB = 'mongodb://localhost:27017/example';
 mongoose.connect(mongoDB);
 mongoose.Promise = global.Promise;
@@ -55,6 +57,7 @@ db.once('open', function() {
   });
 
 });
+//**********************************************************
 
 // Bootstrap application settings
 app.use(express.static('./public')); // load UI from public folder
@@ -66,30 +69,6 @@ var assistant = new AssistantV1({
   version: '2018-07-10'
 });
 
-const getFileExtension = (acceptQuery) => {
-  const accept = acceptQuery || '';
-  switch (accept) {
-    case 'audio/ogg;codecs=opus':
-    case 'audio/ogg;codecs=vorbis':
-      return 'ogg';
-    case 'audio/wav':
-      return 'wav';
-    case 'audio/mpeg':
-      return 'mpeg';
-    case 'audio/webm':
-      return 'webm';
-    case 'audio/flac':
-      return 'flac';
-    default:
-      return 'mp3';
-  }
-};
-
-var textToSpeech = new TextToSpeechV1({
-  username: process.env.ASSISTANT_USERNAME,
-  password: process.env.ASSISTANT_PASSWORD,
-  url: 'https://stream.watsonplatform.net/text-to-speech/api/'
-});
 // Endpoint to be call from the client side
 app.post('/api/message', function (req, res) {
   var workspace = process.env.WORKSPACE_ID || '<workspace-id>';
@@ -124,10 +103,6 @@ app.post('/api/message', function (req, res) {
         // to the response.
         for(var i = 0; i < generic.length; i++) {
           if (generic[i].hasOwnProperty('text')) {
-            textToSpeech.synthesize({
-              text: generic[i].text,
-              accept: 'audio/wav'
-            });
             data.output.text.push(generic[i].text);
           } else if (generic[i].hasOwnProperty('title')) {
             data.output.text.push(generic[i].title);
@@ -152,37 +127,40 @@ function updateMessage(input, response) {
   if (!response.output) {
     response.output = {};
   } 
-  if (response.intents && response.intents[0]) {
-    var intent = response.intents[0];
   
-
-	switch(intent.intent){
-		case "Wait":
-			responseText = intentHandlers.wait();
-			break;
-		case "TaskInfo":
-			responseText = intentHandlers.taskInfo();
-			break;
-		case "ProjectInfo":
-			responseText = intentHandlers.projectInfo();
-			break;
-		case "EmployeeInfo":
-			responseText = intentHandlers.employeeInfo();
-			break;
-		case "SingleEmployeeInfo":
-			responseText = intentHandlers.singleEmployeeInfo();
-			break;
-		case "AssignTask":
-			responseText = intentHandlers.assignTask();
-			break;
-		default:
-			responseText = "I don't understand that. Could you try rephrasing?";
-
-			break;
-		
-	}
-
+  var intent;
+  if (response.intents && response.intents[0]) {
+    intent = response.intents[0];
+  } else {
+    response.output.text = 'I don\'t understand that. Could you try rephrasing?';
+    return response;
   }
+  
+  
+  switch(intent.intent){
+  case 'Wait':
+    responseText = intentHandlers.wait();
+    break;
+  case 'TaskInfo':
+    responseText = intentHandlers.taskInfo();
+    break;
+  case 'ProjectInfo':
+    responseText = intentHandlers.projectInfo();
+    break;
+  case 'EmployeeInfo':
+    responseText = intentHandlers.employeeInfo();
+    break;
+  case 'SingleEmployeeInfo':
+    responseText = intentHandlers.singleEmployeeInfo();
+    break;
+  case 'AssignTask':
+    responseText = intentHandlers.assignTask();
+    break;
+  default:
+    responseText = 'I don\'t understand that. Could you try rephrasing?';
+    break;
+  }
+
   response.output.text = responseText;
   return response;
 }
