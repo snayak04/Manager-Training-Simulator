@@ -17,7 +17,7 @@ module.exports = {
   },
     
   employeeInfo: function () {
-    return 'EMPLOYEE INTENT';
+	return 'EMPLOYEE INTENT';
   },
 	
   singleEmployeeInfo: function () {
