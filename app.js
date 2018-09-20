@@ -20,7 +20,7 @@ var express = require('express'); // app server
 var bodyParser = require('body-parser'); // parser for post requests
 var AssistantV1 = require('watson-developer-cloud/assistant/v1'); // watson sdk
 //var TextToSpeechV1 = require('watson-developer-cloud/text-to-speech/v1');
-var intentHandlers = require('./server/js/intents');
+var intentHandlers = require('./src/js/intents');
 // Databases
 
 
@@ -108,22 +108,22 @@ function updateMessage(input, response) {
   
   switch(intent.intent){
   case 'Wait':
-    responseText = intentHandlers.wait();
+    responseText = intentHandlers.wait(response);
     break;
   case 'TaskInfo':
-    responseText = intentHandlers.taskInfo();
+    responseText = intentHandlers.taskInfo(response);
     break;
   case 'ProjectInfo':
-    responseText = intentHandlers.projectInfo();
+    responseText = intentHandlers.projectInfo(response);
     break;
   case 'EmployeeInfo':
-    responseText = intentHandlers.employeeInfo();
+    responseText = intentHandlers.employeeInfo(response);
     break;
   case 'SingleEmployeeInfo':
-    responseText = intentHandlers.singleEmployeeInfo();
+    responseText = intentHandlers.singleEmployeeInfo(response);
     break;
   case 'AssignTask':
-    responseText = intentHandlers.assignTask();
+    responseText = intentHandlers.assignTask(response);
     break;
   default:
     responseText = 'I don\'t understand that. Could you try rephrasing?';
