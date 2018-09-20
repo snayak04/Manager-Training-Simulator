@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node server.js",
     "test-integration": "casperjs test ./test/integration/test.*.js",
-    "test-integration-runner": "NODE_ENV=test && process.env.WORKSPACE_ID=test node casper-runner.js",
+    "test-integration-runner": "NODE_ENV=test && WORKSPACE_ID=test node casper-runner.js",
     "test": "npm run lint && npm run test-integration-runner",
     "test-unit": "jest test/unit --coverage",
     "lint": "eslint .",
