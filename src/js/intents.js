@@ -12,12 +12,10 @@ module.exports = {
 	var query = {name: "Paul"};
 	database.findbyAttribute(query,"ksk1", "collectionksk", uri, function(result){
 		console.log(result[0].name);
-		responseMessage = "TEST MESSAGE"
+		responseMessage = "MESSAGE FROM INSIDE CALLBACK"
 	});
 	
-	while (responseMessage == null){
-		deasync.runLoopOnce();
-	}
+	deasync.loopWhile(function(){return responseMessage == null});
 	
     return responseMessage;
   },
