@@ -20,6 +20,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "body-parser": "^1.18.3",
+    "deasync": "^0.1.13",
     "dotenv": "^6.0.0",
     "express": "^4.16.3",
     "mongodb": "^3.1.6",
