@@ -3,17 +3,28 @@
 
 //var assistant = require('./assistant.js');
 var database = require('./DBUtils');
+var databaseGet = require('./DBgetset');
 var deasync = require('deasync');
 var uri = "mongodb+srv://new_test_1:new_test_1@cluster0-fbxn9.mongodb.net/ksk1?retryWrites=true"
 
 module.exports = {
   wait: function (response) {
 	var responseMessage = null;
-	var query = {name: "Paul"};
-	database.findbyAttribute(query,"ksk1", "collectionksk", uri, function(result){
-		console.log(result[0].name);
-		responseMessage = "MESSAGE FROM INSIDE CALLBACK"
-	});
+
+  databaseGet.getEmployee("Paul", function(result){
+    console.log(result[0]);
+    responseMessage = "MESSAGE FROM INSIDE CALLBACK"
+  });
+
+  databaseGet.getTask("Testing", function(result){
+    console.log(result[0]);
+    responseMessage = "MESSAGE FROM INSIDE CALLBACK"
+  });
+
+  databaseGet.getProjectState("01/01/01 14:14:14", function(result){
+    console.log(result[0]);
+    responseMessage = "MESSAGE FROM INSIDE CALLBACK"
+  });
 	
 	deasync.loopWhile(function(){return responseMessage == null});
 	

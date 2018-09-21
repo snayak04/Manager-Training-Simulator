@@ -42,18 +42,18 @@ module.exports = {
 
   findbyAttribute : function(query,dbName, collectionName, url, callback){
     MongoClient.connect(url, function(err, db) {
-  if (err) throw err;
-  var dbo = db.db(dbName);
-  //var query = { key: value };
-  dbo.collection(collectionName).find(query).toArray(function(err, result) {
-    if (err) throw err;
-	return callback(result);
-	db.close();
-  });
-});
+      if (err) throw err;
+      var dbo = db.db(dbName);
+      //var query = { key: value };
+      dbo.collection(collectionName).find(query).toArray(function(err, result) {
+        if (err) throw err;
+    	return callback(result);
+    	db.close();
+      });
+    });
 
 
-}
+  }
 }
 
 
