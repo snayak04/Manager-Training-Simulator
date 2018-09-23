@@ -2,10 +2,9 @@
 // These are called from app.js after the most likely intent is determined.
 
 //var assistant = require('./assistant.js');
-var database = require('./DBUtils');
-var databaseGet = require('./DBgetset');
+var database = require('./DBgetset');
 var deasync = require('deasync');
-var uri = "mongodb+srv://new_test_1:new_test_1@cluster0-fbxn9.mongodb.net/ksk1?retryWrites=true"
+var config = require('./config');
 
 module.exports = {
   /*Wait Intent
@@ -14,7 +13,14 @@ module.exports = {
     -An employee finishing their task
   */
   wait: function (response) {
-    return 'WAIT INTENT';
+    var returnMessage = null;
+    database.getProjectState(function(result){
+      returnMessage = 'test';
+    });
+    
+    //wait for message to be built
+    deasync.loopWhile(function(){return returnMessage == null});
+    return returnMessage;
   },
     
   taskInfo: function (response) {
