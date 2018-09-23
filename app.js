@@ -16,6 +16,8 @@
 
 'use strict';
 
+var config = require('./src/js/config'); //config values
+
 var express = require('express'); // app server
 var bodyParser = require('body-parser'); // parser for post requests
 var AssistantV1 = require('watson-developer-cloud/assistant/v1'); // watson sdk
@@ -105,6 +107,12 @@ function updateMessage(input, response) {
     return response;
   }
   
+  //if intent confidence is too low, ask them to rephrase
+  if(intent.confidence < config.MINIMUM_CONFIDENCE_VALUE){
+    response.output.text = 'I don\'t understand that. Could you try rephrasing?';
+    return response;
+  }
+  
   
   switch(intent.intent){
   case 'Wait':
@@ -119,14 +127,11 @@ function updateMessage(input, response) {
   case 'EmployeeInfo':
     responseText = intentHandlers.employeeInfo(response);
     break;
-  case 'SingleEmployeeInfo':
-    responseText = intentHandlers.singleEmployeeInfo(response);
-    break;
   case 'AssignTask':
     responseText = intentHandlers.assignTask(response);
     break;
   default:
-    responseText = 'I don\'t understand that. Could you try rephrasing?';
+    //Do nothing
     break;
   }
 
