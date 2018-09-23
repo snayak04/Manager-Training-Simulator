@@ -9,8 +9,22 @@ module.exports = {
       return callback(result);
     });
   },
+  getAllEmployees: function(callback){
+    //Empty query to get every employee
+    var search = {};
+    DBUtil.findbyAttribute(search, "ksk1", "Employees", uri, function(result){
+      return callback(result);
+    });
+  },
   getTask: function(taskName, callback){
     var search = { project: taskName };
+    DBUtil.findbyAttribute(search, "ksk1", "Tasks", uri, function(result){
+      return callback(result);
+    });
+  },
+  getAllTasks: function(callback){
+    //Empty query to get every task
+    var search = {};
     DBUtil.findbyAttribute(search, "ksk1", "Tasks", uri, function(result){
       return callback(result);
     });
