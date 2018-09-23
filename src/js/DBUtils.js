@@ -58,7 +58,7 @@ module.exports = {
   deleteOneRecord : function(query, collectionName){
     MongoClient.connect(config.DATABASE_URI, function(err, db) {
       if (err) throw err;
-      var dbo = db.db(config.DATABASE_NAME));
+      var dbo = db.db(config.DATABASE_NAME);
       dbo.collection(collectionName).deleteOne(query, function(err, obj){
         if (err) throw err;
         db.close();
@@ -69,7 +69,7 @@ module.exports = {
   updateOneRecord: function(query, collectionName, newValues){
     MongoClient.connect(config.DATABASE_URI, function(err, db) {
       if (err) throw err;
-      var dbo = db.db(config.DATABASE_NAME));
+      var dbo = db.db(config.DATABASE_NAME);
       dbo.collection(collectionName).updateOne(query, newValues, function(err, obj){
         if (err) throw err;
         db.close();
@@ -78,8 +78,7 @@ module.exports = {
   }
   
 
-  }
-}
+};
 
 
 
