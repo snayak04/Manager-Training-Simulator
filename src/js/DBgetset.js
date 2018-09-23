@@ -1,37 +1,36 @@
 var DBUtil = require('./DButils.js');
 
-var uri = "mongodb+srv://new_test_1:new_test_1@cluster0-fbxn9.mongodb.net/ksk1?retryWrites=true"
-
 module.exports = {
   getEmployee: function(employeeName, callback){
     var search = { name: employeeName };
-    DBUtil.findbyAttribute(search, "ksk1", "Employees", uri, function(result){
+    DBUtil.findbyAttribute(search,"Employees", function(result){
       return callback(result);
     });
   },
   getAllEmployees: function(callback){
     //Empty query to get every employee
     var search = {};
-    DBUtil.findbyAttribute(search, "ksk1", "Employees", uri, function(result){
+    DBUtil.findbyAttribute(search, "Employees", function(result){
       return callback(result);
     });
   },
   getTask: function(taskName, callback){
-    var search = { project: taskName };
-    DBUtil.findbyAttribute(search, "ksk1", "Tasks", uri, function(result){
+    var search = { title: taskName };
+    DBUtil.findbyAttribute(search, "Tasks", function(result){
       return callback(result);
     });
   },
   getAllTasks: function(callback){
     //Empty query to get every task
     var search = {};
-    DBUtil.findbyAttribute(search, "ksk1", "Tasks", uri, function(result){
+    DBUtil.findbyAttribute(search, "Tasks", function(result){
       return callback(result);
     });
   },
-  getProjectState: function(projectStateName, callback){
-    var search = { date: projectStateName };
-    DBUtil.findbyAttribute(search, "ksk1", "ProjectStates", uri, function(result){
+  //For now just assume only one project
+  getProjectState: function(callback){
+    var search = {};
+    DBUtil.findbyAttribute(search, "ProjectStates", function(result){
       return callback(result);
     });
   }
