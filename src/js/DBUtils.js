@@ -17,7 +17,7 @@ module.exports = {
         var dbo = db.db(config.DATABASE_NAME);
         dbo.createCollection(collectionName, function(err, res) {
         if (err) throw err;
-        console.log("Collection"+ collectionName+ "created!");
+        console.log("Collection"+ collectionName + "created!");
         db.close();
         });
       });
@@ -49,11 +49,34 @@ module.exports = {
       //var query = { key: value };
       dbo.collection(collectionName).find(query).toArray(function(err, result) {
         if (err) throw err;
-    	return callback(result);
-    	db.close();
+        db.close();
+        return callback(result);
       });
     });
+  },
 
+  deleteOneRecord : function(query, collectionName){
+    MongoClient.connect(config.DATABASE_URI, function(err, db) {
+      if (err) throw err;
+      var dbo = db.db(config.DATABASE_NAME));
+      dbo.collection(collectionName).deleteOne(query, function(err, obj){
+        if (err) throw err;
+        db.close();
+      });
+    });
+  },
+  
+  updateOneRecord: function(query, collectionName, newValues){
+    MongoClient.connect(config.DATABASE_URI, function(err, db) {
+      if (err) throw err;
+      var dbo = db.db(config.DATABASE_NAME));
+      dbo.collection(collectionName).updateOne(query, newValues, function(err, obj){
+        if (err) throw err;
+        db.close();
+      });
+    });
+  }
+  
 
   }
 }
