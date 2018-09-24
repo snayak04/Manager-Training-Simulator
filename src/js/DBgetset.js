@@ -33,6 +33,31 @@ module.exports = {
     DBUtil.findbyAttribute(search, "Projects", function(result){
       return callback(result);
     });
+  },
+  updateSatisfaction: function(employeeName, newSatis){
+    var search = { name: employeeName };
+    var satisfactionInsert = { $set: {satisfaction: newSatis}};
+    DBUtil.updateOneRecord(search, "Employees", satisfactionInsert);
+  },
+  updateProjectState: function(projectTitle, newStart){
+    var search = { title: projectTitle };
+    var stateInsert = { $set: {startTime: newStart}};
+    DBUtil.updateOneRecord(search, "Projects", stateInsert);
+  },
+  updateWorking: function(taskTitle, newWorkerArray){
+    var search = { title: taskTitle };
+    var workingInsert = { $set: {employees: newWorkerArray}};
+    DBUtil.updateOneRecord(search, "Tasks", workingInsert);
+  },
+  updateTimeLeft: function(taskTitle, newLeft){
+    var search = { title: taskTitle };
+    var leftInsert = { $set: {timeleft: newLeft}};
+    DBUtil.updateOneRecord(search, "Tasks", leftInsert);
+  },
+  updateState: function(taskTitle, newState){
+    var search = { title: taskTitle };
+    var stateInsert = { $set: {state: newState}};
+    DBUtil.updateOneRecord(search, "Tasks", stateInsert);
   }
 }
 
