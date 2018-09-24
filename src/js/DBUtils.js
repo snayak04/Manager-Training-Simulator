@@ -18,7 +18,7 @@ module.exports = {
         var dbo = db.db(config.DATABASE_NAME);
         dbo.createCollection(collectionName, function(err, res) {
           if (err) throw err;
-          console.log("Collection "+ collectionName + " created!");
+          console.log("Collection " + collectionName + " created!");
           db.close();
         });
       });
@@ -31,7 +31,7 @@ module.exports = {
       var dbo = db.db(config.DATABASE_NAME);
       dbo.dropCollection(collectionName, function(err, delOK) {
           if(!err){
-            if (delOK) console.log("Collection deleted");
+            if (delOK) console.log("Collection " + collectionName + " deleted");
           }
           dbo.createCollection(collectionName, function(err, res) {
             if (err) throw err;
