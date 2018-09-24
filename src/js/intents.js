@@ -14,9 +14,6 @@ module.exports = {
   */
   wait: function (response) {
     var returnMessage = null;
-    database.updateWorking("Optimize performance", ["newworkers"]);
-    database.updateTimeLeft("Optimize performance", 900);
-    database.updateState("Optimize performance", "NewState");
     
     database.getAllTasks(function(result){
       console.log(result);
