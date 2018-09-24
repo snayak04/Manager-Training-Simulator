@@ -24,19 +24,20 @@ function initialize(){
   //Create new project
   var startTime = new Date('2018-09-24T09:00:00')
   var deadline = new Date('2018-09-28T17:00:00')
-  projectMaker.insertNewProject('DefaultProject', startTime, deadline)
-
-  //Create employees
-  employeeMaker.insertNewEmployee('DefaultProject', 'John', 'Software Engineer', 85, 80);
-  employeeMaker.insertNewEmployee('DefaultProject', 'Harry', 'Software Intern', 30, 75);
-  employeeMaker.insertNewEmployee('DefaultProject', 'Amanda', 'Software Engineer', 75, 70);
-
-  //Create tasks
-  taskMaker.insertNewTask('DefaultProject', 'Code the new level', 20, 'Incomplete', []);
-  taskMaker.insertNewTask('DefaultProject', 'Add a battle royale mode', 40, 'Incomplete', []);
-  taskMaker.insertNewTask('DefaultProject', 'Optimize performance', 10, 'Incomplete', []);
-  taskMaker.insertNewTask('DefaultProject', 'Update UI to twenty-first century', 30, 'Incomplete', []);
-  taskMaker.insertNewTask('DefaultProject', 'Add random map generation', 10, 'Incomplete', []);
+  projectMaker.insertNewProject('DefaultProject', startTime, deadline, function(result){
+    projectId = result.ops[0]._id;
+    //Create employees
+    employeeMaker.insertNewEmployee(projectId, 'John', 'Software Engineer', 85, 80);
+    employeeMaker.insertNewEmployee(projectId, 'Harry', 'Software Intern', 30, 75);
+    employeeMaker.insertNewEmployee(projectId, 'Amanda', 'Software Engineer', 75, 70);
+    
+    //Create tasks
+    taskMaker.insertNewTask(projectId, 'Code the new level', 20, 'Incomplete', []);
+    taskMaker.insertNewTask(projectId, 'Add a battle royale mode', 40, 'Incomplete', []);
+    taskMaker.insertNewTask(projectId, 'Optimize performance', 10, 'Incomplete', []);
+    taskMaker.insertNewTask(projectId, 'Update UI to twenty-first century', 30, 'Incomplete', []);
+    taskMaker.insertNewTask(projectId, 'Add random map generation', 10, 'Incomplete', []);
+  });
 }
 
 module.exports = {

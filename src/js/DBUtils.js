@@ -45,7 +45,7 @@ module.exports = {
     return done;
   },
   
-  insertOneRecord : function(record, collectionName){
+  insertOneRecord : function(record, collectionName, callback){
     MongoClient.connect(config.DATABASE_URI, function(err, client) {
       if(err) {
         console.log('Error occurred while connecting to MongoDB Atlas...\n',err);
@@ -57,6 +57,9 @@ module.exports = {
         if (err) throw err;
         console.log("1 document inserted");
         //db.close();
+        if(callback){
+          callback(res);
+        }
       });
       // perform actions on the collection object
       client.close();
