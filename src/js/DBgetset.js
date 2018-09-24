@@ -1,9 +1,9 @@
 var DBUtil = require('./DButils.js');
 
 module.exports = {
-  getEmployee: function(employeeName, callback){
-    var search = { name: employeeName };
-    DBUtil.findbyAttribute(search,"Employees", function(result){
+  getEmployee: function(employeeId, callback){
+    var search = { _id: employeeId };
+    DBUtil.findbyAttribute(search, "Employees", function(result){
       return callback(result);
     });
   },
@@ -14,8 +14,8 @@ module.exports = {
       return callback(result);
     });
   },
-  getTask: function(taskName, callback){
-    var search = { title: taskName };
+  getTask: function(taskId, callback){
+    var search = { _id: taskId };
     DBUtil.findbyAttribute(search, "Tasks", function(result){
       return callback(result);
     });
@@ -34,28 +34,28 @@ module.exports = {
       return callback(result);
     });
   },
-  updateSatisfaction: function(employeeName, newSatis){
-    var search = { name: employeeName };
+  updateEmployeeSatisfaction: function(employeeId, newSatis){
+    var search = { _id: employeId };
     var satisfactionInsert = { $set: {satisfaction: newSatis}};
     DBUtil.updateOneRecord(search, "Employees", satisfactionInsert);
   },
-  updateProjectState: function(projectTitle, newStart){
-    var search = { title: projectTitle };
-    var stateInsert = { $set: {startTime: newStart}};
+  updateProjectTime: function(projectId, newTime){
+    var search = { _id: projectId };
+    var stateInsert = { $set: {currentTime: newTime}};
     DBUtil.updateOneRecord(search, "Projects", stateInsert);
   },
-  updateWorking: function(taskTitle, newWorkerArray){
-    var search = { title: taskTitle };
-    var workingInsert = { $set: {employees: newWorkerArray}};
+  updateTaskWorking: function(taskId, newWorkerArray){
+    var search = { _id: taskId };
+    var workingInsert = { $set: {employeeIds: newWorkerArray}};
     DBUtil.updateOneRecord(search, "Tasks", workingInsert);
   },
-  updateTimeLeft: function(taskTitle, newLeft){
-    var search = { title: taskTitle };
+  updateTaskTimeLeft: function(taskId, newLeft){
+    var search = { _id: taskId};
     var leftInsert = { $set: {timeleft: newLeft}};
     DBUtil.updateOneRecord(search, "Tasks", leftInsert);
   },
-  updateState: function(taskTitle, newState){
-    var search = { title: taskTitle };
+  updateTaskState: function(taskId, newState){
+    var search = { _id: taskId };
     var stateInsert = { $set: {state: newState}};
     DBUtil.updateOneRecord(search, "Tasks", stateInsert);
   }
