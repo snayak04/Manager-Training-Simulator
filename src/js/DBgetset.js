@@ -1,10 +1,16 @@
 var DBUtil = require('./DButils.js');
 
 module.exports = {
-  getEmployee: function(employeeId, callback){
+  getEmployee: function(employeeName, callback){
+    var search = { name: employeeName };
+    DBUtil.findbyAttribute(search, "Employees", function(result){
+      return callback(result[0]);
+    });
+  },
+  getEmployeeById: function(employeeId, callback){
     var search = { _id: employeeId };
     DBUtil.findbyAttribute(search, "Employees", function(result){
-      return callback(result);
+      return callback(result[0]);
     });
   },
   getAllEmployees: function(callback){
@@ -14,10 +20,16 @@ module.exports = {
       return callback(result);
     });
   },
-  getTask: function(taskId, callback){
+  getTask: function(taskTitle, callback){
+    var search = { title: taskTitle };
+    DBUtil.findbyAttribute(search, "Tasks", function(result){
+      return callback(result[0]);
+    });
+  },
+  getTaskById: function(taskId, callback){
     var search = { _id: taskId };
     DBUtil.findbyAttribute(search, "Tasks", function(result){
-      return callback(result);
+      return callback(result[0]);
     });
   },
   getAllTasks: function(callback){
@@ -44,7 +56,7 @@ module.exports = {
     var stateInsert = { $set: {currentTime: newTime}};
     DBUtil.updateOneRecord(search, "Projects", stateInsert);
   },
-  updateTaskWorking: function(taskId, newWorkerArray){
+  updateTaskWorkers: function(taskId, newWorkerArray){
     var search = { _id: taskId };
     var workingInsert = { $set: {employeeIds: newWorkerArray}};
     DBUtil.updateOneRecord(search, "Tasks", workingInsert);

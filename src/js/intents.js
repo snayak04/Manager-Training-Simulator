@@ -105,12 +105,29 @@ module.exports = {
     }else if(!task){
       returnMessage = 'I think you\'re trying to assign a task to ' + employee.value + ', but I don\'t know for which task';
     }else{
-      //TODO: ASSIGN THE TASK IN THE DATABASE HERE.
-      //Need the update database wrappers to finish.
-      
-      returnMessage = 'Assigned task \'' + task.value + '\' to ' + employee.value;
+      //get the full objects so we have all the info we need
+      database.getTask(task.value, function(taskObject){
+        database.getEmployee(employee.value, function(employeeObject){
+          var workers = taskObject.employeeIds;
+          //check if employee is already working
+          var alreadyWorking = false;
+          workers.forEach(function(employeeId){
+            if(employeeId.toString() == employeeObject._id.toString()){
+              alreadyWorking = true;
+            }
+          });
+          if (alreadyWorking){ //employee already on task
+            returnMessage = employeeObject.name + ' is already working on \'' + taskObject.title + '\'';
+          }else{
+            //Add employee to task
+            workers.push(employeeObject._id);
+            database.updateTaskWorkers(taskObject._id, workers);
+            returnMessage = 'Assigned task \'' + taskObject.title + '\' to ' + employeeObject.name;
+          }
+        });
+      });
+      deasync.loopWhile(function(){return returnMessage == null});
     }
-    
     
     return returnMessage;
   }
