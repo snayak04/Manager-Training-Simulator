@@ -43,7 +43,8 @@ module.exports = {
           timeLeft = calculateFinishTime(task);
         });
       });
-      
+    
+    return returnMessage;
     });
     
     //wait for message to be built
