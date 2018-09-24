@@ -29,16 +29,13 @@ module.exports = {
     MongoClient.connect(config.DATABASE_URI, function(err, db) {
       if (err) throw err;
       var dbo = db.db(config.DATABASE_NAME);
-      dbo.dropCollection(collectionName, function(err, delOK) {
-          if(!err){
-            if (delOK) console.log("Collection " + collectionName + " deleted");
-          }
-          dbo.createCollection(collectionName, function(err, res) {
-            if (err) throw err;
-            console.log("Collection "+ collectionName + " created!");
-            db.close();
+      dbo.createCollection(collectionName, function(err, res){
+        dbo.collection(collectionName).deleteMany({}, function(err, delOK) {
+            if(!err){
+              if (delOK) console.log("Collection " + collectionName + " emptied");
+            }
             done = true;
-        });
+          });
         });
     });
     deasync.loopWhile(function(){return !done});

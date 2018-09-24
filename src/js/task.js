@@ -8,7 +8,7 @@ var assistant = require('./assistant.js');
   title: the name of the task
   timeLeft: number of man-hours needed to finish the task
   state: either 'incomplete' or 'complete'
-  employees: array of ids of employees working the task. This is probably empty if you're making a new one.
+  employeeIds: array of ids of employees working the task. This is probably empty if you're making a new one.
 */
 function insertNewTask(projectId, title, timeLeft, state, employeeIds){
   //TODO Maybe verify values?
