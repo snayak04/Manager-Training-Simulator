@@ -6,6 +6,21 @@ var database = require('./DBgetset');
 var deasync = require('deasync');
 var config = require('./config');
 
+//returns how long a task will take to finish with current employees.
+//if it will never finish, returns -1.
+function calculateFinishTime(task){
+  if(!task.employees){
+    return -1;
+  }else{
+    var skillTotal = 0;
+    task.employees.forEach(function(employeeId){
+      //get employee from database
+      var employee; //TODO Get From DB
+      skillTotal += employee.skill / 100;;
+    })
+  }
+}
+
 module.exports = {
   /*Wait Intent
   Goes to the next event, which can be one of the following:
@@ -15,7 +30,20 @@ module.exports = {
   wait: function (response) {
     var returnMessage = null;
     database.getProjectState(function(result){
-      returnMessage = 'test';
+      //Get the hours left in the day
+      var currentTime = result[0].currentTime;
+      var hoursLeft = 17 - currentTime.getHours();
+      
+      //Check if any of the tasks will finish before the day ends
+      database.getAllTasks(function(result) {
+        console.log(result);
+        shortestFinishTime = null;
+        var i = 0;
+        result.forEach(function(task){
+          timeLeft = calculateFinishTime(task);
+        });
+      });
+      
     });
     
     //wait for message to be built
@@ -54,19 +82,19 @@ module.exports = {
     var employee;
     var task;
     var entities = response.entities;
-    entities.forEach(function(value){
-      if (value.entity == 'employees'){
+    entities.forEach(function(entity){
+      if (entity.entity == 'employees'){
         if(!employee){
-          employee = value;
-        }else if(value.confidence > employee.confidence){
+          employee = entity;
+        }else if(entity.confidence > employee.confidence){
           //new value has higher confidence, replace old one.
-          employee = value;
+          employee = entity;
         }
-      }else if(value.entity == 'tasks'){
+      }else if(entity.entity == 'tasks'){
         if(!task){
-          task = value;
-        }else if(value.confidence > task.confidence){
-          task = value;
+          task = entity;
+        }else if(entity.confidence > task.confidence){
+          task = entity;
         }
       }
     });

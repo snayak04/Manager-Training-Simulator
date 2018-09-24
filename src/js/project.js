@@ -11,7 +11,7 @@ function insertNewProject(title, startTime, deadline){
   //TODO Maybe verify values?
   var newProject = {
     title: title,
-    startTime: startTime,
+    currentTime: startTime,
     deadline: deadline
   }
   
