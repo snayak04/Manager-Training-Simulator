@@ -24,6 +24,15 @@ module.exports = {
   },
     
   taskInfo: function (response) {
+    database.getAllEmployees(function(result){
+      console.log(result);
+    });
+    database.getAllTasks(function(result){
+      console.log(result);
+    });
+    database.getProjectState(function(result){
+      console.log(result);
+    });
     return 'TASKS INTENT';
   },
     

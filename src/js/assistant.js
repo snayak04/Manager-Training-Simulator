@@ -3,6 +3,7 @@
 //Need to make sure database stays up to date with the assistant when using these.
 
 var watson = require('watson-developer-cloud');
+var deasync = require('deasync');
 
 var assistant = new watson.AssistantV1({
   version: '2018-07-10'
@@ -22,9 +23,7 @@ function addEmployee(newEmployee){
   };
   
   assistant.createValue(params, function(err, response) {
-    if (err) {
-      //TODO: Figure out how to pass out the error later
-    }
+    if (err) throw err;
     return response;
   });
   
@@ -39,9 +38,7 @@ function removeEmployee(employee){
   };
   
   assistant.deleteValue(params, function(err, response) {
-    if (err) {
-      //TODO: Figure out how to pass out the error later
-    }
+    if (err) throw err;
     return response;
   });
 }
@@ -55,9 +52,7 @@ function addTask(newTask){
   };
   
   assistant.createValue(params, function(err, response) {
-    if (err) {
-      //TODO: Figure out how to pass out the error later
-    }
+    if (err) throw err;
     return response;
   });
   
@@ -72,11 +67,29 @@ function removeTask(task){
   };
   
   assistant.deleteValue(params, function(err, response) {
-    if (err) {
-      //TODO: Figure out how to pass out the error later
-    }
+    if (err) throw err;
     return response;
   });
+}
+
+//Resets an entity to have no values
+function clearEntityValues(entityName){
+  var params = {
+    workspace_id: workspace,
+    entity: entityName
+  }
+  var done = false;
+  //just delete the entity and remake it.
+  assistant.deleteEntity(params, function(err, delResponse){
+    assistant.createEntity(params, function(err, creResponse){
+      if (err) throw err;
+      done = true;
+      return creResponse;
+    });
+    return delResponse;
+  });
+  deasync.loopWhile(function(){return !done});
+  return done;
 }
 
 
@@ -84,7 +97,8 @@ module.exports = {
   addEmployee: addEmployee,
   addTask: addTask,
   removeEmployee: removeEmployee,
-  removeTask: removeTask
+  removeTask: removeTask,
+  clearEntityValues: clearEntityValues
 };
 
 

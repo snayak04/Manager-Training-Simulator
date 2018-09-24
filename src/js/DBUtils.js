@@ -1,6 +1,7 @@
 var MongoClient = require('mongodb').MongoClient;
 
 var config = require('./config');
+var deasync = require('deasync');
 
 module.exports = {
   createDataBase: function(url){
@@ -16,11 +17,32 @@ module.exports = {
         if (err) throw err;
         var dbo = db.db(config.DATABASE_NAME);
         dbo.createCollection(collectionName, function(err, res) {
-        if (err) throw err;
-        console.log("Collection"+ collectionName + "created!");
-        db.close();
+          if (err) throw err;
+          console.log("Collection "+ collectionName + " created!");
+          db.close();
         });
       });
+  },
+  
+  resetCollection: function(collectionName){
+    var done = false;
+    MongoClient.connect(config.DATABASE_URI, function(err, db) {
+      if (err) throw err;
+      var dbo = db.db(config.DATABASE_NAME);
+      dbo.dropCollection(collectionName, function(err, delOK) {
+          if(!err){
+            if (delOK) console.log("Collection deleted");
+          }
+          dbo.createCollection(collectionName, function(err, res) {
+            if (err) throw err;
+            console.log("Collection "+ collectionName + " created!");
+            db.close();
+            done = true;
+        });
+        });
+    });
+    deasync.loopWhile(function(){return !done});
+    return done;
   },
   
   insertOneRecord : function(record, collectionName){
