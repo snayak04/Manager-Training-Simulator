@@ -30,7 +30,7 @@ module.exports = {
   //For now just assume only one project
   getProjectState: function(callback){
     var search = {};
-    DBUtil.findbyAttribute(search, "ProjectStates", function(result){
+    DBUtil.findbyAttribute(search, "Projects", function(result){
       return callback(result);
     });
   }
