@@ -18,7 +18,7 @@ function insertNewEmployee(projectId, name, jobTitle, skill, satisfaction){
     jobTitle: jobTitle,
     skill: skill,
     satisfaction: satisfaction
-  }
+  };
   
   //Put in database
   database.insertOneRecord(newEmployee, 'Employees');
