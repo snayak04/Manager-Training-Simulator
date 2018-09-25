@@ -13,7 +13,7 @@ function insertNewProject(title, startTime, deadline, callback){
     title: title,
     currentTime: startTime,
     deadline: deadline
-  }
+  };
   
   //Put in database
   database.insertOneRecord(newProject, 'Projects', function(res){

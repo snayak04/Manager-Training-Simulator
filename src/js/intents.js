@@ -20,15 +20,39 @@ function calculateFinishTime(task){
         skillTotal += employee.skill / 100;
         done = true;
       });
-      deasync.loopWhile(function(){return !done});
+      deasync.loopWhile(function(){return !done;});
     });
     return Math.ceil(task.timeLeft / skillTotal);
   }
 }
 
-//updates a task's timeleft after a given number of hours based on current employees working it 
-function updateTimeLeft(task, hours){
+//updates a task's timeleft after a given number of hours based on current employees working it
+//returns array of finished tasks
+function updateTimeLeft(tasks, hours){
   //TODO Write this
+  var finishedTasks = [];
+  tasks.forEach(function(task){
+    var skillTotal = 0;
+    var done = false;
+    task.employeeIds.forEach(function(employeeId){
+      //get employee from database
+      var done = false;
+      database.getEmployeeById(employeeId, function(employee){
+        skillTotal += employee.skill / 100;
+        done = true;
+      });
+      deasync.loopWhile(function(){return !done;});
+    });
+    newTimeLeft = Math.floor(task.timeLeft - (hours * skillTotal));
+    if(newTimeLeft <= 0){//task is finished
+      newTimeLeft = 0;
+      
+      finishedTasks.push(task);
+    }
+    
+    database.updateTaskTimeLeft(task._id, newTimeLeft);  
+  });
+  return finishedTasks;
 }
 
 function scoreProductivity(){
@@ -52,59 +76,59 @@ module.exports = {
     var done = false;
     database.getProjectState(function(projects){
       //Get the hours left in the day
-      var project = projects[0] //Assuming one project for now
+      var project = projects[0]; //Assuming one project for now
       var currentTime = project.currentTime;
       var hoursLeftInDay = config.DAY_END_TIME - currentTime.getHours();
       
       //Check if any of the tasks will finish before the day ends
       database.getAllTasks(function(tasks) {
         var shortestFinishTime = null;
-        var i = 0;
         tasks.forEach(function(task){
-          timeLeft = calculateFinishTime(task);
+          var timeLeft = calculateFinishTime(task);
           if(!shortestFinishTime || timeLeft < shortestFinishTime){
             shortestFinishTime = timeLeft;
           }
         });
         if(shortestFinishTime == -1 || shortestFinishTime > hoursLeftInDay){
           //Next event is end of day
-          tasks.forEach(function(task){
-            updateTimeLeft(task, hoursLeftInDay);
-          });
+          updateTimeLeft(tasks, hoursLeftInDay);
           //Update time to next morning
-          newTime = new Date(currentTime.getTime());
+          var newTime = new Date(currentTime.getTime());
           newTime.setDate(currentTime.getDate() + 1);
           newTime.setHours(config.DAY_START_TIME);
           database.updateProjectTime(project._id, newTime);
           //Build Message
           var satisfactionRating = scoreSatisfaction();
           var productivityRating = scoreProductivity();
-          returnMessage = 'It is the end of the day. Here is your rating for the day:\n';
-          returnMessage = returnMessage + ' Productivity Rating: ' + productivityRating + '\n';
-          returnMessage = returnMessage + ' Satisfaction Rating: ' + satisfactionRating + '\n';
+          returnMessage = 'It is the end of the day. Here is your rating for the day:<br>'
+            + '   Productivity Rating: ' + productivityRating + '<br>'
+            + '   Satisfaction Rating: ' + satisfactionRating + '<br>'
+            + '<br>'
+            + 'It is now ' + config.DAY_START_TIME + ' AM on ' 
+            + newTime.getMonth() + '\\' + newTime.getDate();
           done = true;
           
         }else{
           //Next event is an employee finishing their task
+          var finishedTasks = [];
+          finishedTasks = updateTimeLeft(task, shortestFinishTime);
+          currentTime.setHours(currentTime.getHours() + shortestFinishTime);
+          //buildMessage
+          returnMessage = 'It is now ' + currentTime.getHours() + ' o\'clock';
+          finishedTask.forEach(function(task){
+            returnMessage += '<br>   The task \'' + task.title + '\' has been completed';
+          });
+          done = true;
         }
       });
     });
     
     //wait for message to be built
-    deasync.loopWhile(function(){return !done});
+    deasync.loopWhile(function(){return !done;});
     return returnMessage;
   },
     
   taskInfo: function (response) {
-    database.getAllEmployees(function(result){
-      console.log(result);
-    });
-    database.getAllTasks(function(result){
-      console.log(result);
-    });
-    database.getProjectState(function(result){
-      console.log(result);
-    });
     return 'TASKS INTENT';
   },
     
@@ -113,7 +137,7 @@ module.exports = {
   },
     
   employeeInfo: function (response) {
-	return 'EMPLOYEE INTENT';
+    return 'EMPLOYEE INTENT';
   },
 	
   /* Assign Task Intent
@@ -169,7 +193,7 @@ module.exports = {
           }
         });
       });
-      deasync.loopWhile(function(){return returnMessage == null});
+      deasync.loopWhile(function(){return returnMessage == null;});
     }
     
     return returnMessage;

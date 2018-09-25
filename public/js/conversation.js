@@ -216,7 +216,7 @@ var ConversationPanel = (function () {
         messageArray.push(Common.buildDomElement(messageJson));
       }
     });
-
+    
     return messageArray;
   }
 

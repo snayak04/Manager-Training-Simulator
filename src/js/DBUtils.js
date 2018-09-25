@@ -49,7 +49,7 @@ module.exports = {
       }
       console.log('Connected...');
       //var myobj = { name: "Company Inc", address: "Highway 37" };
-      const collection = client.db(config.DATABASE_NAME).collection(collectionName);
+      var collection = client.db(config.DATABASE_NAME).collection(collectionName);
       collection.insertOne(record, function(err, res) {
         if (err) throw err;
         console.log("1 document inserted");

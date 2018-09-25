@@ -18,7 +18,7 @@ function insertNewTask(projectId, title, timeLeft, state, employeeIds){
     timeLeft: timeLeft,
     state: state,
     employeeIds: employeeIds
-  }
+  };
   
   //Put in database
   database.insertOneRecord(newTask, 'Tasks');

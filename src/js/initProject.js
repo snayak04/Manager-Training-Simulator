@@ -19,13 +19,13 @@ function initialize(){
   asyncDone[3] = assistant.clearEntityValues('tasks');
   asyncDone[4] = assistant.clearEntityValues('employees');
   
-  deasync.loopWhile(function(){return asyncDone.indexOf(false) > -1});
+  deasync.loopWhile(function(){return asyncDone.indexOf(false) > -1;});
 
   //Create new project
-  var startTime = new Date('2018-09-24T09:00:00')
-  var deadline = new Date('2018-09-28T17:00:00')
+  var startTime = new Date('2018-09-24T09:00:00');
+  var deadline = new Date('2018-09-28T17:00:00');
   projectMaker.insertNewProject('DefaultProject', startTime, deadline, function(result){
-    projectId = result.ops[0]._id;
+    var projectId = result.ops[0]._id;
     //Create employees
     employeeMaker.insertNewEmployee(projectId, 'John', 'Software Engineer', 85, 80);
     employeeMaker.insertNewEmployee(projectId, 'Harry', 'Software Intern', 30, 75);
