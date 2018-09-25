@@ -10,7 +10,7 @@ module.exports = {
   DAY_END_TIME: 17,
 
   /* DATABASE SETTINGS */
-  DATABASE_NAME: 'ksk1',
-  DATABASE_URI: 'mongodb+srv://new_test_1:new_test_1@cluster0-fbxn9.mongodb.net/ksk1?retryWrites=true'
+  DATABASE_NAME: 'ManagerSimulator',
+  DATABASE_URI: 'mongodb+srv://user:user_password1@managersimulator-hnsxz.mongodb.net/ManagerSimulator?retryWrites=true'
 
 };
