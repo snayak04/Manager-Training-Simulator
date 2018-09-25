@@ -7,12 +7,13 @@ var database = require('./DBUtils');
   startTime: start time of the project as a Date() object
   deadline: deadline of the project as a Date() object
 */
-function insertNewProject(title, startTime, deadline){
+function insertNewProject(title, startTime, deadline, tasks){
   //TODO Maybe verify values?
   var newProject = {
     title: title,
     startTime: startTime,
-    deadline: deadline
+    deadline: deadline,
+	tasks: tasks
   }
   
   //Put in database

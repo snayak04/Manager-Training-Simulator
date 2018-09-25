@@ -24,24 +24,58 @@ module.exports = {
   },
     
   taskInfo: function (response) {
-    database.getAllEmployees(function(result){
-      console.log(result);
-    });
     database.getAllTasks(function(result){
-      console.log(result);
-    });
-    database.getProjectState(function(result){
       console.log(result);
     });
     return 'TASKS INTENT';
   },
     
   projectInfo: function (response) {
-    return 'PROJECT INTENT';
+	var sync;
+	var string = ""
+	database.getProjectState(function(result){
+      //process.stdout.write("Keys = " + Object.keys(result[0]))
+	  string += result[0].title + ":"
+	  string += "<br>Time = " + result[0].startTime
+	  string += "<br>Deadline = " + result[0].deadline
+	  var timeLeft = result[0].deadline - result[0].startTime
+	  timeLeft /= 1000
+	  var sec = timeLeft % 60
+	  var min = (timeLeft / 60) % 60
+	  var hours = (timeLeft / 3600) % 24
+	  var days = Math.floor(timeLeft / 86400)
+	  string += "<br>You have "+days+" days, "+hours+" hours, and "+min+" minutes left to complete the project."
+	  
+	  var string = "\nProject Title = " + result[0].title + "\nTime = " + result[0].startTime + "\nDeadline = " + result[0].deadline + "\nYou have "+days+" days, "+hours+" hours, and "+min+" minutes left to complete the project."
+	  
+	  sync = 1;
+    });
+	deasync.loopWhile(function(){return sync == null;});
+	return string;
   },
     
   employeeInfo: function (response) {
-	return 'EMPLOYEE INTENT';
+	var string = "";
+	var sync;
+    database.getAllEmployees(function(result){
+		//process.stdout.write("Keys = " + Object.keys(result[0]))
+		result.forEach(function(employee){
+			string += employee.name+":"
+			string += "<br>Title: " + employee.jobTitle
+			string += "<br>Skill: "+employee.skill
+			
+			var job = employee.workingOn
+			if(job == null){job = "nothing"}
+			string += "<br>Working on: " + job
+			string += "<br>Satisfaction: "+employee.satisfaction
+			
+			string += "<br><br>"
+		});
+		sync = 1;
+	});
+	deasync.loopWhile(function(){return sync == null;});
+	
+	return string;
   },
 	
   /* Assign Task Intent
