@@ -9,8 +9,4 @@ module.exports = {
   DAY_START_TIME: 9,
   DAY_END_TIME: 17,
 
-  /* DATABASE SETTINGS */
-  DATABASE_NAME: 'ManagerSimulator',
-  DATABASE_URI: 'mongodb+srv://user:user_password1@managersimulator-hnsxz.mongodb.net/ManagerSimulator?retryWrites=true'
-
 };
