@@ -21,7 +21,7 @@ casper.test.begin('Manager Training Simulator', 3, function suite(test) {
 
   function testWelcomeMessageExists() {
     casper.waitForSelector('.from-watson', function () {
-      test.assertExists('.message-inner', 'Welcome message received');
+      test.assertExists('.message-inner', 'Welcome message received.');
     });
   }
 
