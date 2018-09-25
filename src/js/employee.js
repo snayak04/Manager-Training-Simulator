@@ -10,12 +10,14 @@ var assistant = require('./assistant.js');
   skill: 1-100, how good they are at their job
   satisfaction: 1-100, how much they like their job
 */
-function insertNewEmployee(projectId, name, jobTitle, skill, satisfaction){
+
+function insertNewEmployee(project, name, jobTitle, workingOn, skill, satisfaction){
   //TODO Maybe verify values?
   var newEmployee = {
     projectId: projectId,
     name: name,
     jobTitle: jobTitle,
+	workingOn: workingOn, 
     skill: skill,
     satisfaction: satisfaction
   };

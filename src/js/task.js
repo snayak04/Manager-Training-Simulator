@@ -20,6 +20,8 @@ function insertNewTask(projectId, title, timeLeft, state, employeeIds){
     employeeIds: employeeIds
   };
   
+  
+  
   //Put in database
   database.insertOneRecord(newTask, 'Tasks');
   

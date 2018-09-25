@@ -22,21 +22,21 @@ function initialize(){
   deasync.loopWhile(function(){return asyncDone.indexOf(false) > -1;});
 
   //Create new project
-  var startTime = new Date('2018-09-24T09:00:00');
-  var deadline = new Date('2018-09-28T17:00:00');
-  projectMaker.insertNewProject('DefaultProject', startTime, deadline, function(result){
-    var projectId = result.ops[0]._id;
-    //Create employees
-    employeeMaker.insertNewEmployee(projectId, 'John', 'Software Engineer', 85, 80);
-    employeeMaker.insertNewEmployee(projectId, 'Harry', 'Software Intern', 30, 75);
-    employeeMaker.insertNewEmployee(projectId, 'Amanda', 'Software Engineer', 75, 70);
-    
-    //Create tasks
-    taskMaker.insertNewTask(projectId, 'Code the new level', 20, 'Incomplete', []);
-    taskMaker.insertNewTask(projectId, 'Add a battle royale mode', 40, 'Incomplete', []);
-    taskMaker.insertNewTask(projectId, 'Optimize performance', 1, 'Incomplete', []);
-    taskMaker.insertNewTask(projectId, 'Update UI to twenty-first century', 30, 'Incomplete', []);
-    taskMaker.insertNewTask(projectId, 'Add random map generation', 10, 'Incomplete', []);
+  var startTime = new Date('2018-09-24T09:00:00')
+  var deadline = new Date('2018-09-28T17:00:00')
+  projectMaker.insertNewProject("defaultProject", startTime, deadline, ['Code the new level', 20, 'Incomplete', 'Add a battle royale mode', 'Optimize performance', 'Update UI to twenty-first century', 'Add random map generation'], function(result){
+	  var projectId = result.ops[0]._id;
+	  //Create employees
+	  employeeMaker.insertNewEmployee(projectId, 'John', 'Software Engineer',null, 85, 80);
+	  employeeMaker.insertNewEmployee(projectId, 'Harry', 'Software Intern',null, 30, 75);
+	  employeeMaker.insertNewEmployee(projectId, 'Amanda', 'Software Engineer',null, 75, 70);
+
+	  //Create tasks
+	  taskMaker.insertNewTask(projectId, 'Code the new level', 20, 'Incomplete', []);
+	  taskMaker.insertNewTask(projectId, 'Add a battle royale mode', 40, 'Incomplete', []);
+	  taskMaker.insertNewTask(projectId, 'Optimize performance', 10, 'Incomplete', []);
+	  taskMaker.insertNewTask(projectId, 'Update UI to twenty-first century', 30, 'Incomplete', []);
+	  taskMaker.insertNewTask(projectId, 'Add random map generation', 10, 'Incomplete', []);
   });
 }
 
