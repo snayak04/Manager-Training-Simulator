@@ -77,7 +77,7 @@ function clearEntityValues(entityName){
   var params = {
     workspace_id: workspace,
     entity: entityName
-  }
+  };
   var done = false;
   //just delete the entity and remake it.
   assistant.deleteEntity(params, function(err, delResponse){
@@ -88,7 +88,7 @@ function clearEntityValues(entityName){
     });
     return delResponse;
   });
-  deasync.loopWhile(function(){return !done});
+  deasync.loopWhile(function(){return !done;});
   return done;
 }
 
