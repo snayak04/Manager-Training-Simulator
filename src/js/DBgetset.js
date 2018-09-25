@@ -1,4 +1,4 @@
-var DBUtil = require('./DButils.js');
+var DBUtil = require('./DBUtils');
 
 module.exports = {
   getEmployee: function(employeeName, callback){
