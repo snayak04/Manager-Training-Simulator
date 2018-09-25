@@ -1,4 +1,4 @@
-var DBUtil = require('./DButils.js');
+var DBUtil = require('./DBUtils.js');
 
 module.exports = {
   getEmployee: function(employeeName, callback){
@@ -63,7 +63,7 @@ module.exports = {
   },
   updateTaskTimeLeft: function(taskId, newLeft){
     var search = { _id: taskId};
-    var leftInsert = { $set: {timeleft: newLeft}};
+    var leftInsert = { $set: {timeLeft: newLeft}};
     DBUtil.updateOneRecord(search, 'Tasks', leftInsert);
   },
   updateTaskState: function(taskId, newState){

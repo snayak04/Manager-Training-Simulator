@@ -29,7 +29,6 @@ function calculateFinishTime(task){
 //updates a task's timeleft after a given number of hours based on current employees working it
 //returns array of finished tasks
 function updateTimeLeft(tasks, hours){
-  //TODO Write this
   var finishedTasks = [];
   tasks.forEach(function(task){
     var skillTotal = 0;
@@ -49,7 +48,6 @@ function updateTimeLeft(tasks, hours){
       
       finishedTasks.push(task);
     }
-    
     database.updateTaskTimeLeft(task._id, newTimeLeft);  
   });
   return finishedTasks;
@@ -82,21 +80,25 @@ module.exports = {
       
       //Check if any of the tasks will finish before the day ends
       database.getAllTasks(function(tasks) {
-        var shortestFinishTime = null;
+        var shortestFinishTime = -1;
         tasks.forEach(function(task){
           var timeLeft = calculateFinishTime(task);
           if(!shortestFinishTime || timeLeft < shortestFinishTime){
-            shortestFinishTime = timeLeft;
+			if(shortestFinishTime != -1){
+				shortestFinishTime = timeLeft;
+			}
           }
         });
+		console.log(shortestFinishTime);
         if(shortestFinishTime == -1 || shortestFinishTime > hoursLeftInDay){
-          //Next event is end of day
-          updateTimeLeft(tasks, hoursLeftInDay);
+          //Next event is end of day		  
           //Update time to next morning
+		  updateTimeLeft(tasks, hoursLeftInDay);
           var newTime = new Date(currentTime.getTime());
           newTime.setDate(currentTime.getDate() + 1);
           newTime.setHours(config.DAY_START_TIME);
           database.updateProjectTime(project._id, newTime);
+		  
           //Build Message
           var satisfactionRating = scoreSatisfaction();
           var productivityRating = scoreProductivity();
@@ -107,10 +109,9 @@ module.exports = {
             + 'It is now ' + config.DAY_START_TIME + ' AM on ' 
             + newTime.getMonth() + '\\' + newTime.getDate();
           done = true;
-          
         }else{
           //Next event is an employee finishing their task
-          var finishedTasks = [];
+          var finishedTasks;
           finishedTasks = updateTimeLeft(task, shortestFinishTime);
           currentTime.setHours(currentTime.getHours() + shortestFinishTime);
           //buildMessage
@@ -125,6 +126,9 @@ module.exports = {
     
     //wait for message to be built
     deasync.loopWhile(function(){return !done;});
+	database.getAllTasks(function(result){
+		console.log(result);
+	});
     return returnMessage;
   },
     

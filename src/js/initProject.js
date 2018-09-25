@@ -34,7 +34,7 @@ function initialize(){
     //Create tasks
     taskMaker.insertNewTask(projectId, 'Code the new level', 20, 'Incomplete', []);
     taskMaker.insertNewTask(projectId, 'Add a battle royale mode', 40, 'Incomplete', []);
-    taskMaker.insertNewTask(projectId, 'Optimize performance', 10, 'Incomplete', []);
+    taskMaker.insertNewTask(projectId, 'Optimize performance', 1, 'Incomplete', []);
     taskMaker.insertNewTask(projectId, 'Update UI to twenty-first century', 30, 'Incomplete', []);
     taskMaker.insertNewTask(projectId, 'Add random map generation', 10, 'Incomplete', []);
   });
