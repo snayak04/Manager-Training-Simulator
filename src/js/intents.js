@@ -9,16 +9,26 @@ var config = require('./config');
 //returns how long a task will take to finish with current employees.
 //if it will never finish, returns -1.
 function calculateFinishTime(task){
-  if(!task.employees){
+  if(task.employeeIds.length == 0){
     return -1;
   }else{
     var skillTotal = 0;
-    task.employees.forEach(function(employeeId){
+    task.employeeIds.forEach(function(employeeId){
       //get employee from database
-      var employee; //TODO Get From DB
-      skillTotal += employee.skill / 100;;
-    })
+      var done = false;
+      database.getEmployeeById(employeeId, function(employee){
+        skillTotal += employee.skill / 100;
+        done = true;
+      });
+      deasync.loopWhile(function(){return !done});
+    });
+    return Math.ceil(task.timeLeft / skillTotal);
   }
+}
+
+//updates a task's timeleft after a given number of hours based on 
+function updateTimeLeft(task, hours){
+  //TODO
 }
 
 module.exports = {
@@ -32,19 +42,24 @@ module.exports = {
     database.getProjectState(function(result){
       //Get the hours left in the day
       var currentTime = result[0].currentTime;
-      var hoursLeft = 17 - currentTime.getHours();
+      var hoursLeftInDay = config.DAY_END_TIME - currentTime.getHours();
       
       //Check if any of the tasks will finish before the day ends
       database.getAllTasks(function(result) {
-        console.log(result);
         shortestFinishTime = null;
         var i = 0;
         result.forEach(function(task){
           timeLeft = calculateFinishTime(task);
+          if(!shortestFinishTime || timeLeft < shortestFinishTime){
+            shortestFinishTime = timeLeft;
+          }
         });
+        if(shortestFinishTime == -1 || shortestFinishTime > hoursLeftInDay){}
+          //Next event is end of day
+        }else{
+          //Next event is an employee finishing their task
+        }
       });
-    
-    return returnMessage;
     });
     
     //wait for message to be built
