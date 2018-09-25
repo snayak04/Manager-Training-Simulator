@@ -26,9 +26,19 @@ function calculateFinishTime(task){
   }
 }
 
-//updates a task's timeleft after a given number of hours based on 
+//updates a task's timeleft after a given number of hours based on current employees working it 
 function updateTimeLeft(task, hours){
-  //TODO
+  //TODO Write this
+}
+
+function scoreProductivity(){
+  //TODO Write this
+  return -1;
+}
+
+function scoreSatisfaction(){
+  //TODO Write this
+  return -1;
 }
 
 module.exports = {
@@ -39,23 +49,41 @@ module.exports = {
   */
   wait: function (response) {
     var returnMessage = null;
-    database.getProjectState(function(result){
+    var done = false;
+    database.getProjectState(function(projects){
       //Get the hours left in the day
-      var currentTime = result[0].currentTime;
+      var project = projects[0] //Assuming one project for now
+      var currentTime = project.currentTime;
       var hoursLeftInDay = config.DAY_END_TIME - currentTime.getHours();
       
       //Check if any of the tasks will finish before the day ends
-      database.getAllTasks(function(result) {
-        shortestFinishTime = null;
+      database.getAllTasks(function(tasks) {
+        var shortestFinishTime = null;
         var i = 0;
-        result.forEach(function(task){
+        tasks.forEach(function(task){
           timeLeft = calculateFinishTime(task);
           if(!shortestFinishTime || timeLeft < shortestFinishTime){
             shortestFinishTime = timeLeft;
           }
         });
-        if(shortestFinishTime == -1 || shortestFinishTime > hoursLeftInDay){}
+        if(shortestFinishTime == -1 || shortestFinishTime > hoursLeftInDay){
           //Next event is end of day
+          tasks.forEach(function(task){
+            updateTimeLeft(task, hoursLeftInDay);
+          });
+          //Update time to next morning
+          newTime = new Date(currentTime.getTime());
+          newTime.setDate(currentTime.getDate() + 1);
+          newTime.setHours(config.DAY_START_TIME);
+          database.updateProjectTime(project._id, newTime);
+          //Build Message
+          var satisfactionRating = scoreSatisfaction();
+          var productivityRating = scoreProductivity();
+          returnMessage = 'It is the end of the day. Here is your rating for the day:\n';
+          returnMessage = returnMessage + ' Productivity Rating: ' + productivityRating + '\n';
+          returnMessage = returnMessage + ' Satisfaction Rating: ' + satisfactionRating + '\n';
+          done = true;
+          
         }else{
           //Next event is an employee finishing their task
         }
@@ -63,7 +91,7 @@ module.exports = {
     });
     
     //wait for message to be built
-    deasync.loopWhile(function(){return returnMessage == null});
+    deasync.loopWhile(function(){return !done});
     return returnMessage;
   },
     
