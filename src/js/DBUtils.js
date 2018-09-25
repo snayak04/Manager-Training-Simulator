@@ -18,7 +18,7 @@ module.exports = {
         var dbo = db.db(config.DATABASE_NAME);
         dbo.createCollection(collectionName, function(err, res) {
           if (err) throw err;
-          console.log("Collection "+ collectionName + " created!");
+          console.log("Collection " + collectionName + " created!");
           db.close();
         });
       });
@@ -29,34 +29,34 @@ module.exports = {
     MongoClient.connect(config.DATABASE_URI, function(err, db) {
       if (err) throw err;
       var dbo = db.db(config.DATABASE_NAME);
-      dbo.dropCollection(collectionName, function(err, delOK) {
-          if(!err){
-            if (delOK) console.log("Collection deleted");
-          }
-          dbo.createCollection(collectionName, function(err, res) {
-            if (err) throw err;
-            console.log("Collection "+ collectionName + " created!");
-            db.close();
+      dbo.createCollection(collectionName, function(err, res){
+        dbo.collection(collectionName).deleteMany({}, function(err, delOK) {
+            if(!err){
+              if (delOK) console.log("Collection " + collectionName + " emptied");
+            }
             done = true;
-        });
+          });
         });
     });
     deasync.loopWhile(function(){return !done});
     return done;
   },
   
-  insertOneRecord : function(record, collectionName){
+  insertOneRecord : function(record, collectionName, callback){
     MongoClient.connect(config.DATABASE_URI, function(err, client) {
       if(err) {
         console.log('Error occurred while connecting to MongoDB Atlas...\n',err);
       }
       console.log('Connected...');
       //var myobj = { name: "Company Inc", address: "Highway 37" };
-      const collection = client.db(config.DATABASE_NAME).collection(collectionName);
+      var collection = client.db(config.DATABASE_NAME).collection(collectionName);
       collection.insertOne(record, function(err, res) {
         if (err) throw err;
         console.log("1 document inserted");
         //db.close();
+        if(callback){
+          callback(res);
+        }
       });
       // perform actions on the collection object
       client.close();

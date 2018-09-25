@@ -4,21 +4,21 @@ var database = require('./DBUtils');
 var assistant = require('./assistant.js');
 
 /*Adds a new task to both the database and the watson assistant
-  project: the project the task is for
+  projectId: the id of the project the task is for
   title: the name of the task
   timeLeft: number of man-hours needed to finish the task
   state: either 'incomplete' or 'complete'
-  employees: array of employee names working the task
+  employeeIds: array of ids of employees working the task. This is probably empty if you're making a new one.
 */
-function insertNewTask(project, title, timeLeft, state, employees){
+function insertNewTask(projectId, title, timeLeft, state, employeeIds){
   //TODO Maybe verify values?
   var newTask = {
-    project: project,
+    projectId: projectId,
     title: title,
     timeLeft: timeLeft,
     state: state,
-    employees: employees
-  }
+    employeeIds: employeeIds
+  };
   
   
   

@@ -26,7 +26,7 @@ var ConversationPanel = (function () {
   // Initialize the module
   function init() {
     chatUpdateSetup();
-    Api.sendRequest('', null);
+    //Api.sendRequest('', null);
     setupInputBox();
   }
   // Set up callbacks on payload setters in Api module
@@ -216,7 +216,7 @@ var ConversationPanel = (function () {
         messageArray.push(Common.buildDomElement(messageJson));
       }
     });
-
+    
     return messageArray;
   }
 
