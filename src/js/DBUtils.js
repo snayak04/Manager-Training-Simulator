@@ -13,9 +13,9 @@ module.exports = {
   },
   
   createCollection: function(collectionName){
-      MongoClient.connect(config.DATABASE_URI, function(err, db) {
+      MongoClient.connect(process.env.DATABASE_URI, function(err, db) {
         if (err) throw err;
-        var dbo = db.db(config.DATABASE_NAME);
+        var dbo = db.db(process.env.DATABASE_NAME);
         dbo.createCollection(collectionName, function(err, res) {
           if (err) throw err;
           console.log("Collection " + collectionName + " created!");
@@ -26,9 +26,9 @@ module.exports = {
   
   resetCollection: function(collectionName){
     var done = false;
-    MongoClient.connect(config.DATABASE_URI, function(err, db) {
+    MongoClient.connect(process.env.DATABASE_URI, function(err, db) {
       if (err) throw err;
-      var dbo = db.db(config.DATABASE_NAME);
+      var dbo = db.db(process.env.DATABASE_NAME);
       dbo.createCollection(collectionName, function(err, res){
         dbo.collection(collectionName).deleteMany({}, function(err, delOK) {
             if(!err){
@@ -43,13 +43,13 @@ module.exports = {
   },
   
   insertOneRecord : function(record, collectionName, callback){
-    MongoClient.connect(config.DATABASE_URI, function(err, client) {
+    MongoClient.connect(process.env.DATABASE_URI, function(err, client) {
       if(err) {
         console.log('Error occurred while connecting to MongoDB Atlas...\n',err);
       }
       console.log('Connected...');
       //var myobj = { name: "Company Inc", address: "Highway 37" };
-      var collection = client.db(config.DATABASE_NAME).collection(collectionName);
+      var collection = client.db(process.env.DATABASE_NAME).collection(collectionName);
       collection.insertOne(record, function(err, res) {
         if (err) throw err;
         console.log("1 document inserted");
@@ -65,9 +65,9 @@ module.exports = {
   },
 
   findbyAttribute : function(query, collectionName, callback){
-    MongoClient.connect(config.DATABASE_URI, function(err, db) {
+    MongoClient.connect(process.env.DATABASE_URI, function(err, db) {
       if (err) throw err;
-      var dbo = db.db(config.DATABASE_NAME);
+      var dbo = db.db(process.env.DATABASE_NAME);
       //var query = { key: value };
       dbo.collection(collectionName).find(query).toArray(function(err, result) {
         if (err) throw err;
@@ -78,9 +78,9 @@ module.exports = {
   },
 
   deleteOneRecord : function(query, collectionName){
-    MongoClient.connect(config.DATABASE_URI, function(err, db) {
+    MongoClient.connect(process.env.DATABASE_URI, function(err, db) {
       if (err) throw err;
-      var dbo = db.db(config.DATABASE_NAME);
+      var dbo = db.db(process.env.DATABASE_NAME);
       dbo.collection(collectionName).deleteOne(query, function(err, obj){
         if (err) throw err;
         db.close();
@@ -89,9 +89,9 @@ module.exports = {
   },
   
   updateOneRecord: function(query, collectionName, newValues){
-    MongoClient.connect(config.DATABASE_URI, function(err, db) {
+    MongoClient.connect(process.env.DATABASE_URI, function(err, db) {
       if (err) throw err;
-      var dbo = db.db(config.DATABASE_NAME);
+      var dbo = db.db(process.env.DATABASE_NAME);
       dbo.collection(collectionName).updateOne(query, newValues, function(err, obj){
         if (err) throw err;
         db.close();
