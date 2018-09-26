@@ -225,12 +225,15 @@ module.exports = {
               alreadyWorking = true;
             }
           });
-          if (alreadyWorking){ //employee already on task
+          if (alreadyWorking){ //employee already on this task
             returnMessage = employeeObject.name + ' is already working on \'' + taskObject.title + '\'';
+          }else if(employeeObject.workingOn != null){ //employee on a different task
+            returnMessage = employeeObject.name + ' is already working on a different task, \'' + employeeObject.workingOn + '\'';
           }else{
             //Add employee to task
             workers.push(employeeObject._id);
             database.updateTaskWorkers(taskObject._id, workers);
+            database.updateEmployeeWorkingOn(employeeObject._id, taskObject.title);
             returnMessage = 'Assigned task \'' + taskObject.title + '\' to ' + employeeObject.name;
           }
         });

@@ -51,6 +51,11 @@ module.exports = {
     var satisfactionInsert = { $set: {satisfaction: newSatis}};
     DBUtil.updateOneRecord(search, 'Employees', satisfactionInsert);
   },
+  updateEmployeeWorkingOn: function(employeeId, newTask){
+    var search = { _id: employeeId };
+    var satisfactionInsert = { $set: {workingOn: newTask}};
+    DBUtil.updateOneRecord(search, 'Employees', satisfactionInsert);
+  },
   updateProjectTime: function(projectId, newTime){
     var search = { _id: projectId };
     var stateInsert = { $set: {currentTime: newTime}};
