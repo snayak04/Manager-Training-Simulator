@@ -84,7 +84,7 @@ module.exports = {
         tasks.forEach(function(task){
           var timeLeft = calculateFinishTime(task);
           if(!shortestFinishTime || timeLeft < shortestFinishTime){
-			if(shortestFinishTime != -1){
+			if(timeLeft != -1){
 				shortestFinishTime = timeLeft;
 			}
           }
@@ -126,9 +126,6 @@ module.exports = {
     
     //wait for message to be built
     deasync.loopWhile(function(){return !done;});
-	database.getAllTasks(function(result){
-		console.log(result);
-	});
     return returnMessage;
   },
     
