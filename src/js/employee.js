@@ -17,7 +17,7 @@ function insertNewEmployee(projectId, name, jobTitle, workingOn, skill, satisfac
     projectId: projectId,
     name: name,
     jobTitle: jobTitle,
-	workingOn: workingOn, 
+    workingOn: workingOn, 
     skill: skill,
     satisfaction: satisfaction
   };
