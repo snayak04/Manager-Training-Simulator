@@ -31,26 +31,41 @@ function calculateFinishTime(task){
 function updateTimeLeft(tasks, hours){
   var finishedTasks = [];
   tasks.forEach(function(task){
-    var skillTotal = 0;
-    var done = false;
-    task.employeeIds.forEach(function(employeeId){
-      //get employee from database
+    //Only check tasks that are incomplete
+    if(task.state != 'Complete'){
+      var skillTotal = 0;
       var done = false;
-      database.getEmployeeById(employeeId, function(employee){
-        skillTotal += employee.skill / 100;
-        done = true;
+      task.employeeIds.forEach(function(employeeId){
+        //get employee from database
+        var done = false;
+        database.getEmployeeById(employeeId, function(employee){
+          skillTotal += employee.skill / 100;
+          done = true;
+        });
+        deasync.loopWhile(function(){return !done;});
       });
-      deasync.loopWhile(function(){return !done;});
-    });
-    newTimeLeft = Math.floor(task.timeLeft - (hours * skillTotal));
-    if(newTimeLeft <= 0){//task is finished
-      newTimeLeft = 0;
-      
-      finishedTasks.push(task);
-    }
-    database.updateTaskTimeLeft(task._id, newTimeLeft);  
+      newTimeLeft = Math.floor(task.timeLeft - (hours * skillTotal));
+      if(newTimeLeft <= 0){//task is finished
+        newTimeLeft = 0;
+        finishedTasks.push(task);
+      }
+      database.updateTaskTimeLeft(task._id, newTimeLeft);
+    }    
   });
   return finishedTasks;
+}
+
+//Does all necessary database stuff when a task finishes.
+function finishTasks(finishedTasks){
+  finishedTasks.forEach(function (task){
+    //No one is working on this task
+    task.employeeIds.forEach(function(employeeId){
+      database.updateEmployeeWorkingOn(employeeId, null);
+    });
+    database.updateTaskWorkers(task._id, []);
+    //Task is now complete
+    database.updateTaskState(task._id, 'Complete');
+  });
 }
 
 function scoreProductivity(){
@@ -80,20 +95,24 @@ module.exports = {
       
       //Check if any of the tasks will finish before the day ends
       database.getAllTasks(function(tasks) {
-        var shortestFinishTime = -1;
+        var shortestFinishTime = null;
         tasks.forEach(function(task){
-          var timeLeft = calculateFinishTime(task);
-          if(!shortestFinishTime || timeLeft < shortestFinishTime){
-			if(timeLeft != -1){
-				shortestFinishTime = timeLeft;
-			}
+          //Don't care about complete tasks
+          if(task.state != 'Complete'){
+            var timeLeft = calculateFinishTime(task);
+            if(!shortestFinishTime || timeLeft < shortestFinishTime){
+              if(timeLeft != -1){
+                shortestFinishTime = timeLeft;
+              } 
+            }
           }
         });
-		console.log(shortestFinishTime);
-        if(shortestFinishTime == -1 || shortestFinishTime > hoursLeftInDay){
+        console.log(shortestFinishTime);
+        
+        if(shortestFinishTime == null || shortestFinishTime > hoursLeftInDay){
           //Next event is end of day		  
           //Update time to next morning
-		  updateTimeLeft(tasks, hoursLeftInDay);
+          updateTimeLeft(tasks, hoursLeftInDay);
           var newTime = new Date(currentTime.getTime());
           newTime.setDate(currentTime.getDate() + 1);
           newTime.setHours(config.DAY_START_TIME);
@@ -109,15 +128,25 @@ module.exports = {
             + 'It is now ' + config.DAY_START_TIME + ' AM on ' 
             + newTime.getMonth() + '\\' + newTime.getDate();
           done = true;
+          
         }else{
           //Next event is an employee finishing their task
-          var finishedTasks;
-          finishedTasks = updateTimeLeft(task, shortestFinishTime);
+          var finishedTasks = updateTimeLeft(tasks, shortestFinishTime);
+          console.log("Finished Tasks: " + finishedTasks);
+          finishTasks(finishedTasks);
           currentTime.setHours(currentTime.getHours() + shortestFinishTime);
+          
           //buildMessage
-          returnMessage = 'It is now ' + currentTime.getHours() + ' o\'clock';
-          finishedTask.forEach(function(task){
-            returnMessage += '<br>   The task \'' + task.title + '\' has been completed';
+          currentHour = currentTime.getHours();
+          if(currentHour == 12){
+            returnMessage = 'It is now 12 PM';
+          }else if(currentHour > 12){
+            returnMessage = 'It is now ' + (currentHour - 12)+ ' PM';
+          }else{
+            returnMessage = 'It is now ' + currentHour + ' AM';
+          }
+          finishedTasks.forEach(function(task){
+            returnMessage += '<br>The task \'' + task.title + '\' has been completed';
           });
           done = true;
         }
@@ -225,7 +254,9 @@ module.exports = {
               alreadyWorking = true;
             }
           });
-          if (alreadyWorking){ //employee already on this task
+          if(taskObject.state == 'Complete'){ //task is complete
+            returnMessage = 'The task \'' + taskObject.title + '\' is already complete';
+          }else if (alreadyWorking){ //employee already on this task
             returnMessage = employeeObject.name + ' is already working on \'' + taskObject.title + '\'';
           }else if(employeeObject.workingOn != null){ //employee on a different task
             returnMessage = employeeObject.name + ' is already working on a different task, \'' + employeeObject.workingOn + '\'';
