@@ -159,26 +159,62 @@ module.exports = {
   },
     
   taskInfo: function (response) {
-    return 'TASKS INTENT';
+	  var sync = 0;
+	  var string = "";
+	  database.getAllTasks(function(result){
+		  //process.stdout.write("Keys = " + Object.keys(result[0]));
+		  result.forEach(function(task){
+			  string += "<br>" + task.title + ":"
+			  string += "<br>State: " + task.state
+			  string += "<br>Time Left: " + task.timeLeft + " man-hours"
+			  string += "<br>Employees: " + task.employeeIds
+			  if(task.employeeIds.length == 0){string+="none"}
+			  /*
+			  task.employeeIds.forEach(function(id){
+				sync = 0
+				database.getEmployeeById(id, function(employee){
+					process.stdout.write("Employee = " + employee);
+					if(employee != undefined){
+						process.stdout.write("YES");
+						string += employee.name + ",";
+					}
+					sync == 1
+				});
+				deasync.loopWhile(function(){return sync == 0;});
+			  });
+			  */
+			  var eta = calculateFinishTime(task);
+			  if(eta == -1){eta = "never"}
+			  string += "<br>ETA: " + eta;
+			  
+			  string += "<br>"
+		  });		  
+		  sync = 2;
+	  });
+	  deasync.loopWhile(function(){return sync <= 1;});
+      return string;
   },
     
   projectInfo: function (response) {
 	var sync;
 	var string = ""
 	database.getProjectState(function(result){
-      //process.stdout.write("Keys = " + Object.keys(result[0]))
-	  string += result[0].title + ":"
-	  string += "<br>Time = " + result[0].startTime
-	  string += "<br>Deadline = " + result[0].deadline
-	  var timeLeft = result[0].deadline - result[0].startTime
+	  var project = result[0];
+      //process.stdout.write("Keys = " + Object.keys(project))
+	  string += project.title + ":"
+	  string += "<br>Time = " + project.startTime
+	  string += "<br>Deadline = " + project.deadline
+	  var timeLeft = project.deadline - project.startTime
 	  timeLeft /= 1000
 	  var sec = timeLeft % 60
 	  var min = (timeLeft / 60) % 60
 	  var hours = (timeLeft / 3600) % 24
 	  var days = Math.floor(timeLeft / 86400)
 	  string += "<br>You have "+days+" days, "+hours+" hours, and "+min+" minutes left to complete the project."
-	  
-	  var string = "\nProject Title = " + result[0].title + "\nTime = " + result[0].startTime + "\nDeadline = " + result[0].deadline + "\nYou have "+days+" days, "+hours+" hours, and "+min+" minutes left to complete the project."
+	  string += "<br>Tasks: "
+	  project.tasks.forEach(function(task){
+		  string += "<br>" + task;
+	  });
 	  
 	  sync = 1;
     });
