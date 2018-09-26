@@ -202,9 +202,9 @@ module.exports = {
 	  var project = result[0];
       //process.stdout.write("Keys = " + Object.keys(project))
 	  string += project.title + ":"
-	  string += "<br>Time = " + project.startTime
+	  string += "<br>Time = " + project.currentTime
 	  string += "<br>Deadline = " + project.deadline
-	  var timeLeft = project.deadline - project.startTime
+	  var timeLeft = project.deadline - project.currentTime
 	  timeLeft /= 1000
 	  var sec = timeLeft % 60
 	  var min = (timeLeft / 60) % 60
