@@ -27,9 +27,9 @@ function initialize(){
   projectMaker.insertNewProject("DefaultProject", startTime, deadline, ['Code the new level', 'Add a battle royale mode', 'Optimize performance', 'Update UI to twenty-first century', 'Add random map generation'], function(result){
 	  var projectId = result.ops[0]._id;
 	  //Create employees
-	  employeeMaker.insertNewEmployee(1, 'John', 'Software Engineer',null, 85, 80);
-	  employeeMaker.insertNewEmployee(2, 'Harry', 'Software Intern',null, 30, 75);
-	  employeeMaker.insertNewEmployee(3, 'Amanda', 'Software Engineer',null, 75, 70);
+	  employeeMaker.insertNewEmployee(projectId, 'John', 'Software Engineer',null, 85, 80);
+	  employeeMaker.insertNewEmployee(projectId, 'Harry', 'Software Intern',null, 30, 75);
+	  employeeMaker.insertNewEmployee(projectId, 'Amanda', 'Software Engineer',null, 75, 70);
 
 	  //Create tasks
 	  taskMaker.insertNewTask(projectId, 'Code the new level', 20, 'Incomplete', []);
