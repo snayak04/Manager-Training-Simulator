@@ -25,7 +25,6 @@ casper.test.begin('Manager Training Simulator', 2, function suite(test) {
     test.assertHttpStatus(200, 'Web Server is live and running');
     test.assertTitle('Not A Game - Manager Training Simulator', 'Title is correct');
 
-    testWelcomeMessageExists();
   });
 
   casper.run(function () {
