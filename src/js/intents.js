@@ -80,7 +80,7 @@ function scoreProductivity(){
       }
     });
     done = true;
-  })
+  });
   deasync.loopWhile(function(){return !done;});
   var score = 10 + (employeesWorking * 30);
   return score;
@@ -174,17 +174,17 @@ module.exports = {
     
   taskInfo: function (response) {
 	  var sync = 0;
-	  var string = "";
+	  var string = '';
 	  database.getAllTasks(function(result){
 		  //process.stdout.write("Keys = " + Object.keys(result[0]));
 		  result.forEach(function(task){
-			  string += "<br>" + task.title + ":";
-			  string += "<br>&ensp;State: " + task.state + "<br>";
+			  string += '<br>' + task.title + ':';
+			  string += '<br>&ensp;State: ' + task.state + '<br>';
         if(task.state != 'Complete'){
-          string += "&ensp;Time Left: " + task.timeLeft + " man-hours";
-          string += "<br>&ensp;Employees: ";
+          string += '&ensp;Time Left: ' + task.timeLeft + ' man-hours';
+          string += '<br>&ensp;Employees: ';
           if(task.employeeIds.length == 0){
-            string+="none"
+            string+='none';
           }else{
             var firstEmployee = true;
             task.employeeIds.forEach(function(id){
@@ -194,7 +194,7 @@ module.exports = {
                   string += employee.name;
                   firstEmployee = false;
                 }else{
-                  string += ", " + employee.name;
+                  string += ', ' + employee.name;
                 }
                 done = true;
               });
@@ -202,34 +202,34 @@ module.exports = {
             });
           }
           var eta = calculateFinishTime(task);
-          if(eta == -1){eta = "never"}
-          string += "<br>&ensp;ETA: " + eta;
+          if(eta == -1){eta = 'never';}
+          string += '<br>&ensp;ETA: ' + eta;
           
-          string += "<br>"
+          string += '<br>';
         }
 		  });		  
 		  sync = 2;
 	  });
 	  deasync.loopWhile(function(){return sync <= 1;});
-      return string;
+    return string;
   },
     
   projectInfo: function (response) {
-	var sync;
-	var string = ""
-	database.getProjectState(function(result){
+    var sync;
+    var string = '';
+    database.getProjectState(function(result){
 	  var project = result[0];
       //process.stdout.write("Keys = " + Object.keys(project))
-	  string += project.title + ":"
-	  string += "<br>&ensp;Time = " + project.currentTime
-	  string += "<br>&ensp;Deadline = " + project.deadline
-	  var timeLeft = project.deadline - project.currentTime
-	  timeLeft /= 1000
-	  var sec = timeLeft % 60
-	  var min = (timeLeft / 60) % 60
-	  var hours = (timeLeft / 3600) % 24
-	  var days = Math.floor(timeLeft / 86400)
-	  string += "<br>&ensp;You have "+days+" days, "+hours+" hours, and "+min+" minutes left to complete the project."
+	  string += project.title + ':';
+	  string += '<br>&ensp;Time = ' + project.currentTime;
+	  string += '<br>&ensp;Deadline = ' + project.deadline;
+	  var timeLeft = project.deadline - project.currentTime;
+	  timeLeft /= 1000;
+	  var sec = timeLeft % 60;
+	  var min = (timeLeft / 60) % 60;
+	  var hours = (timeLeft / 3600) % 24;
+	  var days = Math.floor(timeLeft / 86400);
+	  string += '<br>&ensp;You have '+days+' days, '+hours+' hours, and '+min+' minutes left to complete the project.';
 	  /*string += "<br>Tasks: "
 	  project.tasks.forEach(function(task){
 		  string += "<br>" + task;
@@ -237,32 +237,32 @@ module.exports = {
 	  
 	  sync = 1;
     });
-	deasync.loopWhile(function(){return sync == null;});
-	return string;
+    deasync.loopWhile(function(){return sync == null;});
+    return string;
   },
     
   employeeInfo: function (response) {
-	var string = "";
-	var sync;
+    var string = '';
+    var sync;
     database.getAllEmployees(function(result){
-		//process.stdout.write("Keys = " + Object.keys(result[0]))
-		result.forEach(function(employee){
-			string += employee.name+":"
-			string += "<br>&ensp;Title: " + employee.jobTitle
+      //process.stdout.write("Keys = " + Object.keys(result[0]))
+      result.forEach(function(employee){
+        string += employee.name+':';
+        string += '<br>&ensp;Title: ' + employee.jobTitle;
       
-      var job = employee.workingOn
-			if(job == null){job = "nothing"}
-      string += "<br>&ensp;Working on: " + job
+        var job = employee.workingOn;
+        if(job == null){job = 'nothing';}
+        string += '<br>&ensp;Working on: ' + job;
       
-			string += "<br>&ensp;Skill: "+employee.skill
-			string += "<br>&ensp;Satisfaction: "+employee.satisfaction
-			string += "<br><br>"
-		});
-		sync = 1;
-	});
-	deasync.loopWhile(function(){return sync == null;});
+        string += '<br>&ensp;Skill: '+employee.skill;
+        string += '<br>&ensp;Satisfaction: '+employee.satisfaction;
+        string += '<br><br>';
+      });
+      sync = 1;
+    });
+    deasync.loopWhile(function(){return sync == null;});
 	
-	return string;
+    return string;
   },
 	
   /* Assign Task Intent

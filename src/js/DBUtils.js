@@ -5,23 +5,23 @@ var deasync = require('deasync');
 
 module.exports = {
   createDataBase: function(url){
-      MongoClient.connect(url, function(err, db) {
-        if (err) throw err;
-        console.log("Database created!");
-        db.close();
+    MongoClient.connect(url, function(err, db) {
+      if (err) throw err;
+      console.log('Database created!');
+      db.close();
     });
   },
   
   createCollection: function(collectionName){
-      MongoClient.connect(process.env.DATABASE_URI, function(err, db) {
+    MongoClient.connect(process.env.DATABASE_URI, function(err, db) {
+      if (err) throw err;
+      var dbo = db.db(process.env.DATABASE_NAME);
+      dbo.createCollection(collectionName, function(err, res) {
         if (err) throw err;
-        var dbo = db.db(process.env.DATABASE_NAME);
-        dbo.createCollection(collectionName, function(err, res) {
-          if (err) throw err;
-          console.log("Collection " + collectionName + " created!");
-          db.close();
-        });
+        console.log('Collection ' + collectionName + ' created!');
+        db.close();
       });
+    });
   },
   
   resetCollection: function(collectionName){
@@ -31,14 +31,14 @@ module.exports = {
       var dbo = db.db(process.env.DATABASE_NAME);
       dbo.createCollection(collectionName, function(err, res){
         dbo.collection(collectionName).deleteMany({}, function(err, delOK) {
-            if(!err){
-              if (delOK) console.log("Collection " + collectionName + " emptied");
-            }
-            done = true;
-          });
+          if(!err){
+            if (delOK) console.log('Collection ' + collectionName + ' emptied');
+          }
+          done = true;
         });
+      });
     });
-    deasync.loopWhile(function(){return !done});
+    deasync.loopWhile(function(){return !done;});
     return done;
   },
   
@@ -52,7 +52,7 @@ module.exports = {
       var collection = client.db(process.env.DATABASE_NAME).collection(collectionName);
       collection.insertOne(record, function(err, res) {
         if (err) throw err;
-        console.log("1 document inserted");
+        console.log('1 document inserted');
         //db.close();
         if(callback){
           callback(res);
