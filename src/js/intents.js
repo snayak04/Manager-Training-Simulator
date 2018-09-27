@@ -69,13 +69,26 @@ function finishTasks(finishedTasks){
 }
 
 function scoreProductivity(){
-  //TODO Write this
-  return -1;
+  //TODO Make this better
+  var done = false;
+  var employeesWorking;
+  database.getAllEmployees(function(employees){
+    employeesWorking = employees.length;
+    employees.forEach(function(employee){
+      if(!employee.workingOn){
+        employeesWorking -= 1;
+      }
+    });
+    done = true;
+  })
+  deasync.loopWhile(function(){return !done;});
+  var score = 10 + (employeesWorking * 30);
+  return score;
 }
 
 function scoreSatisfaction(){
   //TODO Write this
-  return -1;
+  return 75;
 }
 
 module.exports = {
@@ -107,7 +120,6 @@ module.exports = {
             }
           }
         });
-        console.log(shortestFinishTime);
         
         if(shortestFinishTime == null || shortestFinishTime > hoursLeftInDay){
           //Next event is end of day		  
@@ -122,8 +134,8 @@ module.exports = {
           var satisfactionRating = scoreSatisfaction();
           var productivityRating = scoreProductivity();
           returnMessage = 'It is the end of the day. Here is your rating for the day:<br>'
-            + '   Productivity Rating: ' + productivityRating + '<br>'
-            + '   Satisfaction Rating: ' + satisfactionRating + '<br>'
+            + '&ensp;Productivity Rating: ' + productivityRating + '<br>'
+            + '&ensp;Satisfaction Rating: ' + satisfactionRating + '<br>'
             + '<br>'
             + 'It is now ' + config.DAY_START_TIME + ' AM on ' 
             + newTime.getMonth() + '\\' + newTime.getDate();
@@ -132,22 +144,24 @@ module.exports = {
         }else{
           //Next event is an employee finishing their task
           var finishedTasks = updateTimeLeft(tasks, shortestFinishTime);
-          console.log("Finished Tasks: " + finishedTasks);
           finishTasks(finishedTasks);
           currentTime.setHours(currentTime.getHours() + shortestFinishTime);
+          database.updateProjectTime(project._id, currentTime);
+          
+          returnMessage = '';
           
           //buildMessage
+          finishedTasks.forEach(function(task){
+            returnMessage += 'The task \'' + task.title + '\' has been completed<br>';
+          });
           currentHour = currentTime.getHours();
           if(currentHour == 12){
-            returnMessage = 'It is now 12 PM';
+            returnMessage += 'It is now 12 PM';
           }else if(currentHour > 12){
-            returnMessage = 'It is now ' + (currentHour - 12)+ ' PM';
+            returnMessage += 'It is now ' + (currentHour - 12)+ ' PM';
           }else{
-            returnMessage = 'It is now ' + currentHour + ' AM';
+            returnMessage += 'It is now ' + currentHour + ' AM';
           }
-          finishedTasks.forEach(function(task){
-            returnMessage += '<br>The task \'' + task.title + '\' has been completed';
-          });
           done = true;
         }
       });
@@ -164,30 +178,35 @@ module.exports = {
 	  database.getAllTasks(function(result){
 		  //process.stdout.write("Keys = " + Object.keys(result[0]));
 		  result.forEach(function(task){
-			  string += "<br>" + task.title + ":"
-			  string += "<br>State: " + task.state
-			  string += "<br>Time Left: " + task.timeLeft + " man-hours"
-			  string += "<br>Employees: " + task.employeeIds
-			  if(task.employeeIds.length == 0){string+="none"}
-			  /*
-			  task.employeeIds.forEach(function(id){
-				sync = 0
-				database.getEmployeeById(id, function(employee){
-					process.stdout.write("Employee = " + employee);
-					if(employee != undefined){
-						process.stdout.write("YES");
-						string += employee.name + ",";
-					}
-					sync == 1
-				});
-				deasync.loopWhile(function(){return sync == 0;});
-			  });
-			  */
-			  var eta = calculateFinishTime(task);
-			  if(eta == -1){eta = "never"}
-			  string += "<br>ETA: " + eta;
-			  
-			  string += "<br>"
+			  string += "<br>" + task.title + ":";
+			  string += "<br>&ensp;State: " + task.state + "<br>";
+        if(task.state != 'Complete'){
+          string += "&ensp;Time Left: " + task.timeLeft + " man-hours";
+          string += "<br>&ensp;Employees: ";
+          if(task.employeeIds.length == 0){
+            string+="none"
+          }else{
+            var firstEmployee = true;
+            task.employeeIds.forEach(function(id){
+              var done = false;
+              database.getEmployeeById(id, function(employee){
+                if(firstEmployee){
+                  string += employee.name;
+                  firstEmployee = false;
+                }else{
+                  string += ", " + employee.name;
+                }
+                done = true;
+              });
+              deasync.loopWhile(function(){!done;});
+            });
+          }
+          var eta = calculateFinishTime(task);
+          if(eta == -1){eta = "never"}
+          string += "<br>&ensp;ETA: " + eta;
+          
+          string += "<br>"
+        }
 		  });		  
 		  sync = 2;
 	  });
@@ -202,19 +221,19 @@ module.exports = {
 	  var project = result[0];
       //process.stdout.write("Keys = " + Object.keys(project))
 	  string += project.title + ":"
-	  string += "<br>Time = " + project.currentTime
-	  string += "<br>Deadline = " + project.deadline
+	  string += "<br>&ensp;Time = " + project.currentTime
+	  string += "<br>&ensp;Deadline = " + project.deadline
 	  var timeLeft = project.deadline - project.currentTime
 	  timeLeft /= 1000
 	  var sec = timeLeft % 60
 	  var min = (timeLeft / 60) % 60
 	  var hours = (timeLeft / 3600) % 24
 	  var days = Math.floor(timeLeft / 86400)
-	  string += "<br>You have "+days+" days, "+hours+" hours, and "+min+" minutes left to complete the project."
-	  string += "<br>Tasks: "
+	  string += "<br>&ensp;You have "+days+" days, "+hours+" hours, and "+min+" minutes left to complete the project."
+	  /*string += "<br>Tasks: "
 	  project.tasks.forEach(function(task){
 		  string += "<br>" + task;
-	  });
+	  });*/
 	  
 	  sync = 1;
     });
@@ -229,14 +248,14 @@ module.exports = {
 		//process.stdout.write("Keys = " + Object.keys(result[0]))
 		result.forEach(function(employee){
 			string += employee.name+":"
-			string += "<br>Title: " + employee.jobTitle
-			string += "<br>Skill: "+employee.skill
-			
-			var job = employee.workingOn
+			string += "<br>&ensp;Title: " + employee.jobTitle
+      
+      var job = employee.workingOn
 			if(job == null){job = "nothing"}
-			string += "<br>Working on: " + job
-			string += "<br>Satisfaction: "+employee.satisfaction
-			
+      string += "<br>&ensp;Working on: " + job
+      
+			string += "<br>&ensp;Skill: "+employee.skill
+			string += "<br>&ensp;Satisfaction: "+employee.satisfaction
 			string += "<br><br>"
 		});
 		sync = 1;
@@ -244,7 +263,6 @@ module.exports = {
 	deasync.loopWhile(function(){return sync == null;});
 	
 	return string;
-    return 'EMPLOYEE INTENT';
   },
 	
   /* Assign Task Intent

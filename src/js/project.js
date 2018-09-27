@@ -14,7 +14,7 @@ function insertNewProject(title, startTime, deadline, tasks, callback){
     title: title,
     currentTime: startTime,
     deadline: deadline,
-	tasks: tasks
+    tasks: tasks
   }
   
   //Put in database
