@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 /* eslint no-undef: 0 */
-
 casper.test.begin('Manager Training Simulator', 3, function suite(test) {
-  
+
   var baseHost = 'http://localhost:3000';
 
   function testWelcomeMessageExists() {
