@@ -116,16 +116,16 @@ function updateMessage(input, response) {
   
   switch(intent.intent){
   case 'Wait':
-    responseText = intentHandlers.wait(response);
+    responseText = intentHandlers.wait();
     break;
   case 'TaskInfo':
-    responseText = intentHandlers.taskInfo(response);
+    responseText = intentHandlers.taskInfo();
     break;
   case 'ProjectInfo':
-    responseText = intentHandlers.projectInfo(response);
+    responseText = intentHandlers.projectInfo();
     break;
   case 'EmployeeInfo':
-    responseText = intentHandlers.employeeInfo(response);
+    responseText = intentHandlers.employeeInfo();
     break;
   case 'AssignTask':
     responseText = intentHandlers.assignTask(response);

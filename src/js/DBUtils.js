@@ -1,6 +1,5 @@
 var MongoClient = require('mongodb').MongoClient;
 
-var config = require('./config');
 var deasync = require('deasync');
 
 module.exports = {
@@ -16,7 +15,7 @@ module.exports = {
     MongoClient.connect(process.env.DATABASE_URI, function(err, db) {
       if (err) throw err;
       var dbo = db.db(process.env.DATABASE_NAME);
-      dbo.createCollection(collectionName, function(err, res) {
+      dbo.createCollection(collectionName, function(err) {
         if (err) throw err;
         console.log('Collection ' + collectionName + ' created!');
         db.close();
@@ -29,9 +28,10 @@ module.exports = {
     MongoClient.connect(process.env.DATABASE_URI, function(err, db) {
       if (err) throw err;
       var dbo = db.db(process.env.DATABASE_NAME);
-      dbo.createCollection(collectionName, function(err, res){
-        dbo.collection(collectionName).deleteMany({}, function(err, delOK) {
-          if(!err){
+      dbo.createCollection(collectionName, function(err){
+        if (err) throw err;
+        dbo.collection(collectionName).deleteMany({}, function(delErr, delOK) {
+          if(!delErr){
             if (delOK) console.log('Collection ' + collectionName + ' emptied');
           }
           done = true;
@@ -81,7 +81,7 @@ module.exports = {
     MongoClient.connect(process.env.DATABASE_URI, function(err, db) {
       if (err) throw err;
       var dbo = db.db(process.env.DATABASE_NAME);
-      dbo.collection(collectionName).deleteOne(query, function(err, obj){
+      dbo.collection(collectionName).deleteOne(query, function(err){
         if (err) throw err;
         db.close();
       });
@@ -92,7 +92,7 @@ module.exports = {
     MongoClient.connect(process.env.DATABASE_URI, function(err, db) {
       if (err) throw err;
       var dbo = db.db(process.env.DATABASE_NAME);
-      dbo.collection(collectionName).updateOne(query, newValues, function(err, obj){
+      dbo.collection(collectionName).updateOne(query, newValues, function(err){
         if (err) throw err;
         db.close();
       });

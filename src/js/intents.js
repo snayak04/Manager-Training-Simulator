@@ -34,7 +34,6 @@ function updateTimeLeft(tasks, hours){
     //Only check tasks that are incomplete
     if(task.state != 'Complete'){
       var skillTotal = 0;
-      var done = false;
       task.employeeIds.forEach(function(employeeId){
         //get employee from database
         var done = false;
@@ -44,7 +43,7 @@ function updateTimeLeft(tasks, hours){
         });
         deasync.loopWhile(function(){return !done;});
       });
-      newTimeLeft = Math.floor(task.timeLeft - (hours * skillTotal));
+      var newTimeLeft = Math.floor(task.timeLeft - (hours * skillTotal));
       if(newTimeLeft <= 0){//task is finished
         newTimeLeft = 0;
         finishedTasks.push(task);
@@ -97,7 +96,7 @@ module.exports = {
     -The day ending
     -An employee finishing their task
   */
-  wait: function (response) {
+  wait: function () {
     var returnMessage = null;
     var done = false;
     database.getProjectState(function(projects){
@@ -129,7 +128,7 @@ module.exports = {
           newTime.setDate(currentTime.getDate() + 1);
           newTime.setHours(config.DAY_START_TIME);
           database.updateProjectTime(project._id, newTime);
-		  
+          
           //Build Message
           var satisfactionRating = scoreSatisfaction();
           var productivityRating = scoreProductivity();
@@ -154,7 +153,7 @@ module.exports = {
           finishedTasks.forEach(function(task){
             returnMessage += 'The task \'' + task.title + '\' has been completed<br>';
           });
-          currentHour = currentTime.getHours();
+          var currentHour = currentTime.getHours();
           if(currentHour == 12){
             returnMessage += 'It is now 12 PM';
           }else if(currentHour > 12){
@@ -172,14 +171,14 @@ module.exports = {
     return returnMessage;
   },
     
-  taskInfo: function (response) {
-	  var sync = 0;
-	  var string = '';
-	  database.getAllTasks(function(result){
-		  //process.stdout.write("Keys = " + Object.keys(result[0]));
-		  result.forEach(function(task){
-			  string += '<br>' + task.title + ':';
-			  string += '<br>&ensp;State: ' + task.state + '<br>';
+  taskInfo: function () {
+    var sync = 0;
+    var string = '';
+    database.getAllTasks(function(result){
+      //process.stdout.write("Keys = " + Object.keys(result[0]));
+      result.forEach(function(task){
+        string += '<br>' + task.title + ':';
+        string += '<br>&ensp;State: ' + task.state + '<br>';
         if(task.state != 'Complete'){
           string += '&ensp;Time Left: ' + task.timeLeft + ' man-hours';
           string += '<br>&ensp;Employees: ';
@@ -207,41 +206,40 @@ module.exports = {
           
           string += '<br>';
         }
-		  });		  
-		  sync = 2;
-	  });
-	  deasync.loopWhile(function(){return sync <= 1;});
+      });
+      sync = 2;
+    });
+    deasync.loopWhile(function(){return sync <= 1;});
     return string;
   },
     
-  projectInfo: function (response) {
+  projectInfo: function () {
     var sync;
     var string = '';
     database.getProjectState(function(result){
-	  var project = result[0];
+      var project = result[0];
       //process.stdout.write("Keys = " + Object.keys(project))
-	  string += project.title + ':';
-	  string += '<br>&ensp;Time = ' + project.currentTime;
-	  string += '<br>&ensp;Deadline = ' + project.deadline;
-	  var timeLeft = project.deadline - project.currentTime;
-	  timeLeft /= 1000;
-	  var sec = timeLeft % 60;
-	  var min = (timeLeft / 60) % 60;
-	  var hours = (timeLeft / 3600) % 24;
-	  var days = Math.floor(timeLeft / 86400);
-	  string += '<br>&ensp;You have '+days+' days, '+hours+' hours, and '+min+' minutes left to complete the project.';
-	  /*string += "<br>Tasks: "
-	  project.tasks.forEach(function(task){
-		  string += "<br>" + task;
-	  });*/
-	  
-	  sync = 1;
+      string += project.title + ':';
+      string += '<br>&ensp;Time = ' + project.currentTime;
+      string += '<br>&ensp;Deadline = ' + project.deadline;
+      var timeLeft = project.deadline - project.currentTime;
+      timeLeft /= 1000;
+      var min = (timeLeft / 60) % 60;
+      var hours = (timeLeft / 3600) % 24;
+      var days = Math.floor(timeLeft / 86400);
+      string += '<br>&ensp;You have '+days+' days, '+hours+' hours, and '+min+' minutes left to complete the project.';
+      /*string += "<br>Tasks: "
+    project.tasks.forEach(function(task){
+      string += "<br>" + task;
+    });*/
+    
+      sync = 1;
     });
     deasync.loopWhile(function(){return sync == null;});
     return string;
   },
     
-  employeeInfo: function (response) {
+  employeeInfo: function () {
     var string = '';
     var sync;
     database.getAllEmployees(function(result){
