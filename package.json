@@ -20,9 +20,12 @@
   "license": "Apache-2.0",
   "dependencies": {
     "body-parser": "^1.18.3",
+    "deasync": "^0.1.13",
     "dotenv": "^6.0.0",
     "express": "^4.16.3",
-    "watson-developer-cloud": "^3.7.0"
+    "mongodb": "^3.1.6",
+    "mongoose": "^5.2.17",
+    "watson-developer-cloud": "^3.10.0"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
@@ -31,10 +34,10 @@
   "devDependencies": {
     "babel-eslint": "^8.2.6",
     "casperjs": "^1.1.4",
-    "codecov": "^3.0.4",
-    "eslint": "^5.1.0",
-    "jest": "^23.4.1",
+    "codecov": "^3.1.0",
+    "eslint": "^5.6.0",
+    "jest": "^23.6.0",
     "phantomjs-prebuilt": "^2.1.16",
-    "supertest": "^3.1.0"
+    "supertest": "^3.3.0"
   }
 }
