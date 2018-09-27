@@ -25,18 +25,18 @@ function initialize(){
   var startTime = new Date('2018-09-24T09:00:00');
   var deadline = new Date('2018-09-28T17:00:00');
   projectMaker.insertNewProject('Manager Simulator 3', startTime, deadline, ['Code the new level', 'Add a battle royale mode', 'Optimize performance', 'Update UI to twenty-first century', 'Add random map generation'], function(result){
-	  var projectId = result.ops[0]._id;
-	  //Create employees
-	  employeeMaker.insertNewEmployee(projectId, 'John', 'Software Engineer',null, 85, 80);
-	  employeeMaker.insertNewEmployee(projectId, 'Harry', 'Software Intern',null, 30, 75);
-	  employeeMaker.insertNewEmployee(projectId, 'Amanda', 'Software Engineer',null, 75, 70);
+    var projectId = result.ops[0]._id;
+    //Create employees
+    employeeMaker.insertNewEmployee(projectId, 'John', 'Software Engineer',null, 85, 80);
+    employeeMaker.insertNewEmployee(projectId, 'Harry', 'Software Intern',null, 30, 75);
+    employeeMaker.insertNewEmployee(projectId, 'Amanda', 'Software Engineer',null, 75, 70);
 
-	  //Create tasks
-	  taskMaker.insertNewTask(projectId, 'Code the new level', 20, 'Incomplete', []);
-	  taskMaker.insertNewTask(projectId, 'Add a battle royale mode', 40, 'Incomplete', []);
-	  taskMaker.insertNewTask(projectId, 'Optimize performance', 10, 'Incomplete', []);
-	  taskMaker.insertNewTask(projectId, 'Update user interface', 30, 'Incomplete', []);
-	  taskMaker.insertNewTask(projectId, 'Add random map generation', 10, 'Incomplete', []);
+    //Create tasks
+    taskMaker.insertNewTask(projectId, 'Code the new level', 20, 'Incomplete', []);
+    taskMaker.insertNewTask(projectId, 'Add a battle royale mode', 40, 'Incomplete', []);
+    taskMaker.insertNewTask(projectId, 'Optimize performance', 10, 'Incomplete', []);
+    taskMaker.insertNewTask(projectId, 'Update user interface', 30, 'Incomplete', []);
+    taskMaker.insertNewTask(projectId, 'Add random map generation', 10, 'Incomplete', []);
   });
 }
 
