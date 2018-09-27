@@ -22,9 +22,9 @@ function initialize(){
   deasync.loopWhile(function(){return asyncDone.indexOf(false) > -1;});
 
   //Create new project
-  var startTime = new Date('2018-09-24T09:00:00')
-  var deadline = new Date('2018-09-28T17:00:00')
-  projectMaker.insertNewProject("Manager Simulator 3", startTime, deadline, ['Code the new level', 'Add a battle royale mode', 'Optimize performance', 'Update UI to twenty-first century', 'Add random map generation'], function(result){
+  var startTime = new Date('2018-09-24T09:00:00');
+  var deadline = new Date('2018-09-28T17:00:00');
+  projectMaker.insertNewProject('Manager Simulator 3', startTime, deadline, ['Code the new level', 'Add a battle royale mode', 'Optimize performance', 'Update UI to twenty-first century', 'Add random map generation'], function(result){
 	  var projectId = result.ops[0]._id;
 	  //Create employees
 	  employeeMaker.insertNewEmployee(projectId, 'John', 'Software Engineer',null, 85, 80);
