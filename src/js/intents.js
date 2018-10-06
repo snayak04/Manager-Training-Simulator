@@ -5,7 +5,7 @@
 var database = require('./DBgetset');
 var deasync = require('deasync');
 var config = require('./config');
-
+var fs = require('fs');
 //returns how long a task will take to finish with current employees.
 //if it will never finish, returns -1.
 function calculateFinishTime(task){
@@ -104,7 +104,7 @@ module.exports = {
       var project = projects[0]; //Assuming one project for now
       var currentTime = project.currentTime;
       var hoursLeftInDay = config.DAY_END_TIME - currentTime.getHours();
-      
+      console.log(projects);
       //Check if any of the tasks will finish before the day ends
       database.getAllTasks(function(tasks) {
         var shortestFinishTime = null;
@@ -268,12 +268,12 @@ module.exports = {
   */
   assignTask: function (response) {
     var returnMessage;
-    
     //Get highest confidence employee and task entity.
     var employee;
     var task;
     var entities = response.entities;
     entities.forEach(function(entity){
+      console.log(entity.entity);
       if (entity.entity == 'employees'){
         if(!employee){
           employee = entity;
