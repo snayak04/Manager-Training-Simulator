@@ -23,7 +23,7 @@ function insertNewTask(projectId, title, timeLeft, state, employeeIds){
   
   
   //Put in database
-  database.insertOneRecord(newTask, 'Tasks');
+  database.insertOneRecord(newTask, 'tasks');
   
   //Add to assistant
   assistant.addTask(newTask.title);

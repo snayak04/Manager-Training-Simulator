@@ -12,7 +12,7 @@ var assistant = new watson.AssistantV1({
 var workspace = process.env.WORKSPACE_ID || '<workspace-id>';
 if (!process.env.WORKSPACE_ID) {
   console.warn('Error: WORKSPACE_ID is null');
-  return; 
+  process.exit(); 
   //TODO: Handle this error somehow? - this work?
 }
 

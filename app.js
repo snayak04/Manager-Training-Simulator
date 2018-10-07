@@ -33,19 +33,19 @@ mongoose.connect(process.env.DATABASE_URI, { useNewUrlParser: true },
 
 // ###TODO: Loading all models - This would go under the user later:
 const initProject = require('./src/js/initProject');
-initProject.initialize();
 
-async function handler (req, res) {
-  let document
-  try {
-    var emp = require('./models/employees');
-    document = await emp.findOne()
-  } catch (err) {
-    logger.error('Mongo error', err)
-    return res.status(500).send()
-  }
-  var intentHandlers = require('./src/js/intents'); // make sure to initialize after loading the models!
-}
+const intentHandlers = initProject.initialize();
+// async function handler (req, res) {
+//   let document
+//   try {
+//     var emp = require('./models/employees');
+//     document = await emp.findOne()
+//   } catch (err) {
+//     logger.error('Mongo error', err)
+//     return res.status(500).send()
+//   }
+//    = require('./src/js/intents'); // make sure to initialize after loading the models!
+// }
 
 var app = express();
 

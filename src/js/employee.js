@@ -23,7 +23,7 @@ function insertNewEmployee(projectId, name, jobTitle, workingOn, skill, satisfac
   };
   
   //Put in database
-  database.insertOneRecord(newEmployee, 'Employees');
+  database.insertOneRecord(newEmployee, 'employees');
   
   //Add to assistant
   assistant.addEmployee(newEmployee.name);
