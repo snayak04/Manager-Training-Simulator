@@ -25,3 +25,7 @@
  - While the mongodb server is up, run the app however you go about doing it (node server.js, npm start, etc...)
    -Shouldn't throw any errors and will create a connection with your hosted database, anything that you save to the 
    		database will be able to be found in the mongo shell also
+
+##Update: Now there are Employees, Tasks, and Projects Models, refer to those to access the necessary elements.
+- Logic for all the models are in the controller folder, and I am gradually trying to move stuffs from DBUtils to that to work solely with Mongoose. 
+- Some known errors as of now: <strong>assignTask, AgileRating</strong>.
