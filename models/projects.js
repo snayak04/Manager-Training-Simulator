@@ -1,16 +1,19 @@
 const mongoose = require('mongoose');
 const employees = require('./employees');
-var tasks = require("./tasks.js");
+const tasks = require("./tasks.js");
 
 const Schema = mongoose.Schema;
-var employee = employees.employeesSchema;
-var task = tasks.tasksSchema;
-var projectsSchema  = new Schema({
-    _id: mongoose.Types.ObjectId,
-    employees: [employee],
-    tasks: [task],
+
+
+const projectsSchema  = new Schema({
+    _id: Schema.Types.ObjectId,
+    title: String,
+    employees: [{type: mongoose.Schema.Types.ObjectId, ref: 'employees'}],
+    tasks: [{type: mongoose.Schema.Types.ObjectId, ref: 'tasks'}],
+    startDate: Date,
+    deadLine: Date
 });
 
-const Projects = mongoose.model('projects', projectsSchema);
+const projects = mongoose.model('projects', projectsSchema);
 
-module.exports = {projectsSchema, Projects};
+module.exports = {projects:projects};
