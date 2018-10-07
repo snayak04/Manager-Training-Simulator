@@ -43,9 +43,9 @@ var reset = ()=>{
 
   var asyncDone = [false, false, false, false, false];
   //Reset all collections in database
-  asyncDone[0] = database.resetCollection('Employees');
-  asyncDone[1] = database.resetCollection('Tasks');
-  asyncDone[2] = database.resetCollection('Projects');
+  asyncDone[0] = database.resetCollection('employees');
+  asyncDone[1] = database.resetCollection('tasks');
+  asyncDone[2] = database.resetCollection('projects');
   //Reset assistant entity values
   asyncDone[3] = assistant.clearEntityValues('tasks');
   asyncDone[4] = assistant.clearEntityValues('employees');
@@ -59,6 +59,8 @@ function initialize(){
   var tasks = generateTasks();
   var project = generateProject(employees);
   project.save();
+
+  return require('./intents');
 }
 
 module.exports = {

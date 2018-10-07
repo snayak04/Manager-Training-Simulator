@@ -5,10 +5,10 @@
 var database = require('./DBgetset');
 var deasync = require('deasync');
 var config = require('./config');
-
+//const AgileRating = require('../../models/ratings/AgileRating');
 
 //console.log(task.getTasks);
-
+//var agileRating = new AgileRating();
 //returns how long a task will take to finish with current employees.
 //if it will never finish, returns -1.
 function calculateFinishTime(task){
@@ -275,6 +275,7 @@ module.exports = {
     var employee;
     var task;
     var entities = response.entities;
+   // AgileRating.analyzeAndScore(entities);
     entities.forEach(function(entity){
       //console.log(entity.entity);
       if (entity.entity == 'employees'){
