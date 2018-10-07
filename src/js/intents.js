@@ -5,8 +5,7 @@
 var database = require('./DBgetset');
 var deasync = require('deasync');
 var config = require('./config');
-var project = require('../../controller/project');
-var task = require('../../controller/task');
+
 
 //console.log(task.getTasks);
 
