@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-'use strict';
+
 
 var config = require('./src/js/config'); //config values
 
