@@ -11,7 +11,8 @@ const projectsSchema  = new Schema({
     employees: [{type: mongoose.Schema.Types.ObjectId, ref: 'employees'}],
     tasks: [{type: mongoose.Schema.Types.ObjectId, ref: 'tasks'}],
     startDate: Date,
-    deadLine: Date
+    deadline: Date,
+    currentTime: Date
 });
 
 const projects = mongoose.model('projects', projectsSchema);

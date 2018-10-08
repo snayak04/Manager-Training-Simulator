@@ -10,10 +10,9 @@ const Schema = mongoose.Schema;
   satisfaction: 1-100, how much they like their job
 */
 const employeesSchema  = new Schema({
-    employeeIds: Schema.Types.ObjectId,
+    _id: Schema.Types.ObjectId,
     name: String,
-    projects: [{type: mongoose.Schema.Types.ObjectId, ref: 'projects'}],
-    workingOn: [{type: mongoose.Schema.Types.ObjectId, ref: 'tasks'}],
+    workingOn: String,
     skill: {type: Number, min:1, max:100},
     satisfaction: {type: Number, min:1, max:100},
     jobTitle: String

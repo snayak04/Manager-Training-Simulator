@@ -8,10 +8,10 @@ const tasksSchema  = new Schema({
     title: String,
     employeeIds: [{type: mongoose.Schema.Types.ObjectId, ref: 'employees'}],
     points: {type: Number, min: 1, max: 21},
-    state: {type: String, enum: ['backlog', 'inConstruction', 'testing', 'done']},
+    state: {type: String, enum: ['Backlog', 'Incomplete', 'Complete']},
     startTime: {type:Date},
     approxEndTime: Date,
-    actualEndDate: Date
+    timeLeft: {type: Number, min: 0}
 });
 
 var initializeTasks = (name)=>{
