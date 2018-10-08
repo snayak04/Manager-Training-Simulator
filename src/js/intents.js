@@ -2,7 +2,7 @@
 // These are called from app.js after the most likely intent is determined.
 
 //var assistant = require('./assistant.js');
-var database = require('./DBgetset');
+var database = require('./mongoosedb');
 var deasync = require('deasync');
 var config = require('./config');
 //const AgileRating = require('../../models/ratings/AgileRating');

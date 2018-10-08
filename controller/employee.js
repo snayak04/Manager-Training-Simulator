@@ -4,13 +4,12 @@ const {tasks} = require('../models/tasks');
 const {employees} = require('../models/employees'); 
 const assistant = require('../src/js/assistant.js');
 
-var insertNewEmployee = (name, projects, position, skill, satisfaction)=>{
+var insertNewEmployee = (name, workingOn, position, skill, satisfaction)=>{
     employee = new employees({
         _id:mongoose.Types.ObjectId(),
         name: name,
-        projects: projects,
-        tasks: tasks,
-        position: position,
+        workingOn: workingOn,
+        jobTitle: position,
         skill: skill,
         satisfaction: satisfaction
     });

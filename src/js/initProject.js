@@ -16,23 +16,24 @@ var randomizeEmployees = ()=>{
 //TODO:: Returns tasks - gotta make more efficient; didn;t have enough time..
 var generateTasks = ()=>{
   var task = require('../../controller/task');
-  return [task.insertNewTask('Code the new level', 'backlog', null, null, null, null, null),
-  task.insertNewTask('Add a battle royale mode', 'backlog', null, null, null, null, null),
-  task.insertNewTask('Optimize performance', 'backlog', null, null, null, null, null),
-  task.insertNewTask('Update user interface', 'backlog', null, null, null, null, null),
-  task.insertNewTask('Add random map generation', 'backlog', null, null, null, null, null),
+  return [task.insertNewTask('Code the new level', 'Backlog', [], null, null, null, 10),
+  task.insertNewTask('Add a battle royale mode', 'Backlog', [], null, null, null, 15),
+  task.insertNewTask('Optimize performance', 'Backlog', [], null, null, null, 10),
+  task.insertNewTask('Update user interface', 'Backlog', [], null, null, null, 10),
+  task.insertNewTask('Add random map generation', 'Backlog', [], null, null, null, 20),
   ]
 }
 
 // Only initializes the project
-var generateProject = (employees)=>{
+var generateProject = (employees, tasks)=>{
   return new projects({
     _id: new mongoose.Types.ObjectId(),
-    name: 'Sprint 2',
+    title: 'Sprint 2',
     employees: employees,
-    tasks: null,
+    tasks: tasks,
     startDate: new Date('2018-09-24T09:00:00'),
-    endDate: new Date('2018-09-28T17:00:00')
+    deadline: new Date('2018-09-28T17:00:00'),
+    currentTime: new Date('2018-09-24T09:00:00')
   });
 }
 
@@ -57,9 +58,9 @@ function initialize(){
   reset();
   var employees = randomizeEmployees();
   var tasks = generateTasks();
-  var project = generateProject(employees);
+  var project = generateProject(employees, tasks);
   project.save();
-
+  
   return require('./intents');
 }
 
