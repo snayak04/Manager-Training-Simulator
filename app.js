@@ -105,6 +105,11 @@ app.post('/api/message', function (req, res) {
   });
 });
 
+//Rating variables 
+const AgileRating = require('./models/ratings/AgileRating');
+var agileRating = new AgileRating();
+//-- Rating variables end
+
 
 /**
  * Updates the response text using the intent confidence
@@ -117,7 +122,7 @@ function updateMessage(input, response) {
   if (!response.output) {
     response.output = {};
   } 
-  
+  agileRating.listen(response);
   var intent;
   if (response.intents && response.intents[0]) {
     intent = response.intents[0];
