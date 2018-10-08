@@ -24,7 +24,7 @@ var AssistantV1 = require('watson-developer-cloud/assistant/v1'); // watson sdk
 //var TextToSpeechV1 = require('watson-developer-cloud/text-to-speech/v1');
 const mongoose = require('mongoose');
 
-mongoose.connect(process.env.DATABASE_URI, { useNewUrlParser: true }, 
+mongoose.connect(String(process.env.DATABASE_URI), { useNewUrlParser: true }, 
   (err)=>{
     if (err)
       throw err;
