@@ -6,5 +6,6 @@
 (function() {
   // Initialize all modules
   ConversationPanel.init();
+  InfoPanel.init();
   PayloadPanel.init();
 })();
