@@ -10,8 +10,10 @@ var assistant = new watson.AssistantV1({
 });
 
 var workspace = process.env.WORKSPACE_ID || '<workspace-id>';
-if (!workspace || workspace === '<workspace-id>') {
-  //TODO: Handle this error somehow?
+if (!process.env.WORKSPACE_ID) {
+  console.warn('Error: WORKSPACE_ID is null');
+  process.exit(); 
+  //TODO: Handle this error somehow? - this work?
 }
 
 //Add an employee to the assistant
@@ -71,7 +73,34 @@ function removeTask(task){
     return response;
   });
 }
+//Assign a story point to the assistant
+function addStoryPoints(point){
+  var params = {
+    workspace_id: workspace,
+    entity: 'points',
+    value: point
+  };
+  
+  assistant.createValue(params, function(err, response) {
+    if (err) throw err;
+    return response;
+  });
+  
+}
 
+//Remove a story point from the assistant
+function removePoints(point){
+  var params = {
+    workspace_id: workspace,
+    entity: 'points',
+    value: points
+  };
+  
+  assistant.deleteValue(params, function(err, response) {
+    if (err) throw err;
+    return response;
+  });
+}
 //Resets an entity to have no values
 function clearEntityValues(entityName){
   var params = {

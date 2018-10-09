@@ -14,21 +14,40 @@
  * limitations under the License.
  */
 
-'use strict';
+
 
 var config = require('./src/js/config'); //config values
 
-var express = require('express'); // app server
+const express = require('express'); // app server
 var bodyParser = require('body-parser'); // parser for post requests
 var AssistantV1 = require('watson-developer-cloud/assistant/v1'); // watson sdk
 //var TextToSpeechV1 = require('watson-developer-cloud/text-to-speech/v1');
-var intentHandlers = require('./src/js/intents');
-// Databases
+const mongoose = require('mongoose');
 
+mongoose.connect(String(process.env.DATABASE_URI), { useNewUrlParser: true }, 
+  (err)=>{
+    if (err)
+      throw err;
+    console.log("Databse Connected Successfully");
+  });
+
+// ###TODO: Loading all models - This would go under the user later:
+const initProject = require('./src/js/initProject');
+
+const intentHandlers = initProject.initialize();
+// async function handler (req, res) {
+//   let document
+//   try {
+//     var emp = require('./models/employees');
+//     document = await emp.findOne()
+//   } catch (err) {
+//     logger.error('Mongo error', err)
+//     return res.status(500).send()
+//   }
+//    = require('./src/js/intents'); // make sure to initialize after loading the models!
+// }
 
 var app = express();
-
-
 
 // Bootstrap application settings
 app.use(express.static('./public')); // load UI from public folder
@@ -112,6 +131,7 @@ function updateMessage(input, response) {
     response.output.text = 'I don\'t understand that. Could you try rephrasing?';
     return response;
   }
+  
   
   
   switch(intent.intent){

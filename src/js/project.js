@@ -18,7 +18,7 @@ function insertNewProject(title, startTime, deadline, tasks, callback){
   };
   
   //Put in database
-  database.insertOneRecord(newProject, 'Projects', function(res){
+  database.insertOneRecord(newProject, 'projects', function(res){
     return callback(res);
   });
 }

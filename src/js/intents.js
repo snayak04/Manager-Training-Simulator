@@ -2,10 +2,13 @@
 // These are called from app.js after the most likely intent is determined.
 
 //var assistant = require('./assistant.js');
-var database = require('./DBgetset');
+var database = require('./mongoosedb');
 var deasync = require('deasync');
 var config = require('./config');
+//const AgileRating = require('../../models/ratings/AgileRating');
 
+//console.log(task.getTasks);
+//var agileRating = new AgileRating();
 //returns how long a task will take to finish with current employees.
 //if it will never finish, returns -1.
 function calculateFinishTime(task){
@@ -122,7 +125,7 @@ module.exports = {
       var project = projects[0]; //Assuming one project for now
       var currentTime = project.currentTime;
       var hoursLeftInDay = config.DAY_END_TIME - currentTime.getHours();
-      
+     // console.log(projects);
       //Check if any of the tasks will finish before the day ends
       database.getAllTasks(function(tasks) {
         var shortestFinishTime = null;
@@ -319,12 +322,13 @@ module.exports = {
   */
   assignTask: function (response) {
     var returnMessage;
-    
     //Get highest confidence employee and task entity.
     var employee;
     var task;
     var entities = response.entities;
+   // AgileRating.analyzeAndScore(entities);
     entities.forEach(function(entity){
+      //console.log(entity.entity);
       if (entity.entity == 'employees'){
         if(!employee){
           employee = entity;
