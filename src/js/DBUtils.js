@@ -11,32 +11,30 @@ module.exports = {
     });
   },
   
-  createCollection: function(collectionName){
-    MongoClient.connect(process.env.DATABASE_URI, function(err, db) {
-      if (err) throw err;
-      var dbo = db.db(process.env.DATABASE_NAME);
-      dbo.createCollection(collectionName, function(err) {
-        if (err) throw err;
-        console.log('Collection ' + collectionName + ' created!');
-        db.close();
-      });
-    });
-  },
+  // createCollection: function(collectionName){
+  //   MongoClient.connect(process.env.DATABASE_URI, function(err, db) {
+  //     if (err) throw err;
+  //     var dbo = db.db(process.env.DATABASE_NAME);
+  //     dbo.createCollection(collectionName, function(err) {
+  //       if (err) throw err;
+  //       console.log('Collection ' + collectionName + ' created!');
+  //       db.close();
+  //     });
+  //   });
+  // },
   
   resetCollection: function(collectionName){
     var done = false;
     MongoClient.connect(process.env.DATABASE_URI, function(err, db) {
       if (err) throw err;
       var dbo = db.db(process.env.DATABASE_NAME);
-      dbo.createCollection(collectionName, function(err){
-        if (err) throw err;
-        dbo.collection(collectionName).deleteMany({}, function(delErr, delOK) {
-          if(!delErr){
-            if (delOK) console.log('Collection ' + collectionName + ' emptied');
-          }
-          done = true;
-        });
+      dbo.collection(collectionName).deleteMany({}, function(delErr, delOK) {
+        if(!delErr){
+        if (delOK) console.log('Collection ' + collectionName + ' emptied');
+      }
+        done = true;
       });
+     
     });
     deasync.loopWhile(function(){return !done;});
     return done;

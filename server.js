@@ -20,10 +20,7 @@
 require('dotenv').config({silent: true});
 
 var server = require('./app');
-var initProject = require('./src/js/initProject');
 var port = process.env.PORT || 3000;
-
-initProject.initialize();
 
 server.listen(port, function() {
   // eslint-disable-next-line
