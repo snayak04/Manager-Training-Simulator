@@ -90,6 +90,24 @@ function scoreSatisfaction(){
   return 75;
 }
 
+/*
+	emps: a string of the employees names
+	value: how emp1 feels about emp2
+*/
+function relationString(emp1, emp2, value){
+	if (value < 0.2){
+		return emp1 + "hates" + emp2;
+	}else if (0.2 < value < 0.4){
+		return emp1 + "dislikes" + emp2;
+	}else if (0.4 < value < 0.6){
+		return emp1 + "tolerates" + emp2;
+	}else if (0.6 < value < 0.8){
+		return emp1 + "likes" + emp2;
+	}else{
+		return emp1 + " and " + emp2 + "work together very well"
+	}
+}
+
 module.exports = {
   /*Wait Intent
   Goes to the next event, which can be one of the following:
@@ -262,6 +280,39 @@ module.exports = {
 	
     return string;
   },
+  
+  /* 
+	Reports information on the relationship of 2 employees
+	Gives both directions. 
+  */
+  relationInfo: function (response) {
+	  /*
+	  var string = '';
+	  var employee1; //higher confidence
+	  var employee2;
+	  var entities = response.entities;
+	  entities.forEach(function(entity){
+		  if (entity.entity == 'employees'){ //is this necessary?
+			  if (!employee1){
+				  employee1 = entity;
+			  } else if (!employee2){
+				  employee2 = entity;
+			  } else if (entity.confidence > employee1.confidence){
+				  employee2 = employee1;
+				  employee1 = entity;
+			  } else if (entity.confidence > employee2.confidence){
+				  employee2 = entity;
+			  }				  
+		  }		  
+	  });
+	  //TODO error messages
+	  
+	  //TODO the actual thing
+	  var name1 = employee1.value;
+	  var name2 = employee2.value;
+	  */
+	  return "RELATION INTENT"
+  },
 	
   /* Assign Task Intent
     Assigns a specified employee to the specified task
@@ -289,7 +340,10 @@ module.exports = {
         }
       }
     });
-    
+    process.stdout.write("Keys = " + Object.keys(employee))
+	process.stdout.write("Loc = " + employee.location)
+	process.stdout.write("Val = " + employee.value)
+	
     if(!employee){
       returnMessage = 'I think you\'re trying to assign a task, but I don\'t for which employee';
     }else if(!task){

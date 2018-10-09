@@ -1,6 +1,7 @@
 //This initializes the database and assistant to handle a project for use in Thursdays demo.
 
 var database = require('./DBUtils');
+var database2= require('./DBgetset');
 var assistant = require('./assistant');
 var deasync = require('deasync');
 var employeeMaker = require('./employee');
@@ -14,6 +15,7 @@ function initialize(){
   asyncDone[0] = database.resetCollection('Employees');
   asyncDone[1] = database.resetCollection('Tasks');
   asyncDone[2] = database.resetCollection('Projects');
+  asyncDone[3] = database.resetCollection('Relations');
 
   //Reset assistant entity values
   asyncDone[3] = assistant.clearEntityValues('tasks');
@@ -27,10 +29,20 @@ function initialize(){
   projectMaker.insertNewProject('Manager Simulator 3', startTime, deadline, ['Code the new level', 'Add a battle royale mode', 'Optimize performance', 'Update UI to twenty-first century', 'Add random map generation'], function(result){
     var projectId = result.ops[0]._id;
     //Create employees
-    employeeMaker.insertNewEmployee(projectId, 'John', 'Software Engineer',null, 85, 80);
-    employeeMaker.insertNewEmployee(projectId, 'Harry', 'Software Intern',null, 30, 75);
-    employeeMaker.insertNewEmployee(projectId, 'Amanda', 'Software Engineer',null, 75, 70);
-
+    employeeMaker.insertNewEmployee(projectId, 'John', 'Software Engineer',null, 85, 80, 100);
+    employeeMaker.insertNewEmployee(projectId, 'Harry', 'Software Intern',null, 30, 75, 75);
+    employeeMaker.insertNewEmployee(projectId, 'Amanda', 'Software Engineer',null, 75, 70, 45);
+	
+	//Employee Relations
+	database2.getAllEmployees(function(result){
+		result.forEach(function(employee1){
+			result.forEach(function(employee2){
+				//process.stdout.write("Keys = " + Object.keys(employee1))
+				employeeMaker.insertNewRelation(employee1, employee2, Math.random());				
+			});			
+		});		
+	});
+	
     //Create tasks
     taskMaker.insertNewTask(projectId, 'Code the new level', 20, 'Incomplete', []);
     taskMaker.insertNewTask(projectId, 'Add a battle royale mode', 40, 'Incomplete', []);

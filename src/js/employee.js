@@ -9,9 +9,10 @@ var assistant = require('./assistant.js');
   jobTitle: the employee's position
   skill: 1-100, how good they are at their job
   satisfaction: 1-100, how much they like their job
+  professionalism: 1-100, how much they're affected by teamwork modifiers (professional people can work with people they hate)
 */
 
-function insertNewEmployee(projectId, name, jobTitle, workingOn, skill, satisfaction){
+function insertNewEmployee(projectId, name, jobTitle, workingOn, skill, satisfaction, professionalism){
   //TODO Maybe verify values?
   var newEmployee = {
     projectId: projectId,
@@ -19,7 +20,8 @@ function insertNewEmployee(projectId, name, jobTitle, workingOn, skill, satisfac
     jobTitle: jobTitle,
     workingOn: workingOn, 
     skill: skill,
-    satisfaction: satisfaction
+    satisfaction: satisfaction,
+	professionalism: professionalism
   };
   
   //Put in database
@@ -28,10 +30,23 @@ function insertNewEmployee(projectId, name, jobTitle, workingOn, skill, satisfac
   //Add to assistant
   assistant.addEmployee(newEmployee.name);
 }
+
+function insertNewRelation(currentEmployee, targetEmployee, value){
+  var newRelation = {
+    currentEmployee: currentEmployee,
+	targetEmployee: targetEmployee,
+	value: value
+  };
+  
+  //Put in database
+  database.insertOneRecord(newRelation, 'Employee_Relation');
+}
   
 
 
 
 module.exports = {
-  insertNewEmployee: insertNewEmployee
+  insertNewEmployee: insertNewEmployee,
+  insertNewRelation: insertNewRelation
+  
 };

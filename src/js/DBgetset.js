@@ -20,6 +20,16 @@ module.exports = {
       return callback(result);
     });
   },
+  getRelation: function(employee1, employee2, callback){
+		
+	//TODO check if this works
+	var emp1;
+	var emp2
+	var search = { currentEmployee: employee1, targetEmployee: employee2 };
+    DBUtil.findbyAttribute(search, 'Employee_Relation', function(result){
+		return callback(result[0]);
+	});
+  },
   getTask: function(taskTitle, callback){
     var search = { title: taskTitle };
     DBUtil.findbyAttribute(search, 'Tasks', function(result){
