@@ -28,7 +28,7 @@ mongoose.connect(String(process.env.DATABASE_URI), { useNewUrlParser: true },
   (err)=>{
     if (err)
       throw err;
-    console.log("Databse Connected Successfully");
+    console.log("Database Connected Successfully");
   });
 
 // ###TODO: Loading all models - This would go under the user later:
@@ -49,9 +49,30 @@ const intentHandlers = initProject.initialize();
 
 var app = express();
 
+var passport = require('passport');
+var LocalStrategy = require('passport-local').Strategy;
+
+app.use(require('express-session')({
+    secret: 'keyboard cat',
+    resave: false,
+    saveUninitialized: false
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+
+var User = require('./models/user');
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+
 // Bootstrap application settings
-app.use(express.static('./public')); // load UI from public folder
+var options = {
+  index: "login.html"
+};
+app.use(express.static('./public', options)); // load UI from public folder
 app.use(bodyParser.json());
+app.use(require('./routes'));
 
 // Create the service wrapper
 
