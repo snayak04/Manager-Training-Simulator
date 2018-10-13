@@ -74,6 +74,7 @@ app.use(express.static('./public', options)); // load UI from public folder
 app.use(bodyParser.json());
 app.use(require('./routes'));
 
+
 // Create the service wrapper
 
 var assistant = new AssistantV1({
