@@ -70,8 +70,9 @@ passport.deserializeUser(User.deserializeUser());
 var options = {
   index: "login.html"
 };
-app.use(express.static('./public', options)); // load UI from public folder
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.static('./public', options)); // load UI from public folder
 app.use(require('./routes'));
 
 
