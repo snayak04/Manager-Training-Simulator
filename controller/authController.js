@@ -1,24 +1,27 @@
 var mongoose = require("mongoose");
 var passport = require("passport");
-var User = require("../models/User");
+var User = require("../models/user");
+var root = 'public';
 
 var userController = {};
 
 // Restrict access to root page
 userController.home = function(req, res) {
-  res.render('index', { user : req.user });
+  console.log('Restrict root page for logged in users')
+  res.sendFile('index', { user : req.user, 'root': root});
 };
 
 // Go to registration page
 userController.register = function(req, res) {
-  res.render('register');
+  res.sendFile('register.html', {'root': root});
 };
 
 // Post registration
 userController.doRegister = function(req, res) {
-  User.register(new User({ username : req.body.username, name: req.body.name }), req.body.password, function(err, user) {
+  console.log(req.body)
+  User.register(new User({ username : req.body.username}), req.body.password, function(err, user) {
     if (err) {
-      return res.render('register', { user : user });
+      return res.sendFile('register.html', { user : user , 'root': root});
     }
 
     passport.authenticate('local')(req, res, function () {
@@ -29,7 +32,7 @@ userController.doRegister = function(req, res) {
 
 // Go to login page
 userController.login = function(req, res) {
-  res.render('login');
+  res.sendFile('login.html', {'root': root});
 };
 
 // Post login
