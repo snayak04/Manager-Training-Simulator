@@ -21,7 +21,7 @@ var config = require('./src/js/config'); //config values
 const express = require('express'); // app server
 var bodyParser = require('body-parser'); // parser for post requests
 var AssistantV1 = require('watson-developer-cloud/assistant/v1'); // watson sdk
-//var TextToSpeechV1 = require('watson-developer-cloud/text-to-speech/v1');
+var TextToSpeechV1 = require('watson-developer-cloud/text-to-speech/v1');
 const mongoose = require('mongoose');
 
 mongoose.connect(String(process.env.DATABASE_URI), { useNewUrlParser: true }, 
@@ -52,6 +52,21 @@ var app = express();
 // Bootstrap application settings
 app.use(express.static('./public')); // load UI from public folder
 app.use(bodyParser.json());
+
+
+textToSpeech = new TextToSpeechV1({
+    username: process.env.TEXT_TO_SPEECH_USERNAME || '<username>',
+    password: process.env.TEXT_TO_SPEECH_PASSWORD || '<password>',
+  });
+
+//api to get  audio from the text
+app.get('/api/synthesize', (req, res, next) => {
+	  const transcript = textToSpeech.synthesize(req.query);
+	  transcript.on('response', (response) => {
+	  });
+	  transcript.on('error', next);
+	  transcript.pipe(res);
+	});
 
 // Create the service wrapper
 
