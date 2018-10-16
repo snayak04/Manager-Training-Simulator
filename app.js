@@ -109,12 +109,16 @@ app.post('/api/message', function (req, res) {
 
 app.get('/api/message', function (req, res) {
   var query;
+  console.log(req.query.text);
+  if(req.query.text == 'employees'){
+    query = infoMenu.employees();
+  } else {
+    query = infoMenu.tasks();    
+  }
 
-  //query = infoMenu.employees();
-  query = infoMenu.tasks();
-  console.log("iz meeeee")
-  console.log(query);
-  console.log("end");
+  //console.log("iz meeeee")
+  //console.log(query);
+  //console.log("end");
   res.json(query);
 });
 
