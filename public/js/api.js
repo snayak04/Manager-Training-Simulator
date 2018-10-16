@@ -46,6 +46,14 @@ var Api = (function() {
     http.onreadystatechange = function() {
       if (http.readyState === 4 && http.status === 200 && http.responseText) {
         Api.setResponsePayload(http.responseText);
+        //Parsing and Sending the result obtained from server to TEXT TO SPEECH API
+        var reponseJson = JSON.parse(http.responseText);
+        var str = reponseJson.output.text;
+  	  	console.log(reponseJson);
+  	  	str = str.replace(/<br>/gi, '');  //removing html tags to avoid issues
+  	  	str = str.replace(/&ensp;/gi, '');
+  	  	sendRequestToTextToSpeechApi(str);
+  	  	console.log(str);
       }
     };
 
@@ -59,4 +67,31 @@ var Api = (function() {
     // Send request
     http.send(params);
   }
+  
+  //method to send the text to TEXT TO SPEECH API, and receive the audio output
+  function sendRequestToTextToSpeechApi(text, context) {
+	// Build request payload
+	var param = {};
+	param.text = text;
+	param.voice = 'en-US_AllisonVoice';
+	param.accept = 'audio/mp3'
+
+	var http = new XMLHttpRequest();
+	http.open('GET', '/api/synthesize?text=' + text
+			+ '&voice=en-US_AllisonVoice&accept=audio/mp3', true);
+	http.responseType = 'blob';
+	http.onreadystatechange = function() {
+		if (http.readyState === 4 && http.status === 200) {
+			console.log(http.response);
+			var blob = http.response;
+			var audio = document.getElementById('audio');
+			var url = window.URL.createObjectURL(blob);
+			audio.setAttribute('src', url);
+			audio.setAttribute('type', 'audio/mp3');
+		}
+	};
+
+	var params = JSON.stringify(param);
+	http.send(params);
+   }
 }());
