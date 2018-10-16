@@ -14,3 +14,5 @@ env:
   - BX_API=https://api.ng.bluemix.net
   - BX_ORGANIZATION=WatsonPlatformServices
   - BX_SPACE=demos
+  - DATABASE_NAME=MSTravis
+  - DATABASE_URI=mongodb+srv://user:user_password1@managersimulator-hnsxz.mongodb.net/MSTravis?retryWrites=true
