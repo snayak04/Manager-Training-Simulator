@@ -69,22 +69,15 @@ var Api = (function() {
   }
 
   // Send a message request to the server
-  function getRequest(menu, context) {
+  function getRequest(text, context) {
     // Build request payload
-    var payloadToWatson = {};
-    if (menu) {
-      payloadToWatson.input = {
-        text: menu
-      };
-    }
-
-    if (context) {
-      payloadToWatson.context = context;
-    }
+    // Build request payload
+    var param = {};
+    param.text = text;
 
     // Built http request
     var http = new XMLHttpRequest();
-    http.open('GET', messageEndpoint, true);
+    http.open('GET', '/api/message?text=' + text, true)
     http.setRequestHeader('Content-type', 'application/json');
     http.onreadystatechange = function() {
       if (http.readyState === 4 && http.status === 200 && http.responseText) {
@@ -92,14 +85,9 @@ var Api = (function() {
       }
     };
 
-    var params = JSON.stringify(payloadToWatson);
-    // Stored in variable (publicly visible through Api.getRequestPayload)
-    // to be used throughout the application
-    if (Object.getOwnPropertyNames(payloadToWatson).length !== 0) {
-      Api.setRequestPayload(params);
-    }
+    var params = JSON.stringify(param);
 
     // Send request
-    http.send(params);
+    http.send(param);
   }
 }());
