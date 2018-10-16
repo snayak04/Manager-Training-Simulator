@@ -5,9 +5,10 @@ const mongoose = require('mongoose');
 const assistant = require('../src/js/assistant.js');
 
 
-insertNewTask = (title, state, employeeIds, points, startTime, approxEndTime, timeLeft) => {
+insertNewTask = (title, user_id, state, employeeIds, points, startTime, approxEndTime, timeLeft) => {
     var newTask = new tasks({
       _id: mongoose.Types.ObjectId(),
+	  user_id: user_id,
       title: title,
       state: state,
       employeeIds: employeeIds,
