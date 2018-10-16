@@ -132,7 +132,7 @@ function updateMessage(input, response) {
   if (!response.output) {
     response.output = {};
   } 
-  
+  response.output.textToSpeechFlag = "Y"; //flag to enable Text to Speech
   var intent;
   if (response.intents && response.intents[0]) {
     intent = response.intents[0];
@@ -154,6 +154,7 @@ function updateMessage(input, response) {
     responseText = intentHandlers.wait();
     break;
   case 'TaskInfo':
+	response.output.textToSpeechFlag = "N";
     responseText = intentHandlers.taskInfo();
     break;
   case 'ProjectInfo':

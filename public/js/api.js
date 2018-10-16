@@ -52,7 +52,12 @@ var Api = (function() {
   	  	console.log(reponseJson);
   	  	str = str.replace(/<br>/gi, '');  //removing html tags to avoid issues
   	  	str = str.replace(/&ensp;/gi, '');
-  	  	sendRequestToTextToSpeechApi(str);
+  	  	var speak = document.getElementById('Speak');
+  	  	if(speak && speak.checked == true){
+  	  		if(reponseJson.output.textToSpeechFlag != 'N')
+  	  			sendRequestToTextToSpeechApi(str);
+  	  	}
+  	  		
   	  	console.log(str);
       }
     };
