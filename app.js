@@ -67,12 +67,12 @@ passport.deserializeUser(User.deserializeUser());
 
 
 // Bootstrap application settings
-var options = {
+/*var options = {
   index: "login.html"
-};
+};*/
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(express.static('./public', options)); // load UI from public folder
+app.use(express.static('./public')); // load UI from public folder
 app.use(require('./routes'));
 
 
@@ -85,6 +85,8 @@ var assistant = new AssistantV1({
 // Endpoint to be call from the client side
 app.post('/api/message', function (req, res) {
   var workspace = process.env.WORKSPACE_ID || '<workspace-id>';
+  console.log(req.user)
+  var user = req.user
   if (!workspace || workspace === '<workspace-id>') {
     return res.json({
       'output': {
