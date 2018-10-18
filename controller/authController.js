@@ -1,6 +1,7 @@
 var mongoose = require("mongoose");
 var passport = require("passport");
 var User = require("../models/user");
+var initProject = require("../src/js/initProject")
 var root = 'views';
 
 var userController = {};
@@ -27,6 +28,9 @@ userController.doRegister = function(req, res) {
     if (err) {
       return res.sendFile('register.html', { user : user , 'root': root});
     }
+	
+	//Create a new initial project for the new user
+	initProject.initialize(user);
 
     passport.authenticate('local')(req, res, function () {
       res.redirect('/');

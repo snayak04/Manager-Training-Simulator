@@ -32,9 +32,7 @@ mongoose.connect(String(process.env.DATABASE_URI), { useNewUrlParser: true },
   });
 
 // ###TODO: Loading all models - This would go under the user later:
-const initProject = require('./src/js/initProject');
-
-const intentHandlers = initProject.initialize();
+const intentHandlers = require('./src/js/intents');
 // async function handler (req, res) {
 //   let document
 //   try {

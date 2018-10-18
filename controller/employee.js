@@ -16,7 +16,7 @@ var insertNewEmployee = (name, user_id, workingOn, position, skill, satisfaction
     });
     employee.save();
     assistant.addEmployee(employee.name);
-    return employee;
+    return employee._id;
 };
 
 module.exports = {insertNewEmployee};

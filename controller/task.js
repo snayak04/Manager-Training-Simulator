@@ -20,7 +20,7 @@ insertNewTask = (title, user_id, state, employeeIds, points, startTime, approxEn
     newTask.save();
     assistant.addTask(newTask.title);
     
-    return newTask;
+    return newTask._id;
   }
 
 
