@@ -138,7 +138,7 @@ function updateMessage(input, response) {
   }
   
   
-  
+  //console.log(intent.intent);
   switch(intent.intent){
   case 'Wait':
     responseText = intentHandlers.wait();
@@ -154,6 +154,9 @@ function updateMessage(input, response) {
     break;
   case 'AssignTask':
     responseText = intentHandlers.assignTask(response);
+    break;
+  case 'AssignStoryPoints':
+    responseText = intentHandlers.assignStoryPoints(response);
     break;
   default:
     //Do nothing

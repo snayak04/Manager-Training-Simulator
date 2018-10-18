@@ -329,6 +329,54 @@ module.exports = {
     }
     
     return returnMessage;
+  },
+
+  //Assigns story points to a given task.
+  assignStoryPoints: function (response) {
+    var returnMessage;
+    //Get highest confidence employee and task entity.
+    var points;
+    var task;
+    var entities = response.entities;
+   console.log(response);// AgileRating.analyzeAndScore(entities);
+   console.log("entities: " +entities);
+    entities.forEach(function(entity){
+      console.log(entity.entity);
+      if (entity.entity == 'points'){
+        if(!points){
+          points = entity;
+        }else if(entity.confidence > points.confidence){
+          //new value has higher confidence, replace old one.
+          points = entity;
+        }
+      }else if(entity.entity == 'tasks'){
+        if(!task){
+          task = entity;
+        }else if(entity.confidence > task.confidence){
+          task = entity;
+        }
+      }
+    });
+    
+    if(!points){
+      returnMessage = 'I think you\'re trying to assign a story point to a task, but I don\'t know what tasks';
+    }else if(!task){
+      returnMessage = 'I think you\'re trying to assign story point of' + points.value + ', but I don\'t know for which task';
+    }else{
+      //get the full objects so we have all the info we need
+      database.getTask(task.value, function(taskObject){
+          if(taskObject.state == 'Incomplete'){ //task is complete
+            database.updateTaskStoryPoints(taskObject._id, points.value);
+            returnMessage = 'Assigned task \'' + taskObject.title + '\' a story point of ' + taskObject.points;
+          }else{
+            returnMessage = 'The task \'' + taskObject.title + '\' is already in progress, testing, or completed!';
+          }
+        });
+      
+      deasync.loopWhile(function(){return returnMessage == null;});
+    }
+    
+    return returnMessage;
   }
   
 };
