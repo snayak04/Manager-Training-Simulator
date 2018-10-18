@@ -33,17 +33,19 @@ AgileRating.prototype.getScore = () => {
  * @param {JSON object that is returned by the IBM Assistant} context 
  */
 AgileRating.prototype.listen = (context) => {
-    var intent = context.intents[0].intent;
+    var intent;
+    if(context.intents[0].intent)
+        intent = context.intents[0].intent;
     var entities = context.entities; //This can have multiple entities.
-    var task;
-    var employee;
+    var task = "";
+    var employees = "";
     //console.log(entities);
     for(var i  = 0; i< entities.length; i++){
-        console.log(entities[i]);
+        // console.log(entities[i]);
         if (entities[i].entity === 'tasks')
             task = entities[i].value
-        else  if (entities[i].entity === 'employee')
-            task = entities[i].value   
+        else  if (entities[i].entity === 'employees')
+            employees = entities[i].value   
     }
    // console.log(context);
     switch(intent){
