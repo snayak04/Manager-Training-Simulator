@@ -9,16 +9,14 @@ module.exports = {
 	    database.getAllEmployees(function(result){
 	      //process.stdout.write("Keys = " + Object.keys(result[0]))
 	      result.forEach(function(employee){
+          string += '<div class=\"employeebox\">';
 	        string += employee.name+':';
-	        string += '<br>&ensp;Title: ' + employee.jobTitle;
+	        string += '<br>' + employee.jobTitle;
 	      
 	        var job = employee.workingOn;
-	        if(job == null){job = 'nothing';}
+	        if(job == null){job = 'Nothing';}
 	        string += '<br>&ensp;Working on: ' + job;
-	      
-	        string += '<br>&ensp;Skill: '+employee.skill;
-	        string += '<br>&ensp;Satisfaction: '+employee.satisfaction;
-	        string += '<br><br>';
+	        string += '</div>';
 	      });
 	      sync = 1;
 	    });
@@ -33,13 +31,14 @@ module.exports = {
     database.getAllTasks(function(result){
       //process.stdout.write("Keys = " + Object.keys(result[0]));
       result.forEach(function(task){
-        string += '<br>' + task.title + ':';
+        string += '<div class=\"taskbox\">';
+        string += '<h4>' + task.title + '</h4>';
         string += '<br>&ensp;State: ' + task.state + '<br>';
         if(task.state != 'Complete'){
           string += '&ensp;Time Left: ' + task.timeLeft + ' man-hours';
           string += '<br>&ensp;Employees: ';
           if(task.employeeIds.length == 0){
-            string+='none';
+            string+='None';
           }else{
             var firstEmployee = true;
             task.employeeIds.forEach(function(id){
@@ -60,8 +59,9 @@ module.exports = {
 //          if(eta == -1){eta = 'never';}
 //          string += '<br>&ensp;ETA: ' + eta;
           
-          string += '<br>';
+          string += '</br>';
         }
+        string += '</div>';
       });
       sync = 2;
     });

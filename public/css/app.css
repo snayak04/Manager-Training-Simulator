@@ -36,6 +36,24 @@ li:hover {
     background-color: #111;
 }
 
+/******************************************/
+
+.employeebox {
+  background-color: red;
+  width: 25%;
+  float: left;
+  margin: 1px;
+  display:inline;
+}
+
+.taskbox {
+  background-color: red;
+  width: 90%;
+  float: left;
+  margin: 1px;
+}
+
+/******************************************/
 .disclaimer {
   font-size: 0.75rem;
   padding: 0.5rem;
@@ -93,11 +111,12 @@ li:hover {
   text-align: center;
 }
 
+/*********************/
 .info-column-holder {
   height: 90%;
   float: left;
   padding: 0.9375rem 0 0.625rem 0;
-  margin: auto;
+  margin: .5rem;
   text-align: left;
   width: 60%;
   background-color: darkgrey;
@@ -107,18 +126,20 @@ li:hover {
   height: 90%;
   padding: 0.9375rem 0 0.625rem 0;
   margin: auto;
-  text-align: left;
-  width: 70%;
+  text-align: center;
+  width: 100%;
   background-color: lightblue;
+  overflow-y: auto;
 }
 
+/***********************************/
 .chat-column {
   height: 90%;
   float: left;
   padding: 0.9375rem 0 0.625rem 0;
   margin: auto;
   text-align: left;
-  min-width: 30%;
+  width: 35%;
 }
 
 #scrollingChat {
