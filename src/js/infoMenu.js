@@ -57,9 +57,9 @@ module.exports = {
               deasync.loopWhile(function(){!done;});
             });
           }
-          var eta = calculateFinishTime(task);
-          if(eta == -1){eta = 'never';}
-          string += '<br>&ensp;ETA: ' + eta;
+//          var eta = calculateFinishTime(task);
+//          if(eta == -1){eta = 'never';}
+//          string += '<br>&ensp;ETA: ' + eta;
           
           string += '</br>';
         }
