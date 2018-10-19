@@ -17,11 +17,11 @@ var randomizeEmployees = (user)=>{
 //TODO:: Returns tasks - gotta make more efficient; didn;t have enough time..
 var generateTasks = (user)=>{
   var task = require('../../controller/task');
-  return [task.insertNewTask('Code the new level', user._id,'Backlog', [], null, null, null, 10),
-  task.insertNewTask('Add a battle royale mode', user._id, 'Backlog', [], null, null, null, 15),
-  task.insertNewTask('Optimize performance', user._id, 'Backlog', [], null, null, null, 10),
-  task.insertNewTask('Update user interface', user._id, 'Backlog', [], null, null, null, 10),
-  task.insertNewTask('Add random map generation', user._id, 'Backlog', [], null, null, null, 20),
+  return [task.insertNewTask('Code the new level', user._id,'Incomplete', [], null, null, null, 10),
+  task.insertNewTask('Add a battle royale mode', user._id, 'Incomplete', [], null, null, null, 15),
+  task.insertNewTask('Optimize performance', user._id, 'Incomplete', [], null, null, null, 10),
+  task.insertNewTask('Update user interface', user._id, 'Incomplete', [], null, null, null, 10),
+  task.insertNewTask('Add random map generation', user._id, 'Incomplete', [], null, null, null, 20),
   ]
 }
 

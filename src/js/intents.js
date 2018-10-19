@@ -70,11 +70,11 @@ function finishTasks(finishedTasks){
   });
 }
 
-function scoreProductivity(){
+function scoreProductivity(user){
   //TODO Make this better
   var done = false;
   var employeesWorking;
-  database.getAllEmployees(function(employees){
+  database.getAllEmployees(user, function(employees){
     employeesWorking = employees.length;
     employees.forEach(function(employee){
       if(!employee.workingOn){
@@ -99,17 +99,17 @@ module.exports = {
     -The day ending
     -An employee finishing their task
   */
-  wait: function () {
+  wait: function (user) {
     var returnMessage = null;
     var done = false;
-    database.getProjectState(function(projects){
+    database.getProjectState(user, function(projects){
       //Get the hours left in the day
       var project = projects[0]; //Assuming one project for now
       var currentTime = project.currentTime;
       var hoursLeftInDay = config.DAY_END_TIME - currentTime.getHours();
      // console.log(projects);
       //Check if any of the tasks will finish before the day ends
-      database.getAllTasks(function(tasks) {
+      database.getAllTasks(user, function(tasks) {
         var shortestFinishTime = null;
         tasks.forEach(function(task){
           //Don't care about complete tasks
@@ -134,7 +134,7 @@ module.exports = {
           
           //Build Message
           var satisfactionRating = scoreSatisfaction();
-          var productivityRating = scoreProductivity();
+          var productivityRating = scoreProductivity(user);
           returnMessage = 'It is the end of the day. Here is your rating for the day:<br>'
             + '&ensp;Productivity Rating: ' + productivityRating + '<br>'
             + '&ensp;Satisfaction Rating: ' + satisfactionRating + '<br>'
@@ -174,10 +174,10 @@ module.exports = {
     return returnMessage;
   },
     
-  taskInfo: function () {
+  taskInfo: function (user) {
     var sync = 0;
     var string = '';
-    database.getAllTasks(function(result){
+    database.getAllTasks(user, function(result){
       //process.stdout.write("Keys = " + Object.keys(result[0]));
       result.forEach(function(task){
         string += '<br>' + task.title + ':';
@@ -216,10 +216,10 @@ module.exports = {
     return string;
   },
     
-  projectInfo: function () {
+  projectInfo: function (user) {
     var sync;
     var string = '';
-    database.getProjectState(function(result){
+    database.getProjectState(user, function(result){
       var project = result[0];
       //process.stdout.write("Keys = " + Object.keys(project))
       string += project.title + ':';
@@ -242,10 +242,10 @@ module.exports = {
     return string;
   },
     
-  employeeInfo: function () {
+  employeeInfo: function (user) {
     var string = '';
     var sync;
-    database.getAllEmployees(function(result){
+    database.getAllEmployees(user, function(result){
       //process.stdout.write("Keys = " + Object.keys(result[0]))
       result.forEach(function(employee){
         string += employee.name+':';
@@ -269,7 +269,7 @@ module.exports = {
   /* Assign Task Intent
     Assigns a specified employee to the specified task
   */
-  assignTask: function (response) {
+  assignTask: function (user, response) {
     var returnMessage;
     //Get highest confidence employee and task entity.
     var employee;
@@ -300,8 +300,8 @@ module.exports = {
       returnMessage = 'I think you\'re trying to assign a task to ' + employee.value + ', but I don\'t know for which task';
     }else{
       //get the full objects so we have all the info we need
-      database.getTask(task.value, function(taskObject){
-        database.getEmployee(employee.value, function(employeeObject){
+      database.getTask(user, task.value, function(taskObject){
+        database.getEmployee(user, employee.value, function(employeeObject){
           var workers = taskObject.employeeIds;
           //check if employee is already working
           var alreadyWorking = false;
