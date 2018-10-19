@@ -14,9 +14,11 @@ module.exports = {
 	        string += '<br>' + employee.jobTitle;
 	      
 	        var job = employee.workingOn;
-	        if(job == null){job = 'Nothing';}
-	        string += '<br>&ensp;Working on: ' + job;
-	        string += '</div>';
+	        if(job != null){
+	         string += '<br>&ensp;Working on: ' + job;
+          }
+
+          string += '</div>';
 	      });
 	      sync = 1;
 	    });
@@ -38,7 +40,7 @@ module.exports = {
           string += '&ensp;Time Left: ' + task.timeLeft + ' man-hours';
           string += '<br>&ensp;Employees: ';
           if(task.employeeIds.length == 0){
-            string+='None';
+            string+='none';
           }else{
             var firstEmployee = true;
             task.employeeIds.forEach(function(id){
@@ -55,9 +57,9 @@ module.exports = {
               deasync.loopWhile(function(){!done;});
             });
           }
-//          var eta = calculateFinishTime(task);
-//          if(eta == -1){eta = 'never';}
-//          string += '<br>&ensp;ETA: ' + eta;
+          var eta = calculateFinishTime(task);
+          if(eta == -1){eta = 'never';}
+          string += '<br>&ensp;ETA: ' + eta;
           
           string += '</br>';
         }
