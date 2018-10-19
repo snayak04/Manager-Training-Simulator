@@ -83,7 +83,6 @@ var assistant = new AssistantV1({
 // Endpoint to be call from the client side
 app.post('/api/message', function (req, res) {
   var workspace = process.env.WORKSPACE_ID || '<workspace-id>';
-  console.log(req.user)
   var user = req.user
   if (!workspace || workspace === '<workspace-id>') {
     return res.json({
@@ -124,7 +123,7 @@ app.post('/api/message', function (req, res) {
       }
     }
 
-    return res.json(updateMessage(payload, data));
+    return res.json(updateMessage(payload, data, user));
   });
 });
 
@@ -135,7 +134,7 @@ app.post('/api/message', function (req, res) {
  * @param  {Object} response The response from the Assistant service
  * @return {Object}          The response with the updated message
  */
-function updateMessage(input, response) {
+function updateMessage(input, response, user) {
   var responseText = null;
   if (!response.output) {
     response.output = {};
@@ -159,19 +158,19 @@ function updateMessage(input, response) {
   
   switch(intent.intent){
   case 'Wait':
-    responseText = intentHandlers.wait();
+    responseText = intentHandlers.wait(user);
     break;
   case 'TaskInfo':
-    responseText = intentHandlers.taskInfo();
+    responseText = intentHandlers.taskInfo(user);
     break;
   case 'ProjectInfo':
-    responseText = intentHandlers.projectInfo();
+    responseText = intentHandlers.projectInfo(user);
     break;
   case 'EmployeeInfo':
-    responseText = intentHandlers.employeeInfo();
+    responseText = intentHandlers.employeeInfo(user);
     break;
   case 'AssignTask':
-    responseText = intentHandlers.assignTask(response);
+    responseText = intentHandlers.assignTask(user, response);
     break;
   default:
     //Do nothing
