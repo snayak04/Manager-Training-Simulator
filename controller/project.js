@@ -1,6 +1,7 @@
 var {projects} = require('../models/projects');
 var {tasks} = require('../models/tasks');
 var {employees} = require('../models/employees'); 
+const mongoose = require('mongoose');
 
 //Assuming there is only 1 project at a time.
 var getProjectName = projects.findOne((err, res)=>{
@@ -15,7 +16,6 @@ var getProject = projects.findOne((err, res) =>{
 })
 
 insertNewProject = (title, user_id, employeeIds, taskIds, startDate, deadline, currentTime) => {
-	console.log('test2');
     var newProject = new projects({
       _id: mongoose.Types.ObjectId(),
       title: title,
@@ -26,7 +26,6 @@ insertNewProject = (title, user_id, employeeIds, taskIds, startDate, deadline, c
       deadline: deadline,
       currentTime: currentTime
     });
-	console.log('test3');
     newProject.save();
     
     return newProject;

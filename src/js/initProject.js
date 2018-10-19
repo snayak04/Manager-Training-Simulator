@@ -30,7 +30,7 @@ var generateProject = (employees, tasks, user)=>{
   startDate = new Date('2018-09-24T09:00:00');
   deadline = new Date('2018-09-28T17:00:00');
   
-  newProject = project.insertNewProject('Sprint 1', user.user_id, employees, tasks, startDate, deadline, startDate);
+  newProject = project.insertNewProject('Sprint 1', user._id, employees, tasks, startDate, deadline, startDate);
   return newProject;
 }
 
@@ -56,7 +56,6 @@ function initialize(user){
   var employees = randomizeEmployees(user);
   var tasks = generateTasks(user);
   var project = generateProject(employees, tasks, user);
-  console.log(project);
 }
 
 module.exports = {
