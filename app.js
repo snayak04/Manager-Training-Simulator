@@ -30,13 +30,11 @@ mongoose.connect(String(process.env.DATABASE_URI), { useNewUrlParser: true },
   (err)=>{
     if (err)
       throw err;
-    console.log("Databse Connected Successfully");
+    console.log("Database Connected Successfully");
   });
 
 // ###TODO: Loading all models - This would go under the user later:
-const initProject = require('./src/js/initProject');
-
-const intentHandlers = initProject.initialize();
+const intentHandlers = require('./src/js/intents');
 // async function handler (req, res) {
 //   let document
 //   try {
@@ -51,9 +49,32 @@ const intentHandlers = initProject.initialize();
 
 var app = express();
 
+var passport = require('passport');
+var LocalStrategy = require('passport-local').Strategy;
+
+app.use(require('express-session')({
+    secret: 'keyboard cat',
+    resave: false,
+    saveUninitialized: false
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+
+var User = require('./models/user');
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+
 // Bootstrap application settings
-app.use(express.static('./public')); // load UI from public folder
+/*var options = {
+  index: "login.html"
+};*/
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.static('./public')); // load UI from public folder
+app.use(require('./routes'));
+
 
 // Create the service wrapper
 
@@ -64,6 +85,7 @@ var assistant = new AssistantV1({
 // Endpoint to be call from the client side
 app.post('/api/message', function (req, res) {
   var workspace = process.env.WORKSPACE_ID || '<workspace-id>';
+  var user = req.user
   if (!workspace || workspace === '<workspace-id>') {
     return res.json({
       'output': {
@@ -103,7 +125,7 @@ app.post('/api/message', function (req, res) {
       }
     }
 
-    return res.json(updateMessage(payload, data));
+    return res.json(updateMessage(payload, data, user));
   });
 });
 
@@ -128,7 +150,7 @@ app.get('/api/message', function (req, res) {
  * @param  {Object} response The response from the Assistant service
  * @return {Object}          The response with the updated message
  */
-function updateMessage(input, response) {
+function updateMessage(input, response, user) {
   var responseText = null;
   if (!response.output) {
     response.output = {};
@@ -152,19 +174,19 @@ function updateMessage(input, response) {
   
   switch(intent.intent){
   case 'Wait':
-    responseText = intentHandlers.wait();
+    responseText = intentHandlers.wait(user);
     break;
   case 'TaskInfo':
-    responseText = intentHandlers.taskInfo();
+    responseText = intentHandlers.taskInfo(user);
     break;
   case 'ProjectInfo':
-    responseText = intentHandlers.projectInfo();
+    responseText = intentHandlers.projectInfo(user);
     break;
   case 'EmployeeInfo':
-    responseText = intentHandlers.employeeInfo();
+    responseText = intentHandlers.employeeInfo(user);
     break;
   case 'AssignTask':
-    responseText = intentHandlers.assignTask(response);
+    responseText = intentHandlers.assignTask(user, response);
     break;
   default:
     //Do nothing

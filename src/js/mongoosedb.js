@@ -5,8 +5,8 @@ var {employees} = require('../../models/employees');
 
 
 module.exports = {
-  getEmployee: function(employeeName, callback){
-    var search = { name: employeeName };
+  getEmployee: function(user, employeeName, callback){
+    var search = { name: employeeName, user_id: user._id };
     employees.find(search, function(err, result){
       return callback(result[0]);
     });
@@ -16,15 +16,15 @@ module.exports = {
       return callback(result);
     });
   },
-  getAllEmployees: function(callback){
+  getAllEmployees: function(user, callback){
     //Empty query to get every employee
-    var search = {};
+    var search = {user_id: user._id};
     employees.find(search, function(err, result){
       return callback(result);
     });
   },
-  getTask: function(taskTitle, callback){
-    var search = { title: taskTitle };
+  getTask: function(user, taskTitle, callback){
+    var search = { title: taskTitle, user_id: user._id };
     tasks.find(search, function(err, result){
       return callback(result[0]);
     });
@@ -34,16 +34,16 @@ module.exports = {
       return callback(result);
     });
   },
-  getAllTasks: function(callback){
+  getAllTasks: function(user, callback){
     //Empty query to get every task
-    var search = {};
+    var search = { user_id: user._id};
     tasks.find(search, function(err, result){
       return callback(result);
     });
   },
   //For now just assume only one project
-  getProjectState: function(callback){
-    var search = {};
+  getProjectState: function(user, callback){
+    var search = { user_id: user._id};
     projects.find(search, function(err, result){
       return callback(result);
     });
