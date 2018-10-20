@@ -2,7 +2,6 @@
 // all display and behaviors of the conversation column of the app.
 /* eslint no-unused-vars: "off" */
 /* global Api: true, Common: true*/
-
 var ConversationPanel = (function () {
   var settings = {
     selectors: {
@@ -138,6 +137,7 @@ var ConversationPanel = (function () {
       });
       // Move chat to the most recent messages when new messages are added
       scrollToChatBottom();
+      showdata('employees')
     }
   }
 
@@ -254,5 +254,18 @@ var ConversationPanel = (function () {
       inputBox.value = '';
       Common.fireEvent(inputBox, 'input');
     }
+  }
+
+  // Handles the menu employee selection
+  function showdata(menu) {
+      // Retrieve the context from the previous server response
+      var context;
+      var latestResponse = Api.getResponsePayload();
+      if (latestResponse) {
+        context = latestResponse.context;
+      }
+
+      // Send the user message
+      Api.getRequest(menu, context);
   }
 }());

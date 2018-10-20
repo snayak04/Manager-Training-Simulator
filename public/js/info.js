@@ -33,13 +33,11 @@ var InfoPanel = (function () {
     var currentRequestPayloadSetter = Api.setRequestPayload;
     Api.setRequestPayload = function (newPayloadStr) {
       currentRequestPayloadSetter.call(Api, newPayloadStr);
-      console.log("setrequestzz");
     };
 
     var currentResponsePayloadSetter = Api.setResponsePayload;
     Api.setResponsePayload = function (newPayloadStr) {
       currentResponsePayloadSetter.call(Api, newPayloadStr);
-      console.log("setresponsezzz");
       displayMessage(JSON.parse(newPayloadStr), settings.authorTypes.watson);
     };
   }
@@ -47,7 +45,6 @@ var InfoPanel = (function () {
   // Handles the menu employee selection
   function showdata(menu) {
       // Retrieve the context from the previous server response
-      console.log(menu)
       var context;
       var latestResponse = Api.getResponsePayload();
       if (latestResponse) {
@@ -60,13 +57,10 @@ var InfoPanel = (function () {
 
   // Display a user or Watson message that has just been sent/received
   function displayMessage(newPayload, typeValue) {
-    console.log(typeValue);
     var isUser = isUserMessage(typeValue);
-    console.log("asdfjalskdjff");
     var textExists = (newPayload.input && newPayload.input.text) ||
       (newPayload.output && newPayload.output.text);
       document.getElementById("info").innerHTML = newPayload;
-      console.log(newPayload);
   }
 
   // Checks if the given typeValue matches with the user "name", the Watson "name", or neither
