@@ -133,9 +133,9 @@ app.get('/api/message', function (req, res) {
   var query;
   console.log(req.query.text);
   if(req.query.text == 'employees'){
-    query = infoMenu.employees();
+    query = infoMenu.employees(req.user);
   } else {
-    query = infoMenu.tasks();    
+    query = infoMenu.tasks(req.user);    
   }
 
   //console.log("iz meeeee")

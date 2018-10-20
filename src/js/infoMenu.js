@@ -3,10 +3,10 @@ var deasync = require('deasync');
 var config = require('./config');
 
 module.exports = {
-	employees: function () {
+	employees: function (user) {
 	    var string = '';
 	    var sync;
-	    database.getAllEmployees(function(result){
+	    database.getAllEmployees(user, function(result){
 	      //process.stdout.write("Keys = " + Object.keys(result[0]))
 	      result.forEach(function(employee){
           string += '<div class=\"employeebox\">';
@@ -27,10 +27,10 @@ module.exports = {
 	    return string;
 	},
 
-	tasks: function () {
+	tasks: function (user) {
     var sync = 0;
     var string = '';
-    database.getAllTasks(function(result){
+    database.getAllTasks(user, function(result){
       //process.stdout.write("Keys = " + Object.keys(result[0]));
       result.forEach(function(task){
         string += '<div class=\"taskbox\">';
