@@ -25,8 +25,9 @@ function addEmployee(newEmployee){
   };
   
   assistant.createValue(params, function(err, response) {
-    if (err) throw err;
-    return response;
+    if (!err){
+		return response;
+	}
   });
   
 }
@@ -54,8 +55,9 @@ function addTask(newTask){
   };
   
   assistant.createValue(params, function(err, response) {
-    if (err) throw err;
-    return response;
+    if(!err){
+		return response;
+	}
   });
   
 }
@@ -82,8 +84,9 @@ function addStoryPoints(point){
   };
   
   assistant.createValue(params, function(err, response) {
-    if (err) throw err;
-    return response;
+    if (!err){
+		return response;
+	}
   });
   
 }

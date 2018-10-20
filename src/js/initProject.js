@@ -4,37 +4,34 @@ const assistant = require('./assistant');
 var {projects} = require('../../models/projects');
 var {tasks} = require('../../models/tasks');
 var employee = require('../../controller/employee'); 
+var project = require('../../controller/project');
 /*TODO: 
 This would randomize employees from a built in list and return an array with random employees
 */
-var randomizeEmployees = ()=>{
-  return [employee.insertNewEmployee('John', null, 'Software Engineer', 85, 80),
-  employee.insertNewEmployee('Harry', null, 'Software Intern', 30, 75),
-  employee.insertNewEmployee('Amanda', null, 'Software Engineer', 75, 70)]
+var randomizeEmployees = (user)=>{
+  return [employee.insertNewEmployee('John', user._id, null, 'Software Engineer', 85, 80),
+  employee.insertNewEmployee('Harry', user._id, null, 'Software Intern', 30, 75),
+  employee.insertNewEmployee('Amanda', user._id, null, 'Software Engineer', 75, 70)]
 };
 
 //TODO:: Returns tasks - gotta make more efficient; didn;t have enough time..
-var generateTasks = ()=>{
+var generateTasks = (user)=>{
   var task = require('../../controller/task');
-  return [task.insertNewTask('Code the new level', 'Backlog', [], null, null, null, 10),
-  task.insertNewTask('Add a battle royale mode', 'Backlog', [], null, null, null, 15),
-  task.insertNewTask('Optimize performance', 'Backlog', [], null, null, null, 10),
-  task.insertNewTask('Update user interface', 'Backlog', [], null, null, null, 10),
-  task.insertNewTask('Add random map generation', 'Backlog', [], null, null, null, 20),
+  return [task.insertNewTask('Code the new level', user._id,'Incomplete', [], null, null, null, 10),
+  task.insertNewTask('Add a battle royale mode', user._id, 'Incomplete', [], null, null, null, 15),
+  task.insertNewTask('Optimize performance', user._id, 'Incomplete', [], null, null, null, 10),
+  task.insertNewTask('Update user interface', user._id, 'Incomplete', [], null, null, null, 10),
+  task.insertNewTask('Add random map generation', user._id, 'Incomplete', [], null, null, null, 20),
   ]
 }
 
 // Only initializes the project
-var generateProject = (employees, tasks)=>{
-  return new projects({
-    _id: new mongoose.Types.ObjectId(),
-    title: 'Sprint 2',
-    employees: employees,
-    tasks: tasks,
-    startDate: new Date('2018-09-24T09:00:00'),
-    deadline: new Date('2018-09-28T17:00:00'),
-    currentTime: new Date('2018-09-24T09:00:00')
-  });
+var generateProject = (employees, tasks, user)=>{
+  startDate = new Date('2018-09-24T09:00:00');
+  deadline = new Date('2018-09-28T17:00:00');
+  
+  newProject = project.insertNewProject('Sprint 1', user._id, employees, tasks, startDate, deadline, startDate);
+  return newProject;
 }
 
 //Flushes the old stuff from database and Assistant
@@ -54,14 +51,11 @@ var reset = ()=>{
   deasync.loopWhile(function(){return asyncDone.indexOf(false) > -1;});
 }
 
-function initialize(){
-  reset();
-  var employees = randomizeEmployees();
-  var tasks = generateTasks();
-  var project = generateProject(employees, tasks);
-  project.save();
-  
-  return require('./intents');
+function initialize(user){
+  //reset();
+  var employees = randomizeEmployees(user);
+  var tasks = generateTasks(user);
+  var project = generateProject(employees, tasks, user);
 }
 
 module.exports = {
