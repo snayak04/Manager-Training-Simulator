@@ -48,13 +48,14 @@ module.exports = {
               database.getEmployeeById(id, function(employee){
                 if(firstEmployee){
                   string += employee.name;
+                  console.log(string);
                   firstEmployee = false;
                 }else{
                   string += ', ' + employee.name;
                 }
                 done = true;
               });
-              deasync.loopWhile(function(){!done;});
+              deasync.loopWhile(function(){return !done;});
             });
           }
 //          var eta = calculateFinishTime(task);
