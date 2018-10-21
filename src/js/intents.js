@@ -200,7 +200,7 @@ module.exports = {
                 }
                 done = true;
               });
-              deasync.loopWhile(function(){!done;});
+              deasync.loopWhile(function(){return !done;});
             });
           }
           var eta = calculateFinishTime(task);
