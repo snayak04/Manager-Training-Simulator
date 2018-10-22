@@ -11,17 +11,26 @@
     <link rel="stylesheet" href="css/app.css">
   </head>
   
-  <form action="/register" method="POST">
-	<div class="container">
-	  <label for="username"><b>Username</b></label>
-	  <input type="text" placeholder="Enter Username" name="username" id="username" required autofocus>
 
-	  <label for="password"><b>Password</b></label>
-	  <input type="password" placeholder="Enter Password" name="password" id="password" required>
+  <div class="container" id="register">
+    <header>
+      <h1>Manager Training Simulator</h1>
+    </header>
+    <form action="/register" method="POST">
+      <label for="username"><b>Username</b></label>
+      <input type="text" placeholder="Enter Username" name="username" id="username" required autofocus>
 
-	  <button type="submit">Register</button>
-    </div>
-  </form>
+      <label for="password"><b>Password</b></label>
+      <input type="password" placeholder="Enter Password" name="password" id="password" required>
+
+      <button type="submit">Register</button>
+    </form>
+    
+    <form action ="/login" method="GET">
+        <button type="submit">Return to login page</button>
+    </form>
+  </div>
+
   
   
   </html>

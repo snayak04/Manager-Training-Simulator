@@ -4,6 +4,34 @@
   box-sizing: border-box;
 }
 
+button {
+    background-color: #1cb3a0;
+    color: white;
+    padding: 14px 20px;
+    border: none;
+    cursor: pointer;
+    width: 25%;
+    margin-top: 8px;
+}
+
+button:hover {
+    opacity: 0.8;
+}
+
+input[type=text], input[type=password] {
+    width: 25%;
+    padding: 12px 20px;
+    margin:auto;
+    display: block;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+
+.container {
+    padding: 16px;
+}
+
 body {
   font-family: Helvetica Neue for IBM, Helvetica Neue, Helvetica, Arial, sans-serif;
   margin: 0;
@@ -60,6 +88,13 @@ li:hover {
   padding: 0.5rem;
 }
 
+#login, #register {
+  width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
 #view-change-button {
   display: inline-block;
   position: absolute;
@@ -111,6 +146,8 @@ li:hover {
 #chat-column-holder {
   text-align: center;
 }
+
+
 
 /*********************/
 .info-column-holder {
