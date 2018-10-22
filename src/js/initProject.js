@@ -39,11 +39,12 @@ var reset = ()=>{
   var deasync = require('deasync');
   var database = require('./DBUtils');
 
-  var asyncDone = [false, false, false, false, false];
+  var asyncDone = [false, false, false, false, false, false];
   //Reset all collections in database
   asyncDone[0] = database.resetCollection('employees');
   asyncDone[1] = database.resetCollection('tasks');
   asyncDone[2] = database.resetCollection('projects');
+  asyncDone[5] = database.resetCollection('users');
   //Reset assistant entity values
   asyncDone[3] = assistant.clearEntityValues('tasks');
   asyncDone[4] = assistant.clearEntityValues('employees');
@@ -59,7 +60,8 @@ function initialize(user){
 }
 
 module.exports = {
-  initialize: initialize
+  initialize: initialize,
+  reset: reset
 };
 
 
