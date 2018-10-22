@@ -35,17 +35,7 @@ mongoose.connect(String(process.env.DATABASE_URI), { useNewUrlParser: true },
 const initProject = require('./src/js/initProject');
 
 const intentHandlers = initProject.initialize();
-// async function handler (req, res) {
-//   let document
-//   try {
-//     var emp = require('./models/employees');
-//     document = await emp.findOne()
-//   } catch (err) {
-//     logger.error('Mongo error', err)
-//     return res.status(500).send()
-//   }
-//    = require('./src/js/intents'); // make sure to initialize after loading the models!
-// }
+
 
 var app = express();
 
@@ -141,7 +131,7 @@ function updateMessage(input, response) {
   //console.log(intent.intent);
   switch(intent.intent){
   case 'Wait':
-    responseText = intentHandlers.wait();
+    responseText = intentHandlers.wait(agileRating);
     break;
   case 'TaskInfo':
     responseText = intentHandlers.taskInfo();

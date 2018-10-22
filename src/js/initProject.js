@@ -16,12 +16,16 @@ var randomizeEmployees = ()=>{
 //TODO:: Returns tasks - gotta make more efficient; didn;t have enough time..
 var generateTasks = ()=>{
   var task = require('../../controller/task');
-  return [task.insertNewTask('Code the new level', 'Backlog', [], null, null, null, 10),
-  task.insertNewTask('Add a battle royale mode', 'Backlog', [], null, null, null, 15),
-  task.insertNewTask('Optimize performance', 'Backlog', [], null, null, null, 10),
-  task.insertNewTask('Update user interface', 'Backlog', [], null, null, null, 10),
-  task.insertNewTask('Add random map generation', 'Backlog', [], null, null, null, 20),
-  ]
+  // return [task.insertNewTask('Code the new level', 'Backlog', [], null, null, null, 10),
+  // task.insertNewTask('Add a battle royale mode', 'Backlog', [], null, null, null, 15),
+  // task.insertNewTask('Optimize performance', 'Backlog', [], null, null, null, 10),
+  // task.insertNewTask('Update user interface', 'Backlog', [], null, null, null, 10),
+  // task.insertNewTask('Add random map generation', 'Backlog', [], null, null, null, 20),];
+  return [task.insertNewTask('code-the-new-level', 'Backlog', [], null, null, null, 10),
+  task.insertNewTask('add-a-battle-royale-mode', 'Backlog', [], null, null, null, 15),
+  task.insertNewTask('optimize-performance', 'Backlog', [], null, null, null, 10),
+  task.insertNewTask('update-user-interface', 'Backlog', [], null, null, null, 10),
+  task.insertNewTask('add-random-map-generation', 'Backlog', [], null, null, null, 20),];
 }
 
 // Only initializes the project
@@ -55,11 +59,11 @@ var reset = ()=>{
 }
 
 function initialize(){
-  reset();
-  var employees = randomizeEmployees();
-  var tasks = generateTasks();
-  var project = generateProject(employees, tasks);
-  project.save();
+  // reset();
+  // var employees = randomizeEmployees();
+  // var tasks = generateTasks();
+  // var project = generateProject(employees, tasks);
+  // project.save();
   
   return require('./intents');
 }

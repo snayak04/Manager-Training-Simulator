@@ -50,7 +50,7 @@ function addTask(newTask){
   var params = {
     workspace_id: workspace,
     entity: 'tasks',
-    value: newTask
+    value: newTask,
   };
   
   assistant.createValue(params, function(err, response) {
