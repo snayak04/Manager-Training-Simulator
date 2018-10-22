@@ -1,4 +1,4 @@
-var initProject = require('../../src/js/initProject);
+var initProject = require('../../src/js/initProject');
 
 casper.test.begin('Intents', 2, function suite(test) {
   
