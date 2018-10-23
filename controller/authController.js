@@ -8,7 +8,6 @@ var userController = {};
 
 // Restrict access to root page
 userController.home = function(req, res) {
-  console.log('Restrict root page for logged in users')
   if(req.user){
 	res.sendFile('index.html', { user : req.user, 'root': root});
   }
