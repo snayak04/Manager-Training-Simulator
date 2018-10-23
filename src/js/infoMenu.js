@@ -15,7 +15,7 @@ module.exports = {
 	      
 	        var job = employee.workingOn;
 	        if(job != null){
-	         string += '<br>&ensp;Working on: ' + job;
+	         string += '<br>Working on: ' + job;
           }
 
           string += '</div>';
@@ -35,10 +35,10 @@ module.exports = {
       result.forEach(function(task){
         string += '<div class=\"taskbox\">';
         string += '<h4>' + task.title + '</h4>';
-        string += '<br>&ensp;State: ' + task.state + '<br>';
+        string += '<br>State: ' + task.state + '<br>';
         if(task.state != 'Complete'){
-          string += '&ensp;Time Left: ' + task.timeLeft + ' man-hours';
-          string += '<br>&ensp;Employees: ';
+          string += 'Time Left: ' + task.timeLeft + ' man-hours';
+          string += '<br>Employees: ';
           if(task.employeeIds.length == 0){
             string+='none';
           }else{
@@ -58,9 +58,6 @@ module.exports = {
               deasync.loopWhile(function(){return !done;});
             });
           }
-//          var eta = calculateFinishTime(task);
-//          if(eta == -1){eta = 'never';}
-//          string += '<br>&ensp;ETA: ' + eta;
           
           string += '</br>';
         }
@@ -70,5 +67,40 @@ module.exports = {
     });
     deasync.loopWhile(function(){return sync <= 1;});
     return string;
+  },
+
+  projects: function (user) {
+    var sync;
+    var string = '';
+    database.getProjectState(user, function(result){
+      var project = result[0];
+      //process.stdout.write("Keys = " + Object.keys(project))
+      string += project.title + ':';
+      string += '<br>Start: ' + project.currentTime;
+      string += '<br>Deadline: ' + project.deadline;
+      var timeLeft = project.deadline - project.currentTime;
+      timeLeft /= 1000;
+      var min = (timeLeft / 60) % 60;
+      var hours = (timeLeft / 3600) % 24;
+      var days = Math.floor(timeLeft / 86400);
+      string += '<br>Time Remaining '+days+' days, '+hours+' hours, and '+min+' minutes';
+      string += "<br>Tasks: "
+
+      project.tasks.forEach(function(task){
+        var sync2;
+        database.getTaskById(task, function(result){
+          console.log(result.title);
+          string += "<br>" + result.title;
+          console.log(string);
+        });
+        sync2 = 1;
+        deasync.loopWhile(function(){return sync2 == null;});
+      });
+    
+      sync = 1;
+    });
+    deasync.loopWhile(function(){return sync == null;});
+    return string;
   }
+
 };
