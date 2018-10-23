@@ -60,7 +60,6 @@ var InfoPanel = (function () {
     var isUser = isUserMessage(typeValue);
     var textExists = (newPayload.input && newPayload.input.text) ||
       (newPayload.output && newPayload.output.text);
-      console.log(newPayload);
       document.getElementById("info").innerHTML = newPayload;
   }
 
