@@ -364,7 +364,7 @@ module.exports = {
         //console.log(taskObject);
           if(taskObject.state == 'Backlog' || taskObject.state === 'Incomplete'){ 
             database.updateTaskStoryPoints(taskObject._id, points);
-            returnMessage = 'The task \'' + taskObject.title + '\' is assigned a story point of ' + taskObject.points;
+            returnMessage = 'The task \'' + taskObject.title + '\' is assigned a story point of ' + points;
           }else{
             returnMessage = 'The task \'' + taskObject.title + '\' is already in progress, testing, or completed!';
           }
