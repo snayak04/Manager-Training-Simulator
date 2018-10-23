@@ -88,7 +88,7 @@ li:hover {
   
   border: 0px solid;
   border-left-width: 10px;
-  border-left-color: purple;
+  border-left-color: #9855D4;
   border-radius: 10px;
 
   height: auto;
@@ -452,13 +452,13 @@ html{
  
 /* Handle */
 ::-webkit-scrollbar-thumb {
-    background: purple; 
+    background: #9855D4; 
     border-radius: 5px;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-    background: purple; 
+    background: #9855D4; 
 }
 
 @media only screen and (max-width: 1000px) {
