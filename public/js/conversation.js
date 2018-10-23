@@ -137,7 +137,8 @@ var ConversationPanel = (function () {
       });
       // Move chat to the most recent messages when new messages are added
       scrollToChatBottom();
-      showdata('employees')
+      console.log('showing');
+      showdata('tasks')
     }
   }
 
