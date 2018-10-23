@@ -1,19 +1,36 @@
-,AssignTask
-who are in my team?,EmployeeInfo
+assign story points of @points to @tasks,AssignStoryPoints
+give story points of @points to @tasks,AssignStoryPoints
+give @tasks story points of @points,AssignStoryPoints
+assign @points story points to @tasks,AssignStoryPoints
+give @points story points to @tasks,AssignStoryPoints
+give @tasks @points story points,AssignStoryPoints
+Have @employees @tasks,AssignTask
+@employees should @tasks,AssignTask
+@employees @tasks,AssignTask
+"@employees, could you please do @tasks",AssignTask
+"@employees, do @tasks",AssignTask
+Have @employees do the @tasks,AssignTask
+Assign @employees to @tasks,AssignTask
+@employees should do the @tasks,AssignTask
+Can @employees do @tasks,AssignTask
+Employees status,EmployeeInfo
+Employees,EmployeeInfo
+What are my employees doing,EmployeeInfo
+List my employees,EmployeeInfo
 who are my employees?,EmployeeInfo
-what's my team?,EmployeeInfo
-who are in  my team?,EmployeeInfo
-what projects,ProjectInfo
 What's my project?,ProjectInfo
 What Project are we working on?,ProjectInfo
-what to do?,ProjectInfo
-,SingleEmployeeInfo
-what to do?,TaskInfo
-what am I suppose to do?,TaskInfo
-What are my tasks?,TaskInfo
+Project,ProjectInfo
+Project info,ProjectInfo
+What should I do,ProjectInfo
 tasks,TaskInfo
-whats the task,TaskInfo
-what need to be done?,TaskInfo
-duties?,TaskInfo
+what needs to be done?,TaskInfo
+What is left to do?,TaskInfo
+What should my employees do?,TaskInfo
 my tasks,TaskInfo
-,Wait
+What are my tasks?,TaskInfo
+Wait for event,Wait
+Fast forward,Wait
+Wait for something to happen,Wait
+Next event,Wait
+Wait,Wait
