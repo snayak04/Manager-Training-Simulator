@@ -131,7 +131,6 @@ app.post('/api/message', function (req, res) {
 
 app.get('/api/message', function (req, res) {
   var query;
-  console.log(req.query.text);
   if(req.query.text == 'employees'){
     query = infoMenu.employees(req.user);
   } else if(req.query.text == 'tasks'){
@@ -139,11 +138,7 @@ app.get('/api/message', function (req, res) {
   } else {
     query = infoMenu.projects(req.user);    
   }
-
-  //console.log("iz meeeee")
-  //console.log(query);
-  //console.log("end");
-  console.log('query:\n' + query);
+  
   res.json(query);
 });
 

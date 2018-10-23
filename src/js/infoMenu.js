@@ -10,7 +10,7 @@ module.exports = {
         //process.stdout.write("Keys = " + Object.keys(result[0]))
         result.forEach(function(employee){
           string += '<div class=\"employeebox\">';
-          string += employee.name+':';
+          string += '<b>' + employee.name+': </b>';
           string += '<br>' + employee.jobTitle;
         
           var job = employee.workingOn;
@@ -31,11 +31,10 @@ module.exports = {
     var sync = 0;
     var sync2 = 0;
     var string = '<div class=\"taskbox\">';
-    console.log("hey there");
     database.getProjectState(user, function(result){
       var project = result[0];
       //process.stdout.write("Keys = " + Object.keys(project))
-      string += project.title + ':';
+      string += '<b>' + project.title + ': </b>';
       string += '<br>Start: ' + project.currentTime;
       string += '<br>Deadline: ' + project.deadline;
       var timeLeft = project.deadline - project.currentTime;
@@ -49,13 +48,11 @@ module.exports = {
     });
     deasync.loopWhile(function(){return sync2 <=1;});
 
-    console.log("is me");
-
     database.getAllTasks(user, function(result){
       //process.stdout.write("Keys = " + Object.keys(result[0]));
       result.forEach(function(task){
         string += '<div class=\"employeebox\">';
-        string += '<h4>' + task.title + '</h4>';
+        string += '<b>' + task.title + '</b>';
         string += '<br>State: ' + task.state + '<br>';
         if(task.state != 'Complete'){
           string += 'Time Left: ' + task.timeLeft + ' man-hours';
@@ -69,7 +66,6 @@ module.exports = {
               database.getEmployeeById(id, function(employee){
                 if(firstEmployee){
                   string += employee.name;
-                  console.log(string);
                   firstEmployee = false;
                 }else{
                   string += ', ' + employee.name;

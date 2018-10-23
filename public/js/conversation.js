@@ -2,6 +2,8 @@
 // all display and behaviors of the conversation column of the app.
 /* eslint no-unused-vars: "off" */
 /* global Api: true, Common: true*/
+var update = 0;
+
 var ConversationPanel = (function () {
   var settings = {
     selectors: {
@@ -137,8 +139,12 @@ var ConversationPanel = (function () {
       });
       // Move chat to the most recent messages when new messages are added
       scrollToChatBottom();
-      console.log('showing');
-      showdata('tasks')
+      if(update == 1){
+        showdata('tasks')
+        update = 0;
+      } else if (update == 0) {
+        update = 1;
+      }
     }
   }
 
