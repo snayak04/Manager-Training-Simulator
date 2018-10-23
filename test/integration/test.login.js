@@ -1,4 +1,4 @@
-casper.test.begin('Login Tests', 2, function suite(test) {
+casper.test.begin('Login Tests', 12, function suite(test) {
   var baseHost = 'http://localhost:3000';
   
 
