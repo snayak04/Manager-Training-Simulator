@@ -1,8 +1,8 @@
 //New Modified version under test for Mongoose compatibility:
 const mongoose = require('mongoose');
 const assistant = require('./assistant');
-var {projects} = require('../../models/projects');
-var {tasks} = require('../../models/tasks');
+var projects = require('../../models/projects');
+var tasks = require('../../models/tasks');
 var employee = require('../../controller/employee'); 
 var project = require('../../controller/project');
 /*TODO: 
