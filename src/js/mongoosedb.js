@@ -2,7 +2,7 @@
 var {projects} = require('../../models/projects');
 var {tasks} = require('../../models/tasks');
 var {employees} = require('../../models/employees');
-
+var {relations} = require('../../models/relations');
 
 module.exports = {
   getEmployee: function(employeeName, callback){
@@ -21,6 +21,12 @@ module.exports = {
     var search = {};
     employees.find(search, function(err, result){
       return callback(result);
+    });
+  },
+  getRelation: function(firstName, secondName, callback){
+	var search = {firstName: firstName, secondName: secondName};
+	relations.find(search, function(err, result){
+      return callback(result[0]);
     });
   },
   getTask: function(taskTitle, callback){

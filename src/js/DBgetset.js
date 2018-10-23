@@ -20,15 +20,9 @@ module.exports = {
       return callback(result);
     });
   },
-  getRelation: function(employee1, employee2, callback){
-		
-	//TODO check if this works
-	var emp1;
-	var emp2
-	var search = { currentEmployee: employee1, targetEmployee: employee2 };
-    DBUtil.findbyAttribute(search, 'Employee_Relation', function(result){
-		return callback(result[0]);
-	});
+  getRelation: function(firstName, secondName, callback){
+	var search = (firstName: firstName, secondName: secondName)  ;
+	//Whoops, wrong database
   },
   getTask: function(taskTitle, callback){
     var search = { title: taskTitle };
