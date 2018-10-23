@@ -35,7 +35,7 @@ casper.test.begin('Login Tests', 2, function suite(test) {
     });
     
     //test login
-    casper.then(function()){
+    casper.then(function(){
       casper.test.comment('Testing Login');
       test.assertTitle('Not A Game - Manager Training Simulator Login Page', 'Title is correct');
       test.assertUrlMatch(/login/, 'on register page');
@@ -46,7 +46,7 @@ casper.test.begin('Login Tests', 2, function suite(test) {
     });
     
     //check login worked
-    casper.then(function()){
+    casper.then(function(){
       test.assertTitle('Not A Game - Manager Training Simulator', 'Title is correct');
     });
 
