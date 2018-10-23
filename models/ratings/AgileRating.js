@@ -32,7 +32,7 @@ function AgileRating() {
             if (!workerFree)
                 this.score+=40;
         });
-        return this.score;
+        return this.score+40;
     };
     /**
  * Always listens whenever a response is sent by Assistant API.
