@@ -1,8 +1,7 @@
-var initProject = require('../../src/js/initProject');
-
 casper.test.begin('Intents', 2, function suite(test) {
   
   //Reset database before each test
+  var initProject = require('../../src/js/initProject');
   initProject.reset();
 
   var baseHost = 'http://localhost:3000';
