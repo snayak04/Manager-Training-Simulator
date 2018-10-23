@@ -1,12 +1,11 @@
-casper.test.begin('Intents', 2, function suite(test) {
+casper.test.begin('Login Tests', 2, function suite(test) {
+
   
   //Reset database before each test
   var initProject = require('../../src/js/initProject');
   initProject.reset();
 
   var baseHost = 'http://localhost:3000';
-
-
 
   casper.start(baseHost, function () {
     casper.test.comment('Starting Testing');
