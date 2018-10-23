@@ -21,8 +21,8 @@ casper.test.begin('Login Tests', 2, function suite(test) {
       test.assertExists("form[action='/login']", 'login button is found');
       test.assertExists("form[action='/register']", 'register form is found');
       this.fill("form[action='/register']", { //create new user, should redirect to index
-        'username': Travis,
-        'password': Password
+        'username': 'Travis',
+        'password': 'Password'
       }, true);
     });
     
@@ -40,8 +40,8 @@ casper.test.begin('Login Tests', 2, function suite(test) {
       test.assertTitle('Not A Game - Manager Training Simulator Login Page', 'Title is correct');
       test.assertUrlMatch(/login/, 'on register page');
       this.fill("form[action='/login']", { //test that user can login again
-          'username': Travis,
-          'password': Password
+          'username': 'Travis',
+          'password': 'Password'
       }, true);
     });
     
