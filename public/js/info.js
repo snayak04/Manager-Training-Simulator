@@ -38,7 +38,7 @@ var InfoPanel = (function () {
     var currentResponsePayloadSetter = Api.setResponsePayload;
     Api.setResponsePayload = function (newPayloadStr) {
       currentResponsePayloadSetter.call(Api, newPayloadStr);
-      displayMessage(JSON.parse(newPayloadStr), settings.authorTypes.watson);
+      displayMessage(JSON.parse(newPayloadStr));
     };
   }
 
@@ -56,23 +56,10 @@ var InfoPanel = (function () {
   }
 
   // Display a user or Watson message that has just been sent/received
-  function displayMessage(newPayload, typeValue) {
-    var isUser = isUserMessage(typeValue);
-    var textExists = (newPayload.input && newPayload.input.text) ||
-      (newPayload.output && newPayload.output.text);
+  function displayMessage(newPayload) {
+    if (typeof newPayload == typeof "string"){
       document.getElementById("info").innerHTML = newPayload;
-  }
-
-  // Checks if the given typeValue matches with the user "name", the Watson "name", or neither
-  // Returns true if user, false if Watson, and null if neither
-  // Used to keep track of whether a message was from the user or Watson
-  function isUserMessage(typeValue) {
-    if (typeValue === settings.authorTypes.user) {
-      return true;
-    } else if (typeValue === settings.authorTypes.watson) {
-      return false;
     }
-    return null;
   }
 
 }());

@@ -24,10 +24,10 @@
         
         <div class="info-column-holder" background-color="red">
           <ul>
+            <li onclick="InfoPanel.showdata('tasks')">Projects</li>
             <li onclick="InfoPanel.showdata('employees')">Employees</li>
-            <li onclick="InfoPanel.showdata('tasks')">Overview</li>
             <form action="/logout" method="get">
-              <button type="submit">Logout</button>
+              <button type="submit" class="logoutButton">Logout</button>
             </form>
           </ul>
           <div id="info" class="info-column" >
