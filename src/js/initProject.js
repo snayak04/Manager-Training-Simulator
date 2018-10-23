@@ -59,11 +59,11 @@ var reset = ()=>{
 }
 
 function initialize(){
-  // reset();
-  // var employees = randomizeEmployees();
-  // var tasks = generateTasks();
-  // var project = generateProject(employees, tasks);
-  // project.save();
+  reset();
+  var employees = randomizeEmployees();
+  var tasks = generateTasks();
+  var project = generateProject(employees, tasks);
+  project.save();
   
   return require('./intents');
 }
