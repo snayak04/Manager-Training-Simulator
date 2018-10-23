@@ -31,12 +31,15 @@ var generateRelations = (employees)=>{
 		employees.forEach(function(employee2){
 			//process.stdout.write("Keys = " + Object.keys(employee1))
 			var value = Math.random();
+			if (employee1.name == employee2.name){
+				value = 1;
+			}
 			process.stdout.write(employee1.name + "'s affection for " + employee2.name + " is: " + value+ "\n");
-			relationArray[i] = employee.insertNewRelation(employee1, employee2, value);
+			relationArray[i] = employee.insertNewRelation(employee1.name, employee2.name, value);
 			i++;
 		});			
 	});	
-	return relationArray;
+	return relationArray; //??
 }
 
 // Only initializes the project
@@ -85,15 +88,3 @@ function initialize(){
 module.exports = {
   initialize: initialize
 };
-/*
-	//Employee Relations
-	database2.getAllEmployees(function(result){
-		result.forEach(function(employee1){
-			result.forEach(function(employee2){
-				//process.stdout.write("Keys = " + Object.keys(employee1))
-				employee.insertNewRelation(employee1, employee2, Math.random());				
-			});			
-		});		
-	});
-
-*/

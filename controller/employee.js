@@ -2,6 +2,7 @@ const {projects} = require('../models/projects');
 const mongoose = require('mongoose');
 const {tasks} = require('../models/tasks');
 const {employees} = require('../models/employees'); 
+const {relations} = require('../models/relations');
 const assistant = require('../src/js/assistant.js');
 
 var insertNewEmployee = (name, workingOn, position, skill, satisfaction)=>{
@@ -18,16 +19,15 @@ var insertNewEmployee = (name, workingOn, position, skill, satisfaction)=>{
     return employee;
 };
 
-function insertNewRelation(currentEmployee, targetEmployee, value){
-  var newRelation = {
-    currentEmployee: currentEmployee,
-	targetEmployee: targetEmployee,
-	value: value
-  };
-  
-  //Put in database
-  //database.insertOneRecord(newRelation, 'Employee_Relation');
-  return newRelation;
+var insertNewRelation = (firstName, secondName, value)=>{
+	relation = new relations({
+		_id:mongoose.Types.ObjectId(),
+		firstName: firstName,
+		secondName: secondName, 
+		relationStrength: value
+	});
+	relation.save(); //??
+	return relation;
 }
   
 
