@@ -201,6 +201,7 @@ module.exports = {
           //Build Message
           var satisfactionRating = scoreSatisfaction();
           var productivityRating = scoreProductivity(user);
+          //console.log("IN INTENTS!!" + user);
           speechText = '<speak version="1.0">It is now the end of the day <break strength="weak"></break>. Here is your rating for the day';
           speechText +=' <break strength="medium"></break> It is now ' + config.DAY_START_TIME + ' AM on ' + newTime.getMonth() + '\\' + newTime.getDate() + '</speak>';
           returnMessage = 'It is the end of the day. Here is your rating for the day:<br>'

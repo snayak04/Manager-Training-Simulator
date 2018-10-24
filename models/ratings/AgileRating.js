@@ -8,6 +8,9 @@ var tasks = require("../tasks");
 
 
 function AgileRating(user) {
+    this.project , this.score = database.getProjectState(user, function(res){
+        return res[0] , res[0].agileRating;
+    });
     this.score = database.getProjectState(user, function(res){
         return res[0].agileRating;
     });
@@ -36,6 +39,8 @@ function AgileRating(user) {
             else
                 this.score-=20;
         });
+        
+        database.updateProjectRating(this.project._id, this.score);
         return this.score;
     };
     /**
