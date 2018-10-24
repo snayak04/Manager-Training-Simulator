@@ -21,7 +21,7 @@ var config = require('./src/js/config'); //config values
 const express = require('express'); // app server
 var bodyParser = require('body-parser'); // parser for post requests
 var AssistantV1 = require('watson-developer-cloud/assistant/v1'); // watson sdk
-//var TextToSpeechV1 = require('watson-developer-cloud/text-to-speech/v1');
+var TextToSpeechV1 = require('watson-developer-cloud/text-to-speech/v1');
 const mongoose = require('mongoose');
 
 var infoMenu = require('./src/js/infoMenu');
@@ -75,6 +75,21 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static('./public')); // load UI from public folder
 app.use(require('./routes'));
 
+
+
+textToSpeech = new TextToSpeechV1({
+    username: process.env.TEXT_TO_SPEECH_USERNAME || '<username>',
+    password: process.env.TEXT_TO_SPEECH_PASSWORD || '<password>',
+  });
+
+//api to get  audio from the text
+app.get('/api/synthesize', (req, res, next) => {
+	  const transcript = textToSpeech.synthesize(req.query);
+	  transcript.on('response', (response) => {
+	  });
+	  transcript.on('error', next);
+	  transcript.pipe(res);
+	});
 
 // Create the service wrapper
 
@@ -153,8 +168,7 @@ function updateMessage(input, response, user) {
   if (!response.output) {
     response.output = {};
   } 
-  //process.stdout.write("Keys = " + Object.keys(response) + '\n');
-  //process.stdout.write("Intents = " + response.intents[0]);
+  response.output.textToSpeechFlag = "Y"; //flag to enable Text to Speech
   var intent;
   if (response.intents && response.intents[0]) {
     intent = response.intents[0];
@@ -175,17 +189,19 @@ function updateMessage(input, response, user) {
     responseText = intentHandlers.wait(user);
     break;
   case 'TaskInfo':
+    response.output.textToSpeechFlag = "N";
     responseText = intentHandlers.taskInfo(user);
     break;
   case 'ProjectInfo':
     responseText = intentHandlers.projectInfo(user);
     break;
   case 'EmployeeInfo':
+    response.output.textToSpeechFlag = "N";
     responseText = intentHandlers.employeeInfo(user);
     break;
   case 'RelationInfo':
-	responseText = intentHandlers.relationInfo(user, response);
-	break;
+    responseText = intentHandlers.relationInfo(user, response);
+    break;
   case 'AssignTask':
     responseText = intentHandlers.assignTask(user, response);
     break;
@@ -194,8 +210,10 @@ function updateMessage(input, response, user) {
     break;
   }
 
-  response.output.text = responseText;
+  response.output.speechText = responseText[1] 
+  response.output.text = responseText[0];
   return response;
 }
+
 
 module.exports = app;
