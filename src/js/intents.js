@@ -235,7 +235,7 @@ module.exports = {
     
     //wait for message to be built
     deasync.loopWhile(function(){return !done;});
-    return returnMessage;
+    return [returnMessage, null];
   },
     
   taskInfo: function (user) {
@@ -276,7 +276,7 @@ module.exports = {
       sync = 2;
     });
     deasync.loopWhile(function(){return sync <= 1;});
-    return string;
+    return [string, null];
   },
     
   projectInfo: function (user) {
@@ -301,7 +301,7 @@ module.exports = {
       sync = 1;
     });
     deasync.loopWhile(function(){return sync == null;});
-    return string;
+    return [string, null];
   },
     
   employeeInfo: function (user) {
@@ -324,7 +324,7 @@ module.exports = {
     });
     deasync.loopWhile(function(){return sync == null;});
 	
-    return string;
+    return [string, null];
   },
   
   /* 
@@ -382,7 +382,7 @@ module.exports = {
 	  string += "<br>"
 	  string += relationString(name2, name1, backwards);
 	  
-	  return string;
+	  return [string, null];
   },
 	
   /* Assign Task Intent
@@ -447,7 +447,7 @@ module.exports = {
       deasync.loopWhile(function(){return returnMessage == null;});
     }
     
-    return returnMessage;
+    return [returnMessage, null];
   }
   
 };
