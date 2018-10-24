@@ -54,8 +54,15 @@ var Api = (function() {
   	  	str = str.replace(/&ensp;/gi, '');
   	  	var speak = document.getElementById('Speak');
   	  	if(speak && speak.checked == true){
-  	  		if(reponseJson.output.textToSpeechFlag != 'N')
-  	  			sendRequestToTextToSpeechApi(str);
+  	  		if(reponseJson.output.textToSpeechFlag != 'N'){
+  	  			if(reponseJson.output.speechText){
+  	  				sendRequestToTextToSpeechApi(reponseJson.output.speechText);
+  	  			}
+  	  			else{
+  	  				sendRequestToTextToSpeechApi(str);
+  	  			}
+  	  		}
+  	  			
   	  	}
   	  		
   	  	console.log(str);
