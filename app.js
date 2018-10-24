@@ -168,7 +168,7 @@ function updateMessage(input, response, user) {
   } 
   
   response.output.textToSpeechFlag = "Y"; //flag to enable Text to Speech
-  agileRating.listen(response);
+  agileRating.listen(user, response);
   var intent;
   if (response.intents && response.intents[0]) {
     intent = response.intents[0];

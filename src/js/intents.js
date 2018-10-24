@@ -206,7 +206,7 @@ module.exports = {
           returnMessage = 'It is the end of the day. Here is your rating for the day:<br>'
             + '&ensp;Productivity Rating: ' + productivityRating + '<br>'
             + '&ensp;Satisfaction Rating: ' + satisfactionRating + '<br>'
-            + '&ensp;Agile Rating: ' + agileRating.EODAnalysis() + '<br>'
+            + '&ensp;Agile Rating: ' + agileRating.EODAnalysis(user) + '<br>'
             + '<br>'
             + 'It is now ' + config.DAY_START_TIME + ' AM on ' 
             + newTime.getMonth() + '\\' + newTime.getDate();
@@ -252,9 +252,15 @@ module.exports = {
     var string = '';
     database.getAllTasks(user, function(result){
       result.forEach(function(task){
+        var storyPoints = null;
+        if(!task.points){
+          storyPoints = 'Not assigned';
+        }else{
+          storyPoints = task.points;
+        }
         string += '<br>' + task.title + ':';
         string += '<br>&ensp;State: ' + task.state + '<br>';
-        string += '&ensp;Story Points: ' + task.points + '<br>';
+        string += '&ensp;Story Points: ' + storyPoints + '<br>';
         if(task.state != 'Complete'){
           string += '&ensp;Time Left: ' + task.timeLeft + ' man-hours';
           string += '<br>&ensp;Employees: ';

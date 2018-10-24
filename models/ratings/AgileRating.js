@@ -21,10 +21,10 @@ function AgileRating() {
      * 
      * @param {*} taskName 
      */
-    AgileRating.prototype.EODAnalysis = () =>{
+    AgileRating.prototype.EODAnalysis = (user) =>{
         //Check all employees were assigned tasks.
         var workerFree = false;
-        database.getAllEmployees(function(employees){
+        database.getAllEmployees(user, function(employees){
             for (var employee in employees){
                 if(!employee.workingOn)
                     workerFree = true;
@@ -39,7 +39,10 @@ function AgileRating() {
  * @requires Only one intent.
  * @param {JSON object that is returned by the IBM Assistant} context 
  */
-AgileRating.prototype.listen = (context) => {
+AgileRating.prototype.listen = (user, context) => {
+    if(!context.intents[0]){
+      return 0;
+    }
     var intent;
     console.log(this);
     if (context)
@@ -65,7 +68,7 @@ AgileRating.prototype.listen = (context) => {
             //TODO
         break;
         case 'AssignTask':
-            scoreTask(task)
+            scoreTask(user, task)
         break;
     }
 };
@@ -75,9 +78,9 @@ AgileRating.prototype.listen = (context) => {
  * Checks the task object to see if it has a story point, and assigned to an employee, if not deduct score.
  * @param {*} taskName Task name
  */
-function scoreTask(taskName){
+function scoreTask(user, taskName){
     var task;
-    database.getTask(taskName, function(result){
+    database.getTask(user, taskName, function(result){
         task = result;  
         //console.log("Task Name: " + taskName + "Task: " +task);
 
