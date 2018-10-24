@@ -15,12 +15,13 @@ var getProject = projects.findOne((err, res) =>{
     return res;
 })
 
-insertNewProject = (title, user_id, employeeIds, taskIds, startDate, deadline, currentTime) => {
+insertNewProject = (title, user_id, employeeIds, relationIds, taskIds, startDate, deadline, currentTime) => {
     var newProject = new projects({
       _id: mongoose.Types.ObjectId(),
       title: title,
 	  user_id: user_id,
       employees: employeeIds,
+	  relations: relationIds,
       tasks: taskIds,
       startDate: startDate,
       deadline: deadline,

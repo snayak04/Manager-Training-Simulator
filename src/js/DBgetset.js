@@ -20,6 +20,10 @@ module.exports = {
       return callback(result);
     });
   },
+  getRelation: function(firstName, secondName, callback){
+	var search = (firstName: firstName, secondName: secondName)  ;
+	//Whoops, wrong database
+  },
   getTask: function(taskTitle, callback){
     var search = { title: taskTitle };
     DBUtil.findbyAttribute(search, 'tasks', function(result){
