@@ -35,17 +35,7 @@ mongoose.connect(String(process.env.DATABASE_URI), { useNewUrlParser: true },
 
 // ###TODO: Loading all models - This would go under the user later:
 const intentHandlers = require('./src/js/intents');
-// async function handler (req, res) {
-//   let document
-//   try {
-//     var emp = require('./models/employees');
-//     document = await emp.findOne()
-//   } catch (err) {
-//     logger.error('Mongo error', err)
-//     return res.status(500).send()
-//   }
-//    = require('./src/js/intents'); // make sure to initialize after loading the models!
-// }
+
 
 var app = express();
 
@@ -157,6 +147,14 @@ app.get('/api/message', function (req, res) {
   res.json(query);
 });
 
+
+//Rating variables 
+const AgileRating = require('./models/ratings/AgileRating');
+var agileRating = new AgileRating();
+//-- Rating variables end
+
+
+
 /**
  * Updates the response text using the intent confidence
  * @param  {Object} input The request to the Assistant service
@@ -168,7 +166,9 @@ function updateMessage(input, response, user) {
   if (!response.output) {
     response.output = {};
   } 
+  
   response.output.textToSpeechFlag = "Y"; //flag to enable Text to Speech
+  agileRating.listen(response);
   var intent;
   if (response.intents && response.intents[0]) {
     intent = response.intents[0];
@@ -183,10 +183,10 @@ function updateMessage(input, response, user) {
   }
   
   
-  
+  //console.log(intent.intent);
   switch(intent.intent){
   case 'Wait':
-    responseText = intentHandlers.wait(user);
+    responseText = intentHandlers.wait(user, agileRating);
     break;
   case 'TaskInfo':
     response.output.textToSpeechFlag = "N";
@@ -204,6 +204,9 @@ function updateMessage(input, response, user) {
     break;
   case 'AssignTask':
     responseText = intentHandlers.assignTask(user, response);
+    break;
+  case 'AssignStoryPoints':
+    responseText = intentHandlers.assignStoryPoints(user, response);
     break;
   default:
     //Do nothing

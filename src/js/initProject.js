@@ -22,7 +22,7 @@ function generateTasks(user){
   task.insertNewTask('Optimize performance', user._id, 'Incomplete', [], null, null, null, 10),
   task.insertNewTask('Update user interface', user._id, 'Incomplete', [], null, null, null, 10),
   task.insertNewTask('Add random map generation', user._id, 'Incomplete', [], null, null, null, 20),
-  ]
+  ];
 }
 
 var generateRelations = (user, employees)=>{

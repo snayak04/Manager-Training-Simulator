@@ -163,7 +163,8 @@ module.exports = {
     -The day ending
     -An employee finishing their task
   */
-  wait: function (user) {
+
+  wait: function (user, agileRating) {
     var returnMessage = null;
     var speechText = null;
     var done = false;
@@ -205,6 +206,7 @@ module.exports = {
           returnMessage = 'It is the end of the day. Here is your rating for the day:<br>'
             + '&ensp;Productivity Rating: ' + productivityRating + '<br>'
             + '&ensp;Satisfaction Rating: ' + satisfactionRating + '<br>'
+            + '&ensp;Agile Rating: ' + agileRating.EODAnalysis() + '<br>'
             + '<br>'
             + 'It is now ' + config.DAY_START_TIME + ' AM on ' 
             + newTime.getMonth() + '\\' + newTime.getDate();
@@ -252,6 +254,7 @@ module.exports = {
       result.forEach(function(task){
         string += '<br>' + task.title + ':';
         string += '<br>&ensp;State: ' + task.state + '<br>';
+        string += '&ensp;Story Points: ' + task.points + '<br>';
         if(task.state != 'Complete'){
           string += '&ensp;Time Left: ' + task.timeLeft + ' man-hours';
           string += '<br>&ensp;Employees: ';
@@ -420,6 +423,7 @@ module.exports = {
           employee = entity;
         }
       }else if(entity.entity == 'tasks'){
+        console.log(entity);
         if(!task){
           task = entity;
         }else if(entity.confidence > task.confidence){
@@ -440,6 +444,7 @@ module.exports = {
           var workers = taskObject.employeeIds;
           //check if employee is already working
           var alreadyWorking = false;
+          if(workers)
           workers.forEach(function(employeeId){
             if(employeeId.toString() == employeeObject._id.toString()){
               alreadyWorking = true;
@@ -464,6 +469,47 @@ module.exports = {
     }
     
     return [returnMessage, null];
+  },
+
+  //Assigns story points to a given task.
+  assignStoryPoints: function (user, response) {
+    console.log(response);
+    var returnMessage;
+    var points;
+    var task;
+    var entities = response.entities;
+   
+    entities.forEach(function(entity){
+      
+      if (entity.entity == 'points'){
+        points = entity.value;
+      }else if(entity.entity == 'tasks'){
+        if(!task){
+          task = entity;
+        }else if(entity.confidence > task.confidence){
+          task = entity;
+        }
+      }
+    });
+    
+    if(!task){
+      returnMessage = 'I think you\'re trying to assign story point of ' + points + ', but I don\'t know for which task';
+    }else{
+      //get the full objects so we have all the info we need
+      database.getTask(user, task.value, function(taskObject){
+        //console.log(taskObject);
+          if(taskObject.state == 'Backlog' || taskObject.state === 'Incomplete'){ 
+            database.updateTaskStoryPoints(taskObject._id, points);
+            returnMessage = 'The task \'' + taskObject.title + '\' is assigned a story point of ' + points;
+          }else{
+            returnMessage = 'The task \'' + taskObject.title + '\' is already in progress, testing, or completed!';
+          }
+        });
+      
+      deasync.loopWhile(function(){return returnMessage == null;});
+    }
+    
+    return returnMessage;
   }
   
 };
