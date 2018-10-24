@@ -328,7 +328,7 @@ module.exports = {
       deasync.loopWhile(function(){return returnMessage == null;});
     }
     
-    return returnMessage;
+    return [returnMessage, null];
   }
   
 };
