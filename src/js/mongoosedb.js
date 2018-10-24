@@ -89,6 +89,12 @@ module.exports = {
     tasks.findByIdAndUpdate(taskId, stateInsert, function(err){
       if(err) throw err;
     });
+  },
+  updateTaskStoryPoints: function(taskId, points){
+    var stateInsert = { $set: {points: points}};
+    tasks.findByIdAndUpdate(taskId, stateInsert, function(err){
+      if(err) throw err;
+    });
   }
 };
 
