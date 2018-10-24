@@ -14,7 +14,9 @@ const projectsSchema  = new Schema({
     tasks: [{type: mongoose.Schema.Types.ObjectId, ref: 'tasks'}],
     startDate: Date,
     deadline: Date,
-    currentTime: Date
+    currentTime: Date,
+    agileRating: {type: Number, min: 0, max: 100, default: 0}
+
 });
 
 const projects = mongoose.model('projects', projectsSchema);

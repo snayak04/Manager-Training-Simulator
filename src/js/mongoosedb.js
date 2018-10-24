@@ -54,6 +54,14 @@ module.exports = {
       return callback(result);
     });
   },
+
+  updateProjectRating: function(projectId, points){
+    var stateInsert = { $set: {agileRating: points}};
+    projects.findByIdAndUpdate(projectId, stateInsert, function(err){
+      if(err) throw err;
+    });
+  },
+
   updateEmployeeSatisfaction: function(employeeId, newSatis){
     var satisfactionInsert = { $set: {satisfaction: newSatis}};
     employees.findByIdAndUpdate(employeeId, satisfactionInsert, function(err){

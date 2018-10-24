@@ -1,14 +1,16 @@
 var database = require('../../src/js/mongoosedb');
 var tasks = require("../tasks");
+
 /**
  * User starts with full points, and then gradually is marked down based on his mistakes. This will be replaced with Users model or retrieved through the database.
  * All Users will have an AgileRating object
  */
 
 
-function AgileRating() {
-    this.score = 0;
-    
+function AgileRating(user) {
+    this.score = database.getProjectState(user, function(res){
+        return res[0].agileRating;
+    });
     
     /**
      * @returns this.score
@@ -31,20 +33,21 @@ function AgileRating() {
             }
             if (!workerFree)
                 this.score+=40;
+            else
+                this.score-=20;
         });
-        return this.score+40;
+        return this.score;
     };
     /**
  * Always listens whenever a response is sent by Assistant API.
  * @requires Only one intent.
  * @param {JSON object that is returned by the IBM Assistant} context 
  */
-AgileRating.prototype.listen = (user, context) => {
+AgileRating.prototype.listen = (context) => {
     if(!context.intents[0]){
       return 0;
     }
     var intent;
-    console.log(this);
     if (context)
         if(context.intents[0].intent)
             intent = context.intents[0].intent;
@@ -68,7 +71,7 @@ AgileRating.prototype.listen = (user, context) => {
             //TODO
         break;
         case 'AssignTask':
-            scoreTask(user, task)
+           // scoreTask(user, task)
         break;
     }
 };

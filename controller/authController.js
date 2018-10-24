@@ -32,6 +32,7 @@ userController.doRegister = function(req, res) {
 	initProject.initialize(user);
 
     passport.authenticate('local')(req, res, function () {
+      new AgileRating(req.user);
       res.redirect('/');
     });
   });

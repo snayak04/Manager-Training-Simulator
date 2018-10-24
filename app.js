@@ -133,7 +133,10 @@ app.post('/api/message', function (req, res) {
     return res.json(updateMessage(payload, data, user));
   });
 });
-
+//Rating variables 
+const AgileRating = require('./models/ratings/AgileRating');
+//-- Rating variables end
+var agileRating = null;
 app.get('/api/message', function (req, res) {
   var query;
   if(req.query.text == 'employees'){
@@ -143,15 +146,13 @@ app.get('/api/message', function (req, res) {
   } else {
     query = infoMenu.projects(req.user);    
   }
-  
+  agileRating = new AgileRating(req.user);
+
   res.json(query);
 });
 
 
-//Rating variables 
-const AgileRating = require('./models/ratings/AgileRating');
-var agileRating = new AgileRating();
-//-- Rating variables end
+
 
 
 
@@ -168,7 +169,7 @@ function updateMessage(input, response, user) {
   } 
   
   response.output.textToSpeechFlag = "Y"; //flag to enable Text to Speech
-  agileRating.listen(user, response);
+  
   var intent;
   if (response.intents && response.intents[0]) {
     intent = response.intents[0];
