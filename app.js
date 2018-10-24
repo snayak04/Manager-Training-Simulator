@@ -171,8 +171,10 @@ function updateMessage(input, response) {
     break;
   }
 
-  response.output.text = responseText;
+  response.output.speechText = responseText[1] 
+  response.output.text = responseText[0];
   return response;
 }
+
 
 module.exports = app;
