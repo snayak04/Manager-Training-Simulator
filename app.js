@@ -191,12 +191,13 @@ function updateMessage(input, response, user) {
     break;
   case 'TaskInfo':
     response.output.textToSpeechFlag = "N";
-    responseText = intentHandlers.taskInfo();
+    responseText = intentHandlers.taskInfo(user);
     break;
   case 'ProjectInfo':
     responseText = intentHandlers.projectInfo(user);
     break;
   case 'EmployeeInfo':
+    response.output.textToSpeechFlag = "N";
     responseText = intentHandlers.employeeInfo(user);
     break;
   case 'AssignTask':
