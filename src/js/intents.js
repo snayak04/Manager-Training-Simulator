@@ -11,6 +11,7 @@ var config = require('./config');
 //var agileRating = new AgileRating();
 //returns how long a task will take to finish with current employees.
 //if it will never finish, returns -1.
+//TODO Update
 function calculateFinishTime(task){
   if(task.employeeIds.length == 0){
     return -1;
@@ -29,23 +30,36 @@ function calculateFinishTime(task){
   }
 }
 
-//updates a task's timeleft after a given number of hours based on current employees working it
+//updates a task's time left after a given number of hours based on current employees working it
 //returns array of finished tasks
-function updateTimeLeft(tasks, hours){
+function updateTimeLeft(user, tasks, hours){
   var finishedTasks = [];
   tasks.forEach(function(task){
     //Only check tasks that are incomplete
     if(task.state != 'Complete'){
-      var skillTotal = 0;
-      task.employeeIds.forEach(function(employeeId){
-        //get employee from database
-        var done = false;
-        database.getEmployeeById(employeeId, function(employee){
-          skillTotal += employee.skill / 100;
-          done = true;
-        });
-        deasync.loopWhile(function(){return !done;});
-      });
+      var skillSum = 0;
+	  var idealSkillSum = 0;
+	  var names = getNamesFromIds(task.employeeIds);
+	  
+	  //TODO employee.skill isn't getting the right skill. Flip name and employee
+	  //I have no idea what you're talking about, past me
+	  task.employeeIds.forEach(function(id){
+		  var employee;
+		  var done;
+		  database.getEmployeeById(id, function(emp){
+			  employee = emp;
+			  done = true;
+		  });
+		  deasync.loopWhile(function(){return !done;});
+		 
+		  var socialFactor = calculateSocialFactor(user, employee.name, names);
+		  skillSum += employee.skill * employee.skill * socialFactor; //there might be a prettier way to square
+		  idealSkillSum += employee.skill / 100;
+	  });	  
+	  
+	  
+	  var skillTotal = Math.sqrt(skillSum);
+	  skillTotal /= 100;
       var newTimeLeft = Math.floor(task.timeLeft - (hours * skillTotal));
       if(newTimeLeft <= 0){//task is finished
         newTimeLeft = 0;
@@ -55,6 +69,38 @@ function updateTimeLeft(tasks, hours){
     }    
   });
   return finishedTasks;
+}
+
+
+function calculateSocialFactor(user, employeeName, coworkerNames){
+	var socialFactor = 0;
+	coworkerNames.forEach(function(coworkerName){
+	  var done = false;
+	  database.getRelation(user, employeeName, coworkerName, function(result){
+		  socialFactor += result.relationStrength;
+		  done = true;
+	  });
+	  deasync.loopWhile(function(){return !done;});
+	});
+	
+	socialFactor /= coworkerNames.length;
+	return socialFactor;
+	
+}
+
+function getNamesFromIds(ids){
+	var names = [];
+	var i = 0;
+	ids.forEach(function(employeeId){
+		var done = false;
+		database.getEmployeeById(employeeId, function(coworker){
+		  names[i] = coworker.name;
+          i++;
+          done = true;
+        });
+        deasync.loopWhile(function(){return !done;});
+	});
+	return names;
 }
 
 //Does all necessary database stuff when a task finishes.
@@ -93,6 +139,24 @@ function scoreSatisfaction(){
   return 75;
 }
 
+/*
+	emps: a string of the employees names
+	value: how emp1 feels about emp2
+*/
+function relationString(emp1, emp2, value){
+	if (value < 0.2){
+		return emp1 + " hates " + emp2;
+	}else if (0.2 < value < 0.4){
+		return emp1 + " dislikes " + emp2;
+	}else if (0.4 < value < 0.6){
+		return emp1 + " tolerates " + emp2;
+	}else if (0.6 < value < 0.8){
+		return emp1 + " likes " + emp2;
+	}else{
+		return emp1 + " likes " + emp2 + " very much"
+	}
+}
+
 module.exports = {
   /*Wait Intent
   Goes to the next event, which can be one of the following:
@@ -126,7 +190,7 @@ module.exports = {
         if(shortestFinishTime == null || shortestFinishTime > hoursLeftInDay){
           //Next event is end of day		  
           //Update time to next morning
-          updateTimeLeft(tasks, hoursLeftInDay);
+          updateTimeLeft(user, tasks, hoursLeftInDay);
           var newTime = new Date(currentTime.getTime());
           newTime.setDate(currentTime.getDate() + 1);
           newTime.setHours(config.DAY_START_TIME);
@@ -145,7 +209,7 @@ module.exports = {
           
         }else{
           //Next event is an employee finishing their task
-          var finishedTasks = updateTimeLeft(tasks, shortestFinishTime);
+          var finishedTasks = updateTimeLeft(user, tasks, shortestFinishTime);
           finishTasks(finishedTasks);
           currentTime.setHours(currentTime.getHours() + shortestFinishTime);
           database.updateProjectTime(project._id, currentTime);
@@ -178,7 +242,6 @@ module.exports = {
     var sync = 0;
     var string = '';
     database.getAllTasks(user, function(result){
-      //process.stdout.write("Keys = " + Object.keys(result[0]));
       result.forEach(function(task){
         string += '<br>' + task.title + ':';
         string += '<br>&ensp;State: ' + task.state + '<br>';
@@ -221,7 +284,6 @@ module.exports = {
     var string = '';
     database.getProjectState(user, function(result){
       var project = result[0];
-      //process.stdout.write("Keys = " + Object.keys(project))
       string += project.title + ':';
       string += '<br>&ensp;Time = ' + project.currentTime;
       string += '<br>&ensp;Deadline = ' + project.deadline;
@@ -246,7 +308,6 @@ module.exports = {
     var string = '';
     var sync;
     database.getAllEmployees(user, function(result){
-      //process.stdout.write("Keys = " + Object.keys(result[0]))
       result.forEach(function(employee){
         string += employee.name+':';
         string += '<br>&ensp;Title: ' + employee.jobTitle;
@@ -264,6 +325,64 @@ module.exports = {
     deasync.loopWhile(function(){return sync == null;});
 	
     return string;
+  },
+  
+  /* 
+	Reports information on the relationship of 2 employees
+	Gives both directions. 
+  */
+  relationInfo: function (user, response) {
+	  
+	  var string = '';
+	  var employee1; //higher confidence
+	  var employee2;
+	  var entities = response.entities;
+	  entities.forEach(function(entity){
+		  if (entity.entity == 'employees'){ //is this line necessary?
+			  if (!employee1){
+				  employee1 = entity;
+			  } else if (!employee2){
+				  employee2 = entity;
+			  } else if (entity.confidence > employee1.confidence){
+				  employee2 = employee1;
+				  employee1 = entity;
+			  } else if (entity.confidence > employee2.confidence){
+				  employee2 = entity;
+			  }				  
+		  }		  
+	  });
+
+	  if (!employee1 && !employee2){
+		  return "I think you're inquiring about a relationship, but I don't know either of the employees.";
+	  }
+	  if (!employee1 && employee2){
+		  return "I think you're inquiring about a relationship involving " + employee2.value + " but I don't know what other employee."
+	  }
+	  if (employee1 && !employee2){
+		  return "I think you're inquiring about a relationship involving " + employee1.value + " but I don't know what other employee."
+	  }
+	  
+	  
+	  var name1 = employee1.value;
+	  var name2 = employee2.value;
+	  var sync = 0;
+	  var forwards;
+	  var backwards;
+	  database.getRelation(user, name1, name2, function(result){
+		  forwards = result.relationStrength;
+		  sync++;
+      });
+	  database.getRelation(user, name2, name1, function(result){
+		  backwards = result.relationStrength;
+		  sync++;
+      });
+	  deasync.loopWhile(function(){return sync < 2;});
+	  
+	  string += relationString(name1, name2, forwards);
+	  string += "<br>"
+	  string += relationString(name2, name1, backwards);
+	  
+	  return string;
   },
 	
   /* Assign Task Intent
@@ -293,7 +412,7 @@ module.exports = {
         }
       }
     });
-    
+	
     if(!employee){
       returnMessage = 'I think you\'re trying to assign a task, but I don\'t for which employee';
     }else if(!task){

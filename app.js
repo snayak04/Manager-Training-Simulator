@@ -153,7 +153,8 @@ function updateMessage(input, response, user) {
   if (!response.output) {
     response.output = {};
   } 
-  
+  //process.stdout.write("Keys = " + Object.keys(response) + '\n');
+  //process.stdout.write("Intents = " + response.intents[0]);
   var intent;
   if (response.intents && response.intents[0]) {
     intent = response.intents[0];
@@ -161,7 +162,6 @@ function updateMessage(input, response, user) {
     response.output.text = 'I don\'t understand that. Could you try rephrasing?';
     return response;
   }
-  
   //if intent confidence is too low, ask them to rephrase
   if(intent.confidence < config.MINIMUM_CONFIDENCE_VALUE){
     response.output.text = 'I don\'t understand that. Could you try rephrasing?';
@@ -183,6 +183,9 @@ function updateMessage(input, response, user) {
   case 'EmployeeInfo':
     responseText = intentHandlers.employeeInfo(user);
     break;
+  case 'RelationInfo':
+	responseText = intentHandlers.relationInfo(user, response);
+	break;
   case 'AssignTask':
     responseText = intentHandlers.assignTask(user, response);
     break;
