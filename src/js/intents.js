@@ -165,6 +165,7 @@ module.exports = {
   */
   wait: function (user) {
     var returnMessage = null;
+    var speechText = null;
     var done = false;
     database.getProjectState(user, function(projects){
       //Get the hours left in the day
@@ -199,6 +200,8 @@ module.exports = {
           //Build Message
           var satisfactionRating = scoreSatisfaction();
           var productivityRating = scoreProductivity(user);
+          speechText = '<speak version="1.0">It is now the end of the day <break strength="weak"></break>. Here is your rating for the day';
+          speechText +=' <break strength="medium"></break> It is now ' + config.DAY_START_TIME + ' AM on ' + newTime.getMonth() + '\\' + newTime.getDate() + '</speak>';
           returnMessage = 'It is the end of the day. Here is your rating for the day:<br>'
             + '&ensp;Productivity Rating: ' + productivityRating + '<br>'
             + '&ensp;Satisfaction Rating: ' + satisfactionRating + '<br>'
@@ -217,16 +220,20 @@ module.exports = {
           returnMessage = '';
           
           //buildMessage
+          speechText = '<speak version="1.0">';
           finishedTasks.forEach(function(task){
             returnMessage += 'The task \'' + task.title + '\' has been completed<br>';
+            speechText += 'The task ' + task.title + ' has been completed. <break strength="weak"></break>';
           });
           var currentHour = currentTime.getHours();
           if(currentHour == 12){
             returnMessage += 'It is now 12 PM';
           }else if(currentHour > 12){
             returnMessage += 'It is now ' + (currentHour - 12)+ ' PM';
+            speechText += 'It is now ' + (currentHour - 12) + ' PM </speak>';
           }else{
             returnMessage += 'It is now ' + currentHour + ' AM';
+            speechText += 'It is now ' + currentHour + ' AM </speak>';
           }
           done = true;
         }
@@ -235,7 +242,7 @@ module.exports = {
     
     //wait for message to be built
     deasync.loopWhile(function(){return !done;});
-    return [returnMessage, null];
+    return [returnMessage, speechText];
   },
     
   taskInfo: function (user) {
@@ -282,8 +289,10 @@ module.exports = {
   projectInfo: function (user) {
     var sync;
     var string = '';
+    var speechText = null;
     database.getProjectState(user, function(result){
       var project = result[0];
+      speechText = '<speak version="1.0">You are managing ' + project.title;
       string += project.title + ':';
       string += '<br>&ensp;Time = ' + project.currentTime;
       string += '<br>&ensp;Deadline = ' + project.deadline;
@@ -292,16 +301,14 @@ module.exports = {
       var min = (timeLeft / 60) % 60;
       var hours = (timeLeft / 3600) % 24;
       var days = Math.floor(timeLeft / 86400);
+      
       string += '<br>&ensp;You have '+days+' days, '+hours+' hours, and '+min+' minutes left to complete the project.';
-      /*string += "<br>Tasks: "
-    project.tasks.forEach(function(task){
-      string += "<br>" + task;
-    });*/
-    
+      speechText += ' <break strength="medium"></break> You have '+days+' days, '+hours+' hours, and '+min+' minutes left to complete the project. </speak>';
+      
       sync = 1;
     });
     deasync.loopWhile(function(){return sync == null;});
-    return [string, null];
+    return [string, speechText];
   },
     
   employeeInfo: function (user) {
@@ -334,6 +341,7 @@ module.exports = {
   relationInfo: function (user, response) {
 	  
 	  var string = '';
+    var speechText = '';
 	  var employee1; //higher confidence
 	  var employee2;
 	  var entities = response.entities;
@@ -353,13 +361,13 @@ module.exports = {
 	  });
 
 	  if (!employee1 && !employee2){
-		  return "I think you're inquiring about a relationship, but I don't know either of the employees.";
+		  return ["I think you're inquiring about a relationship, but I don't know either of the employees.", null];
 	  }
 	  if (!employee1 && employee2){
-		  return "I think you're inquiring about a relationship involving " + employee2.value + " but I don't know what other employee."
+		  return ["I think you're inquiring about a relationship involving " + employee2.value + " but I don't know what other employee.", null];
 	  }
 	  if (employee1 && !employee2){
-		  return "I think you're inquiring about a relationship involving " + employee1.value + " but I don't know what other employee."
+		  return ["I think you're inquiring about a relationship involving " + employee1.value + " but I don't know what other employee.", null];
 	  }
 	  
 	  
@@ -378,11 +386,18 @@ module.exports = {
       });
 	  deasync.loopWhile(function(){return sync < 2;});
 	  
-	  string += relationString(name1, name2, forwards);
+    var stringPart1 = relationString(name1, name2, forwards);
+    var stringPart2 = relationString(name2, name1, backwards);
+    
+	  string += stringPart1;
 	  string += "<br>"
-	  string += relationString(name2, name1, backwards);
+	  string += stringPart2;
+    
+    speechText += '<speak version="1.0"> ' + stringPart1;
+    speechText += ' <break strength="medium"></break> ';
+    speechText += stringPart2 + '</speak>';
 	  
-	  return [string, null];
+	  return [string, speechText];
   },
 	
   /* Assign Task Intent
@@ -413,6 +428,7 @@ module.exports = {
       }
     });
 	
+  
     if(!employee){
       returnMessage = 'I think you\'re trying to assign a task, but I don\'t for which employee';
     }else if(!task){
