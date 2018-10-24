@@ -8,8 +8,8 @@ var tasks = require("../tasks");
 
 
 function AgileRating(user) {
-    this.project , this.score = database.getProjectState(user, function(res){
-        return res[0] , res[0].agileRating;
+    this.project  = database.getProjectState(user, function(res){
+        return res[0]
     });
     this.score = database.getProjectState(user, function(res){
         return res[0].agileRating;
