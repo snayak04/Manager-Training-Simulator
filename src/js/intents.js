@@ -218,7 +218,7 @@ module.exports = {
           finishTasks(finishedTasks);
           currentTime.setHours(currentTime.getHours() + shortestFinishTime);
           database.updateProjectTime(project._id, currentTime);
-          
+          database.updateProjectRating(project._id, agileRating.getScore());
           returnMessage = '';
           
           //buildMessage
@@ -429,7 +429,7 @@ module.exports = {
           employee = entity;
         }
       }else if(entity.entity == 'tasks'){
-        console.log(entity);
+        //console.log(entity);
         if(!task){
           task = entity;
         }else if(entity.confidence > task.confidence){
@@ -486,16 +486,10 @@ module.exports = {
     var entities = response.entities;
    
     entities.forEach(function(entity){
-      
-      if (entity.entity == 'points'){
+      if (entity.entity == 'points')
         points = entity.value;
-      }else if(entity.entity == 'tasks'){
-        if(!task){
-          task = entity;
-        }else if(entity.confidence > task.confidence){
-          task = entity;
-        }
-      }
+      else if(entity.entity == 'tasks')
+          task = entity; 
     });
     
     if(!task){
@@ -503,7 +497,6 @@ module.exports = {
     }else{
       //get the full objects so we have all the info we need
       database.getTask(user, task.value, function(taskObject){
-        //console.log(taskObject);
           if(taskObject.state == 'Backlog' || taskObject.state === 'Incomplete'){ 
             database.updateTaskStoryPoints(taskObject._id, points);
             returnMessage = 'The task \'' + taskObject.title + '\' is assigned a story point of ' + points;
@@ -515,7 +508,7 @@ module.exports = {
       deasync.loopWhile(function(){return returnMessage == null;});
     }
     
-    return returnMessage;
+    return [returnMessage, null];
   }
   
 };

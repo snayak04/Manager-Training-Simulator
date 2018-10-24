@@ -56,6 +56,7 @@ module.exports = {
         string += '<br>State: ' + task.state + '<br>';
         if(task.state != 'Complete'){
           string += 'Time Left: ' + task.timeLeft + ' man-hours';
+          string += '<br>Story Points: ' + task.points;
           string += '<br>Employees: ';
           if(task.employeeIds.length == 0){
             string+='none';
