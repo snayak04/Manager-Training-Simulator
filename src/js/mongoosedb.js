@@ -55,12 +55,6 @@ module.exports = {
     });
   },
 
-  updateProjectRating: function(projectId, points){
-    var stateInsert = { $set: {agileRating: points}};
-    projects.findByIdAndUpdate(projectId, stateInsert, function(err){
-      if(err) throw err;
-    });
-  },
 
   updateEmployeeSatisfaction: function(employeeId, newSatis){
     var satisfactionInsert = { $set: {satisfaction: newSatis}};
@@ -80,6 +74,14 @@ module.exports = {
       if(err) throw err;
     });
   },
+
+  updateProjectRating: function(projectId, points){
+    var query = {_id: projectId};
+    projects.findOneAndUpdate(query, {$set: {agileRating: points}}, { new: true }, function(err){
+      if (err) throw err;
+    })
+  },
+
   updateTaskWorkers: function(taskId, newWorkerArray){
     var workingInsert = { $set: {employeeIds: newWorkerArray}};
     tasks.findByIdAndUpdate(taskId, workingInsert, function(err){

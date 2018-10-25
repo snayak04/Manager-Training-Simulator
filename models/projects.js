@@ -15,7 +15,7 @@ const projectsSchema  = new Schema({
     startDate: Date,
     deadline: Date,
     currentTime: Date,
-    agileRating: {type: Number, min: 0, max: 100, default: 0}
+    agileRating: {type: Number}
 
 });
 
