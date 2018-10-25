@@ -30,6 +30,28 @@ function calculateFinishTime(task){
   }
 }
 
+function calculateActualFinishTime(user, task){
+  if(task.employeeIds.length == 0){
+    return -1;
+  }else{
+    var skillSum = 0;
+	
+	var coworkerNames = getNamesFromIds(task.employeeIds);
+    task.employeeIds.forEach(function(employeeId){
+      //get employee from database
+      var done = false;
+      database.getEmployeeById(employeeId, function(employee){
+        skillSum += employee.skill * employee.skill * calculateSocialFactor(user, employee.name, coworkerNames);
+        done = true;
+      });
+      deasync.loopWhile(function(){return !done;});
+    });
+	var skillTotal = Math.sqrt(skillSum);
+	skillTotal /= 100;
+    return Math.ceil(task.timeLeft / skillTotal);
+  }
+}
+
 //updates a task's time left after a given number of hours based on current employees working it
 //returns array of finished tasks
 function updateTimeLeft(user, tasks, hours){
@@ -53,7 +75,7 @@ function updateTimeLeft(user, tasks, hours){
 		  deasync.loopWhile(function(){return !done;});
 		 
 		  var socialFactor = calculateSocialFactor(user, employee.name, names);
-		  skillSum += employee.skill * employee.skill * socialFactor; //there might be a prettier way to square
+		  skillSum += employee.skill * employee.skill * socialFactor;
 		  idealSkillSum += employee.skill / 100;
 	  });	  
 	  
@@ -82,10 +104,8 @@ function calculateSocialFactor(user, employeeName, coworkerNames){
 	  });
 	  deasync.loopWhile(function(){return !done;});
 	});
-	
 	socialFactor /= coworkerNames.length;
 	return socialFactor;
-	
 }
 
 function getNamesFromIds(ids){
@@ -180,7 +200,7 @@ module.exports = {
         tasks.forEach(function(task){
           //Don't care about complete tasks
           if(task.state != 'Complete'){
-            var timeLeft = calculateFinishTime(task);
+            var timeLeft = calculateActualFinishTime(user, task);
             if(!shortestFinishTime || timeLeft < shortestFinishTime){
               if(timeLeft != -1){
                 shortestFinishTime = timeLeft;
