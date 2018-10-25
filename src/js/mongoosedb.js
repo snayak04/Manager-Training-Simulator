@@ -54,6 +54,8 @@ module.exports = {
       return callback(result);
     });
   },
+
+
   updateEmployeeSatisfaction: function(employeeId, newSatis){
     var satisfactionInsert = { $set: {satisfaction: newSatis}};
     employees.findByIdAndUpdate(employeeId, satisfactionInsert, function(err){
@@ -72,6 +74,14 @@ module.exports = {
       if(err) throw err;
     });
   },
+
+  updateProjectRating: function(projectId, points){
+    var query = {_id: projectId};
+    projects.findOneAndUpdate(query, {$set: {agileRating: points}}, { new: true }, function(err){
+      if (err) throw err;
+    })
+  },
+
   updateTaskWorkers: function(taskId, newWorkerArray){
     var workingInsert = { $set: {employeeIds: newWorkerArray}};
     tasks.findByIdAndUpdate(taskId, workingInsert, function(err){

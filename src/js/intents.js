@@ -221,6 +221,7 @@ module.exports = {
           //Build Message
           var satisfactionRating = scoreSatisfaction();
           var productivityRating = scoreProductivity(user);
+          //console.log("IN INTENTS!!" + user);
           speechText = '<speak version="1.0">It is now the end of the day <break strength="weak"></break>. Here is your rating for the day';
           speechText +=' <break strength="medium"></break> It is now ' + config.DAY_START_TIME + ' AM on ' + newTime.getMonth() + '\\' + newTime.getDate() + '</speak>';
           returnMessage = 'It is the end of the day. Here is your rating for the day:<br>'
@@ -231,6 +232,7 @@ module.exports = {
             + 'It is now ' + config.DAY_START_TIME + ' AM on ' 
             + newTime.getMonth() + '\\' + newTime.getDate();
           done = true;
+          agileRating.reset();
           
         }else{
           //Next event is an employee finishing their task
@@ -238,7 +240,7 @@ module.exports = {
           finishTasks(finishedTasks);
           currentTime.setHours(currentTime.getHours() + shortestFinishTime);
           database.updateProjectTime(project._id, currentTime);
-          
+        //  database.updateProjectRating(project._id, agileRating.getScore());
           returnMessage = '';
           
           //buildMessage
@@ -449,7 +451,7 @@ module.exports = {
           employee = entity;
         }
       }else if(entity.entity == 'tasks'){
-        console.log(entity);
+        //console.log(entity);
         if(!task){
           task = entity;
         }else if(entity.confidence > task.confidence){
@@ -506,16 +508,10 @@ module.exports = {
     var entities = response.entities;
    
     entities.forEach(function(entity){
-      
-      if (entity.entity == 'points'){
+      if (entity.entity == 'points')
         points = entity.value;
-      }else if(entity.entity == 'tasks'){
-        if(!task){
-          task = entity;
-        }else if(entity.confidence > task.confidence){
-          task = entity;
-        }
-      }
+      else if(entity.entity == 'tasks')
+          task = entity; 
     });
     
     if(!task){
@@ -523,7 +519,6 @@ module.exports = {
     }else{
       //get the full objects so we have all the info we need
       database.getTask(user, task.value, function(taskObject){
-        //console.log(taskObject);
           if(taskObject.state == 'Backlog' || taskObject.state === 'Incomplete'){ 
             database.updateTaskStoryPoints(taskObject._id, points);
             returnMessage = 'The task \'' + taskObject.title + '\' is assigned a story point of ' + points;
@@ -535,7 +530,7 @@ module.exports = {
       deasync.loopWhile(function(){return returnMessage == null;});
     }
     
-    return returnMessage;
+    return [returnMessage, null];
   }
   
 };

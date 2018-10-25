@@ -75,6 +75,7 @@ function initialize(user){
   employeeNames = ['John', 'Harry', 'Amanda'];
   var relations = generateRelations(user, employeeNames);
   var project = generateProject(employees, relations, tasks, user);
+  
 }
 
 module.exports = {
