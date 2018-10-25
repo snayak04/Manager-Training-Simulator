@@ -30,17 +30,18 @@ function calculateFinishTime(task){
   }
 }
 
-function calculateActualFinishTime(task){
+function calculateActualFinishTime(user, task){
   if(task.employeeIds.length == 0){
     return -1;
   }else{
     var skillSum = 0;
+	
 	var coworkerNames = getNamesFromIds(task.employeeIds);
     task.employeeIds.forEach(function(employeeId){
       //get employee from database
       var done = false;
       database.getEmployeeById(employeeId, function(employee){
-        skillSum += employee.skill * employee.skill * calculateSocialFactor(employee.name, coworkerNames);
+        skillSum += employee.skill * employee.skill * calculateSocialFactor(user, employee.name, coworkerNames);
         done = true;
       });
       deasync.loopWhile(function(){return !done;});
@@ -198,7 +199,7 @@ module.exports = {
         tasks.forEach(function(task){
           //Don't care about complete tasks
           if(task.state != 'Complete'){
-            var timeLeft = calculateActualFinishTime(task);
+            var timeLeft = calculateActualFinishTime(user, task);
             if(!shortestFinishTime || timeLeft < shortestFinishTime){
               if(timeLeft != -1){
                 shortestFinishTime = timeLeft;
