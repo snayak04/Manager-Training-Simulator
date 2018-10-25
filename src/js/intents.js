@@ -515,13 +515,13 @@ module.exports = {
     });
     
     if(!task){
-      returnMessage = 'I think you\'re trying to assign story point of ' + points + ', but I don\'t know for which task';
+      returnMessage = 'I think you\'re trying to assign ' + points + ' story points to a task, but I don\'t know for which task';
     }else{
       //get the full objects so we have all the info we need
       database.getTask(user, task.value, function(taskObject){
           if(taskObject.state == 'Backlog' || taskObject.state === 'Incomplete'){ 
             database.updateTaskStoryPoints(taskObject._id, points);
-            returnMessage = 'The task \'' + taskObject.title + '\' is assigned a story point of ' + points;
+            returnMessage = 'The task \'' + taskObject.title + '\' has been assigned ' + points + ' story points';
           }else{
             returnMessage = 'The task \'' + taskObject.title + '\' is already in progress, testing, or completed!';
           }
