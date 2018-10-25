@@ -219,7 +219,7 @@ module.exports = {
           finishTasks(finishedTasks);
           currentTime.setHours(currentTime.getHours() + shortestFinishTime);
           database.updateProjectTime(project._id, currentTime);
-          database.updateProjectRating(project._id, agileRating.getScore());
+        //  database.updateProjectRating(project._id, agileRating.getScore());
           returnMessage = '';
           
           //buildMessage
