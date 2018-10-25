@@ -14,6 +14,10 @@ function AgileRating(user) {
     database.getProjectState(user, function(res){
         this.project = res[0];
         
+
+       AgileRating.prototype.reset= () =>{
+        database.updateProjectRating(this.project._id, 0);
+       } 
     /**
      * 
      * @param {*} taskName 
