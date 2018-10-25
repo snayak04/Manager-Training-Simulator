@@ -212,6 +212,7 @@ module.exports = {
             + 'It is now ' + config.DAY_START_TIME + ' AM on ' 
             + newTime.getMonth() + '\\' + newTime.getDate();
           done = true;
+          agileRating.reset();
           
         }else{
           //Next event is an employee finishing their task
