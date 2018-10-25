@@ -45,7 +45,7 @@ var generateRelations = (user, employees)=>{
 // Only initializes the project
 function generateProject (employees, relations, tasks, user){
   startDate = new Date('2018-09-24T09:00:00');
-  deadline = new Date('2018-09-28T17:00:00');
+  deadline = new Date('2018-10-12T17:00:00');
   
   newProject = project.insertNewProject('Sprint 1', user._id, employees, relations, tasks, startDate, deadline, startDate);
   return newProject;
