@@ -57,7 +57,7 @@ var Api = (function() {
         //Parsing and Sending the result obtained from server to TEXT TO SPEECH API
         var reponseJson = JSON.parse(http.responseText);
         var str = reponseJson.output.text;
-  	  	console.log(reponseJson);
+  	  	//console.log(reponseJson);
   	  	str = str.replace(/<br>/gi, '');  //removing html tags to avoid issues
   	  	str = str.replace(/&ensp;/gi, '');
   	  	var speak = document.getElementById('Speak');
@@ -73,7 +73,7 @@ var Api = (function() {
   	  			
   	  	}
   	  		
-  	  	console.log(str);
+  	  	//console.log(str);
       }
     };
 
@@ -125,7 +125,7 @@ var Api = (function() {
 	http.responseType = 'blob';
 	http.onreadystatechange = function() {
 		if (http.readyState === 4 && http.status === 200) {
-			console.log(http.response);
+			//console.log(http.response);
 			var blob = http.response;
 			var audio = document.getElementById('audio');
 			var url = window.URL.createObjectURL(blob);

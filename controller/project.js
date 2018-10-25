@@ -25,7 +25,8 @@ insertNewProject = (title, user_id, employeeIds, relationIds, taskIds, startDate
       tasks: taskIds,
       startDate: startDate,
       deadline: deadline,
-      currentTime: currentTime
+      currentTime: currentTime,
+      agileRating: 0
     });
     newProject.save();
     
