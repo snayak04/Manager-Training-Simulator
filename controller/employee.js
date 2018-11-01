@@ -20,12 +20,12 @@ var insertNewEmployee = (name, user_id, workingOn, position, skill, satisfaction
     return employee._id;
 };
 
-var insertNewRelation = (user_id, firstName, secondName, value)=>{
+var insertNewRelation = (user_id, firstId, secondId, value)=>{
 	relation = new relations({
 		_id:mongoose.Types.ObjectId(),
 		user_id: user_id,
-		firstName: firstName,
-		secondName: secondName, 
+		firstEmp_id: firstId,
+		secondEmp_id: secondId, 
 		relationStrength: value
 	});
 	relation.save(); //??

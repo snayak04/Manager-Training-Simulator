@@ -82,18 +82,17 @@ Generates a relation for each pair of employees.
 var generateRelations = (user, employees)=>{
 	var relationArray = []
 	var i = 0;
-	//TODO: hackyfix for now. Relation needs to be reworked.
-	employees.forEach(function(employee1name){
-		employees.forEach(function(employee2name){
+	employees.forEach(function(employee1){
+		employees.forEach(function(employee2){
 				var value = Math.random();
-				if (employee1name == employee2name){
+				if (employee1 == employee2){
 					value = 1;
 				}
-				relationArray[i] = employeeController.insertNewRelation(user._id, employee1name, employee2name, value);
+				relationArray[i] = employeeController.insertNewRelation(user._id, employee1, employee2, value);
 				i++;
 		});			
 	});	
-	return relationArray; //??
+	return relationArray;
 }
 
 /*
@@ -133,10 +132,7 @@ TODO: Deletes the user's old project, if there is one.
 function initialize(user){
   var employees = randomizeEmployees(user, config.NUM_EMPLOYEES);
   var tasks = generateTasks(user, config.NUM_TASKS);
-  
-  //Hacky fix for now. Relation should be reworked to reference employees by id, not by names.
-  employeeNames = ['John', 'Harry', 'Amanda'];
-  var relations = generateRelations(user, employeeNames);
+  var relations = generateRelations(user, employees);
   var project = generateProject(employees, relations, tasks, user);
   
 }
