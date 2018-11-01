@@ -22,7 +22,7 @@ Randomizes employees from list of names and titles. Returns an array of ObjectId
 function randomizeEmployees(user, num){
   retVal = [];
   nameList = nameData.names;
-  titlesList = jobTitleData.jobTitles;
+  titleList = jobTitleData.jobTitles;
   
   var i = 0;
   var skill;
@@ -32,16 +32,16 @@ function randomizeEmployees(user, num){
   var title;
   var titleIndex;
   while(i < num){
-    //skill and satisfaciton is a random int between 1 and 100
+    //skill and satisfaciton is a random int between 1 and 100, inclusive
     skill = Math.floor(Math.random() * 100 + 1);
     satisfaction = Math.floor(Math.random() * 100 + 1);
     //name is a random name from the list of names we have. Remove after using so we don't repeat
     nameIndex = Math.floor(Math.random() * nameList.length);
-    name = names[nameIndex];
-    names.splice(nameIndex, 1);
+    name = nameList[nameIndex];
+    nameList.splice(nameIndex, 1);
     //jobTitle is a random title from title list. Can be repeated
-    titleIndex = Math.floor(Math.random() * titlesList.length);
-    title = titlesList[titleIndex];
+    titleIndex = Math.floor(Math.random() * titleList.length);
+    title = titleList[titleIndex];
     
     //Add to database and add new employee id into return value
     retVal.push(employeeController.insertNewEmployee(name, user._id, null, title, skill, satisfaction));
@@ -50,29 +50,42 @@ function randomizeEmployees(user, num){
   return retVal;
 };
 
-//TODO:: Returns tasks - gotta make more efficient; didn;t have enough time..
+/*
+Randomize tasks based on a list. Returns an array of ObjectIds of the new tasks.
+*/
 function generateTasks(user, num){
   var retVal = [];
-  var taskLists = tasks.
+  var taskList = taskData.tasks;
   var i = 0;
+  console.log('tasktest1');
   
-  
+  var hoursNeeded;
+  var taskName;
+  var taskIndex;
   while(i < num){
+    //hoursNeeded is a random int between min and max hours needed, inclusive.
+    hoursNeeded = Math.floor(Math.random() * ((config.MAX_HOURS_NEEDED + 1) - config.MIN_HOURS_NEEDED) + config.MIN_HOURS_NEEDED);
+    //taskName is a random name from the task list. Remove after using so no repeating
+    taskIndex = Math.floor(Math.random() * taskList.length);
+    taskName = taskList[taskIndex];
+    taskList.splice(taskIndex, 1);
+    console.log('tasktest2');
     
+    //insert into database and add task Id to retval
+    retVal.push(taskController.insertNewTask(taskName, user._id, 'Incomplete', [], null, null, null, hoursNeeded));
+    console.log(retVal);
+    i++;
   }
-  var task = require('../../controller/task');
-  return [task.insertNewTask('Code the new level', user._id,'Incomplete', [], null, null, null, 10),
-  taskController.insertNewTask('Add a battle royale mode', user._id, 'Incomplete', [], null, null, null, 15),
-  task.insertNewTask('Optimize performance', user._id, 'Incomplete', [], null, null, null, 10),
-  task.insertNewTask('Update user interface', user._id, 'Incomplete', [], null, null, null, 10),
-  task.insertNewTask('Add random map generation', user._id, 'Incomplete', [], null, null, null, 20),
-  ];
+  return retVal;
 }
 
+/*
+Generates a relation for each pair of employees.
+*/
 var generateRelations = (user, employees)=>{
 	var relationArray = []
 	var i = 0;
-	//hackyfix for now. Relation needs to be reworked.
+	//TODO: hackyfix for now. Relation needs to be reworked.
 	employees.forEach(function(employee1name){
 		employees.forEach(function(employee2name){
 				var value = Math.random();
@@ -86,7 +99,9 @@ var generateRelations = (user, employees)=>{
 	return relationArray; //??
 }
 
-// Only initializes the project
+/*
+Initializes the project.
+*/
 function generateProject (employees, relations, tasks, user){
   startDate = new Date('2018-09-24T09:00:00');
   deadline = new Date('2018-10-12T17:00:00');
@@ -95,7 +110,9 @@ function generateProject (employees, relations, tasks, user){
   return newProject;
 }
 
-//Flushes the old stuff from database and Assistant
+/*
+Flushes the database, should probably be somewhere else be somewhere else
+*/
 function reset(){
   var deasync = require('deasync');
   var database = require('./DBUtils');
@@ -111,10 +128,17 @@ function reset(){
   deasync.loopWhile(function(){return asyncDone.indexOf(false) > -1;});
 }
 
+
+/*
+Creates a new project for the given user. 
+TODO: Deletes the user's old project, if there is one.
+*/
 function initialize(user){
-  //reset();
+  console.log('test1');
   var employees = randomizeEmployees(user, config.NUM_EMPLOYEES);
+  console.log('test2');
   var tasks = generateTasks(user, config.NUM_TASKS);
+  console.log('test3');
   
   //Hacky fix for now. Relation should be reworked to reference employees by id, not by names.
   employeeNames = ['John', 'Harry', 'Amanda'];
