@@ -11,6 +11,8 @@ module.exports = {
   
   /* Settings for generating new projects */
   NUM_EMPLOYEES: 3,
-  NUM_TASKS: 5
+  NUM_TASKS: 5,
+  MIN_HOURS_NEEDED: 1,
+  MAX_HOURS_NEEDED: 20
 
 };
