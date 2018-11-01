@@ -8,5 +8,9 @@ module.exports = {
   //Workday start/end times, 24 hour clock
   DAY_START_TIME: 9,
   DAY_END_TIME: 17,
+  
+  /* Settings for generating new projects */
+  NUM_EMPLOYEES: 3,
+  NUM_TASKS: 5
 
 };
