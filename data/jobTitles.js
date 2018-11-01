@@ -2,6 +2,7 @@ module.exports = {
   jobTitles: [
   'Software Engineer',
   'Software Intern',
-  'QA Analyst'
+  'QA Analyst',
+  'QA Intern'
   ]
 }

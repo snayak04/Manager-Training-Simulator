@@ -23,8 +23,8 @@ module.exports = {
       return callback(result);
     });
   },
-  getRelation: function(user, firstName, secondName, callback){
-	var search = {user_id: user._id, firstName: firstName, secondName: secondName};
+  getRelation: function(user, firstId, secondId, callback){
+	var search = {user_id: user._id, firstEmp_id: firstId, secondEmp_id: secondId};
 	relations.find(search, function(err, result){
       return callback(result[0]);
     });

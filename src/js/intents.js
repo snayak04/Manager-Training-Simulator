@@ -377,7 +377,7 @@ module.exports = {
 	  var employee2;
 	  var entities = response.entities;
 	  entities.forEach(function(entity){
-		  if (entity.entity == 'employees'){ //is this line necessary?
+		  if (entity.entity == 'employees'){
 			  if (!employee1){
 				  employee1 = entity;
 			  } else if (!employee2){
@@ -402,19 +402,27 @@ module.exports = {
 	  }
 	  
 	  
-	  var name1 = employee1.value;
-	  var name2 = employee2.value;
+	  var name1;
+	  var name2;
 	  var sync = 0;
 	  var forwards;
 	  var backwards;
-	  database.getRelation(user, name1, name2, function(result){
-		  forwards = result.relationStrength;
-		  sync++;
+    database.getEmployee(user, employee1.value, function(emp1obj){
+      database.getEmployee(user, employee2.value, function(emp2obj){
+        if(emp1obj && emp2obj){
+          database.getRelation(user, emp1obj._id, emp2obj._id, function(result){
+            forwards = result.relationStrength;
+            sync++;
+            });
+          database.getRelation(user, emp2obj._id, emp1obj._id, function(result){
+            backwards = result.relationStrength;
+            sync++;
+            });
+        }else{//One of the employees detected is not part of this project
+            //TODO HANDLE THIS
+        }
       });
-	  database.getRelation(user, name2, name1, function(result){
-		  backwards = result.relationStrength;
-		  sync++;
-      });
+    });
 	  deasync.loopWhile(function(){return sync < 2;});
 	  
     var stringPart1 = relationString(name1, name2, forwards);
