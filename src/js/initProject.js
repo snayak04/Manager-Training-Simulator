@@ -21,8 +21,8 @@ Randomizes employees from list of names and titles. Returns an array of ObjectId
 */
 function randomizeEmployees(user, num){
   retVal = [];
-  nameList = nameData.names;
-  titleList = jobTitleData.jobTitles;
+  nameList = nameData.names.slice();
+  titleList = jobTitleData.jobTitles.slice();
   
   var i = 0;
   var skill;
@@ -55,7 +55,7 @@ Randomize tasks based on a list. Returns an array of ObjectIds of the new tasks.
 */
 function generateTasks(user, num){
   var retVal = [];
-  var taskList = taskData.tasks;
+  var taskList = taskData.tasks.slice();
   var i = 0;
   console.log('tasktest1');
   
