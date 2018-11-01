@@ -57,7 +57,6 @@ function generateTasks(user, num){
   var retVal = [];
   var taskList = taskData.tasks.slice();
   var i = 0;
-  console.log('tasktest1');
   
   var hoursNeeded;
   var taskName;
@@ -69,11 +68,9 @@ function generateTasks(user, num){
     taskIndex = Math.floor(Math.random() * taskList.length);
     taskName = taskList[taskIndex];
     taskList.splice(taskIndex, 1);
-    console.log('tasktest2');
     
     //insert into database and add task Id to retval
     retVal.push(taskController.insertNewTask(taskName, user._id, 'Incomplete', [], null, null, null, hoursNeeded));
-    console.log(retVal);
     i++;
   }
   return retVal;
@@ -134,11 +131,8 @@ Creates a new project for the given user.
 TODO: Deletes the user's old project, if there is one.
 */
 function initialize(user){
-  console.log('test1');
   var employees = randomizeEmployees(user, config.NUM_EMPLOYEES);
-  console.log('test2');
   var tasks = generateTasks(user, config.NUM_TASKS);
-  console.log('test3');
   
   //Hacky fix for now. Relation should be reworked to reference employees by id, not by names.
   employeeNames = ['John', 'Harry', 'Amanda'];
