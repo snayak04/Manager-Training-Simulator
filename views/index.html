@@ -39,6 +39,7 @@
           <label for="textInput" class="inputOutline">
             <input id="textInput" class="input responsive-column" placeholder="Type something" type="text" onkeydown="ConversationPanel.inputKeyDown(event, this)" autofocus>
           </label>
+          <input type="checkbox" name="textToSpeech" id="Speak" value="male">Enable TTS<br>
         </div>
 
       </div>
@@ -53,8 +54,6 @@
       <audio autoPlay="true" style="display:none" id="audio" controls="controls">
               Your browser does not support the audio element.
       </audio>
-      <input type="radio" name="textToSpeech" id="Speak" value="male"> Speak<br>
-	  <input type="radio" name="textToSpeech" id="Do not Speak" value="female"> Don't speak<br>
     </div>
   
   
