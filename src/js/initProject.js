@@ -6,9 +6,13 @@ const assistant = require('./assistant');
 var config = require('./config');
 
 //Database Model controllers
+var mongoosedb = require('./mongoosedb');
 var taskController = require('../../controller/task');
 var employeeController = require('../../controller/employee'); 
 var projectController = require('../../controller/project');
+
+//deasync
+var deasync = require('deasync');
 
 //Data to pull names, tasks, etc. from
 var nameData = require('../../data/names');
@@ -142,7 +146,6 @@ function generateProject (employees, relations, tasks, user, totalHours){
 Flushes the database, should probably be somewhere else be somewhere else
 */
 function reset(){
-  var deasync = require('deasync');
   var database = require('./DBUtils');
 
   var asyncDone = [false, false, false, false, false];
@@ -156,12 +159,40 @@ function reset(){
   deasync.loopWhile(function(){return asyncDone.indexOf(false) > -1;});
 }
 
+function deleteOldProject(user){
+  var sync = [false, false, false, false];
+  console.log('test1');
+  mongoosedb.deleteAllRelations(user, function(){
+    sync[0] = true;
+    console.log(sync);
+    console.log('relation');
+  });
+  mongoosedb.deleteAllTasks(user, function(){
+    sync[1] = true;
+    console.log(sync);
+    console.log('tasks');
+  });
+  mongoosedb.deleteAllEmployees(user, function(){
+    sync[2] = true;
+    console.log(sync);
+    console.log('employees');
+  });
+  mongoosedb.deleteAllProjects(user, function(){
+    sync[3] = true;
+    console.log(sync);
+    console.log('projects');
+  });
+  deasync.loopWhile(function(){return sync.indexOf(false) > -1;});
+  console.log('test2');
+}
+
 
 /*
 Creates a new project for the given user. 
-TODO: Deletes the user's old project, if there is one.
 */
 function initialize(user){
+  deleteOldProject(user);
+  
   var employees = randomizeEmployees(user, config.NUM_EMPLOYEES);
   var taskRetval = generateTasks(user, config.NUM_TASKS);
   var tasks = taskRetval[0];
