@@ -29,9 +29,6 @@ var Common = (function () {
 
     // Fill the "content" of the element
     if (domJson.text) {
-//      domJson.text = domJson.replace(new RegExp('&', '&amp'));
-//      domJson.text = domJson.replace(new RegExp('&', '&amp'));
-//      domJson.text = domJson.replace(new RegExp('&', '&amp'));
       element.innerHTML = domJson.text;
     } else if (domJson.html) {
       element.insertAdjacentHTML('beforeend', domJson.html);

@@ -105,8 +105,6 @@ var Api = (function() {
       }
     };
 
-    var params = JSON.stringify(param);
-
     // Send request
     http.send(param);
   }
