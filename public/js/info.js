@@ -50,6 +50,8 @@ var InfoPanel = (function () {
       if (latestResponse) {
         context = latestResponse.context;
       }
+      openMenu = menu;
+      console.log(openMenu);
 
       // Send the user message
       Api.getRequest(menu, context);

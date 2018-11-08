@@ -3,6 +3,7 @@
 /* eslint no-unused-vars: "off" */
 /* global Api: true, Common: true*/
 var update = 0;
+var openMenu = 'tasks'
 
 var ConversationPanel = (function () {
   var settings = {
@@ -140,7 +141,7 @@ var ConversationPanel = (function () {
       // Move chat to the most recent messages when new messages are added
       scrollToChatBottom();
       if(update == 1){
-        showdata('tasks')
+        showdata(openMenu);
         update = 0;
       } else if (update == 0) {
         update = 1;
@@ -201,11 +202,9 @@ var ConversationPanel = (function () {
     textArray.forEach(function (currentText) {
       if (currentText) {
         if(isUser){
-          console.log(currentText);
           outputText = currentText.replace(/&/g, '&amp');
           outputText = outputText.replace(/</g, '&lt');
           outputText = outputText.replace(/>/g, '&gt');
-          console.log(outputText);
           var messageJson = {
             // <div class='segments'>
             'tagName': 'div',
