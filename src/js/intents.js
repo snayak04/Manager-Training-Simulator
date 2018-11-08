@@ -36,12 +36,11 @@ function calculateActualFinishTime(user, task){
   }else{
     var skillSum = 0;
 	
-	var coworkerNames = getNamesFromIds(task.employeeIds);
     task.employeeIds.forEach(function(employeeId){
       //get employee from database
       var done = false;
       database.getEmployeeById(employeeId, function(employee){
-        skillSum += employee.skill * employee.skill * calculateSocialFactor(user, employee.name, coworkerNames);
+        skillSum += employee.skill * employee.skill * calculateSocialFactor(user, employee, task.employeeIds);
         done = true;
       });
       deasync.loopWhile(function(){return !done;});
@@ -74,7 +73,7 @@ function updateTimeLeft(user, tasks, hours){
 		  });
 		  deasync.loopWhile(function(){return !done;});
 		 
-		  var socialFactor = calculateSocialFactor(user, employee.name, names);
+		  var socialFactor = calculateSocialFactor(user, employee, task.employeeIds);
 		  skillSum += employee.skill * employee.skill * socialFactor;
 		  idealSkillSum += employee.skill / 100;
 	  });	  
@@ -94,17 +93,17 @@ function updateTimeLeft(user, tasks, hours){
 }
 
 
-function calculateSocialFactor(user, employeeName, coworkerNames){
+function calculateSocialFactor(user, employee, coworkerIds){
 	var socialFactor = 0;
-	coworkerNames.forEach(function(coworkerName){
+	coworkerIds.forEach(function(coworkerId){
 	  var done = false;
-	  database.getRelation(user, employeeName, coworkerName, function(result){
+	  database.getRelation(user, employee._id, coworkerId, function(result){
 		  socialFactor += result.relationStrength;
 		  done = true;
 	  });
 	  deasync.loopWhile(function(){return !done;});
 	});
-	socialFactor /= coworkerNames.length;
+	socialFactor /= coworkerIds.length;
 	return socialFactor;
 }
 
@@ -402,13 +401,14 @@ module.exports = {
 	  }
 	  
 	  
-	  var name1;
-	  var name2;
+	  var name1 = employee1.value;
+	  var name2 = employee2.value;
 	  var sync = 0;
 	  var forwards;
 	  var backwards;
-    database.getEmployee(user, employee1.value, function(emp1obj){
-      database.getEmployee(user, employee2.value, function(emp2obj){
+    var badName = false;
+    database.getEmployee(user, name1, function(emp1obj){
+      database.getEmployee(user, name2, function(emp2obj){
         if(emp1obj && emp2obj){
           database.getRelation(user, emp1obj._id, emp2obj._id, function(result){
             forwards = result.relationStrength;
@@ -419,11 +419,17 @@ module.exports = {
             sync++;
             });
         }else{//One of the employees detected is not part of this project
-            //TODO HANDLE THIS
+            //Maybe improve this message in the future
+            badName = true;
+            string = "I think you're inquiring about a relationship, but I don't know either of the employees.";
+            sync = 2;
         }
       });
     });
 	  deasync.loopWhile(function(){return sync < 2;});
+    if(badName){
+      return [string, null];
+    }
 	  
     var stringPart1 = relationString(name1, name2, forwards);
     var stringPart2 = relationString(name2, name1, backwards);
