@@ -15,7 +15,6 @@ var nameData = require('../../data/names');
 var jobTitleData = require('../../data/jobTitles');
 var taskData = require('../../data/tasks');
 
-
 /*
 Randomizes employees from list of names and titles. Returns an array of ObjectIds of the employees
 */
@@ -61,9 +60,11 @@ function generateTasks(user, num){
   var hoursNeeded;
   var taskName;
   var taskIndex;
+  var totalHours = 0;
   while(i < num){
     //hoursNeeded is a random int between min and max hours needed, inclusive.
     hoursNeeded = Math.floor(Math.random() * ((config.MAX_HOURS_NEEDED + 1) - config.MIN_HOURS_NEEDED) + config.MIN_HOURS_NEEDED);
+    totalHours += hoursNeeded;
     //taskName is a random name from the task list. Remove after using so no repeating
     taskIndex = Math.floor(Math.random() * taskList.length);
     taskName = taskList[taskIndex];
@@ -73,7 +74,7 @@ function generateTasks(user, num){
     retVal.push(taskController.insertNewTask(taskName, user._id, 'Incomplete', [], null, null, null, hoursNeeded));
     i++;
   }
-  return retVal;
+  return [retVal, totalHours];
 }
 
 /*
@@ -98,9 +99,40 @@ var generateRelations = (user, employees)=>{
 /*
 Initializes the project.
 */
-function generateProject (employees, relations, tasks, user){
+function generateProject (employees, relations, tasks, user, totalHours){
   startDate = new Date('2018-09-24T09:00:00');
-  deadline = new Date('2018-10-12T17:00:00');
+  deadline = new Date(startDate.getTime());
+  
+  
+  //Make a reasonable deadline based on how many total hours of work there are
+  var days = 0;
+  var dayOfWeek = startDate.getDay();
+  while(totalHours > 0){
+    //these cases are to handle weekdays
+    if(dayOfWeek == 6 || dayOfWeek == 0){//Sunday and Saturday
+      days++;
+    }else{
+      totalHours -= 8;
+      days++;
+    }
+    dayOfWeek = (dayOfWeek + 1) % 7;
+  }
+  
+  //Add leeway
+  days += Math.floor(Math.random() * ((config.MAX_LEEWAY + 1) - config.MIN_LEEWAY) + config.MIN_LEEWAY);
+  
+  //Add number of days to deadline, which was previously the same as the startDate
+  deadline.setDate(deadline.getDate() + days);
+  
+  //Make sure deadline is a weekday
+  if(deadline.getDay() == 0){//Sunday
+      deadline.setDate(deadline.getDate() + 1);
+  }else if(deadline.getDay() == 6){//Saturday
+      deadline.setDate(deadline.getDate() + 2);
+  }
+  
+  //change deadline time to end of day:
+  deadline.setHours(config.DAY_END_TIME);
   
   newProject = projectController.insertNewProject('Sprint 1', user._id, employees, relations, tasks, startDate, deadline, startDate);
   return newProject;
@@ -131,9 +163,11 @@ TODO: Deletes the user's old project, if there is one.
 */
 function initialize(user){
   var employees = randomizeEmployees(user, config.NUM_EMPLOYEES);
-  var tasks = generateTasks(user, config.NUM_TASKS);
+  var taskRetval = generateTasks(user, config.NUM_TASKS);
+  var tasks = taskRetval[0];
+  var totalHours = taskRetval[1];
   var relations = generateRelations(user, employees);
-  var project = generateProject(employees, relations, tasks, user);
+  var project = generateProject(employees, relations, tasks, user, totalHours);
   
 }
 

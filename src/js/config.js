@@ -10,9 +10,12 @@ module.exports = {
   DAY_END_TIME: 17,
   
   /* Settings for generating new projects */
-  NUM_EMPLOYEES: 3,
-  NUM_TASKS: 5,
+  NUM_EMPLOYEES: 5,
+  NUM_TASKS: 6,
   MIN_HOURS_NEEDED: 1,
-  MAX_HOURS_NEEDED: 20
+  MAX_HOURS_NEEDED: 20,
+  //Number of days of leeway given when generating deadline.
+  MIN_LEEWAY: 1,
+  MAX_LEEWAY: 5
 
 };

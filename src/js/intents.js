@@ -483,28 +483,36 @@ module.exports = {
       //get the full objects so we have all the info we need
       database.getTask(user, task.value, function(taskObject){
         database.getEmployee(user, employee.value, function(employeeObject){
-          var workers = taskObject.employeeIds;
-          //check if employee is already working
-          var alreadyWorking = false;
-          if(workers)
-          workers.forEach(function(employeeId){
-            if(employeeId.toString() == employeeObject._id.toString()){
-              alreadyWorking = true;
+          if(taskObject && employeeObject){
+            var workers = taskObject.employeeIds;
+            //check if employee is already working
+            var alreadyWorking = false;
+            if(workers)
+            workers.forEach(function(employeeId){
+              if(employeeId.toString() == employeeObject._id.toString()){
+                alreadyWorking = true;
+              }
+            });
+            if(taskObject.state == 'Complete'){ //task is complete
+              returnMessage = 'The task \'' + taskObject.title + '\' is already complete';
+            }else if (alreadyWorking){ //employee already on this task
+              returnMessage = employeeObject.name + ' is already working on \'' + taskObject.title + '\'';
+            }else if(employeeObject.workingOn != null){ //employee on a different task
+              returnMessage = employeeObject.name + ' is already working on a different task, \'' + employeeObject.workingOn + '\'';
+            }else{
+              //Add employee to task
+              workers.push(employeeObject._id);
+              database.updateTaskWorkers(taskObject._id, workers);
+              database.updateEmployeeWorkingOn(employeeObject._id, taskObject.title);
+              returnMessage = 'Assigned task \'' + taskObject.title + '\' to ' + employeeObject.name;
             }
-          });
-          if(taskObject.state == 'Complete'){ //task is complete
-            returnMessage = 'The task \'' + taskObject.title + '\' is already complete';
-          }else if (alreadyWorking){ //employee already on this task
-            returnMessage = employeeObject.name + ' is already working on \'' + taskObject.title + '\'';
-          }else if(employeeObject.workingOn != null){ //employee on a different task
-            returnMessage = employeeObject.name + ' is already working on a different task, \'' + employeeObject.workingOn + '\'';
-          }else{
-            //Add employee to task
-            workers.push(employeeObject._id);
-            database.updateTaskWorkers(taskObject._id, workers);
-            database.updateEmployeeWorkingOn(employeeObject._id, taskObject.title);
-            returnMessage = 'Assigned task \'' + taskObject.title + '\' to ' + employeeObject.name;
-          }
+            }else{//entered a name/task that isn't on this project
+              if(!employeeObject){
+                returnMessage = 'That employee does not work on this project';
+              }else{
+                returnMessage = 'That task is not a part of this project';
+              }
+            }
         });
       });
       deasync.loopWhile(function(){return returnMessage == null;});
@@ -533,11 +541,15 @@ module.exports = {
     }else{
       //get the full objects so we have all the info we need
       database.getTask(user, task.value, function(taskObject){
-          if(taskObject.state == 'Backlog' || taskObject.state === 'Incomplete'){ 
-            database.updateTaskStoryPoints(taskObject._id, points);
-            returnMessage = 'The task \'' + taskObject.title + '\' has been assigned ' + points + ' story points';
+          if(taskObject){
+            if(taskObject.state == 'Backlog' || taskObject.state === 'Incomplete'){ 
+              database.updateTaskStoryPoints(taskObject._id, points);
+              returnMessage = 'The task \'' + taskObject.title + '\' has been assigned ' + points + ' story points';
+            }else{
+              returnMessage = 'The task \'' + taskObject.title + '\' is already in progress, testing, or completed!';
+            }
           }else{
-            returnMessage = 'The task \'' + taskObject.title + '\' is already in progress, testing, or completed!';
+            returnMessage = 'That task is not a part of this project';
           }
         });
       
