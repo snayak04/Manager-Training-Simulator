@@ -25,7 +25,6 @@ function AgileRating(user) {
     AgileRating.prototype.EODAnalysis = (user) =>{
         //Check all employees were assigned tasks.
         var score = this.project.agileRating;
-        console.log(score);
         
         var sync;
         database.getAllEmployees(user, function(employees){
@@ -40,8 +39,6 @@ function AgileRating(user) {
         });
         deasync.loopWhile(function(){return sync == null;});
         database.updateProjectRating(this.project._id, score);
-      
-        console.log("OUTSIDE PROMISE "+score);
         return score;
     };
     });

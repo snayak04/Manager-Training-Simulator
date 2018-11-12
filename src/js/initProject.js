@@ -161,23 +161,17 @@ function reset(){
 
 function deleteOldProject(user){
   var sync = false;
-  console.log('test1');
 
   mongoosedb.deleteAllProjects(user, function(){
-    console.log('projects');
     mongoosedb.deleteAllRelations(user, function(){
-      console.log('relation');
       mongoosedb.deleteAllTasks(user, function(){
-        console.log('tasks');
         mongoosedb.deleteAllEmployees(user, function(){
-          console.log('employees');
           sync = true;
         });
       });
     });
   });
   deasync.loopWhile(function(){return !sync});
-  console.log('test2');
 }
 
 

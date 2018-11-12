@@ -242,23 +242,45 @@ module.exports = {
         //  database.updateProjectRating(project._id, agileRating.getScore());
           returnMessage = '';
           
-          //buildMessage
-          speechText = '<speak version="1.0">';
-          finishedTasks.forEach(function(task){
-            returnMessage += 'The task \'' + task.title + '\' has been completed<br>';
-            speechText += 'The task ' + task.title + ' has been completed. <break strength="weak"></break>';
+          finishedTasksIds = [];
+          finishedTasks.forEach(function(finished){
+            finishedTasksIds.push(finished._id);
           });
-          var currentHour = currentTime.getHours();
-          if(currentHour == 12){
-            returnMessage += 'It is now 12 PM';
-          }else if(currentHour > 12){
-            returnMessage += 'It is now ' + (currentHour - 12)+ ' PM';
-            speechText += 'It is now ' + (currentHour - 12) + ' PM </speak>';
-          }else{
-            returnMessage += 'It is now ' + currentHour + ' AM';
-            speechText += 'It is now ' + currentHour + ' AM </speak>';
-          }
-          done = true;
+          
+          //Check if project is completed
+          //get tasks again as they may have been edited
+          database.getAllTasks(user, function(updatedTasks){
+            allTasksDone = true;
+            updatedTasks.forEach(function(task){
+              var index = finishedTasksIds.indexOf(task._id);
+              if(task.state != "Complete" && index == -1){
+                allTasksDone = false;
+              }
+            })
+          
+            if(!allTasksDone){
+              //buildMessage
+              speechText = '<speak version="1.0">';
+              finishedTasks.forEach(function(task){
+                returnMessage += 'The task \'' + task.title + '\' has been completed<br>';
+                speechText += 'The task ' + task.title + ' has been completed. <break strength="weak"></break>';
+              });
+              var currentHour = currentTime.getHours();
+              if(currentHour == 12){
+                returnMessage += 'It is now 12 PM';
+              }else if(currentHour > 12){
+                returnMessage += 'It is now ' + (currentHour - 12)+ ' PM';
+                speechText += 'It is now ' + (currentHour - 12) + ' PM </speak>';
+              }else{
+                returnMessage += 'It is now ' + currentHour + ' AM';
+                speechText += 'It is now ' + currentHour + ' AM </speak>';
+              }
+            }else{
+              returnMessage = "Congrats, you have completed the project! You can start a new one by clicking the \'New Project\' buttton";
+              speechText = null;
+            }
+            done = true;
+          });
         }
       });
     });
