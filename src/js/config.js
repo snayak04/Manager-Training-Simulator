@@ -11,7 +11,7 @@ module.exports = {
   
   /* Settings for generating new projects */
   NUM_EMPLOYEES: 4,
-  NUM_TASKS: 2,
+  NUM_TASKS: 6,
   MIN_HOURS_NEEDED: 1,
   MAX_HOURS_NEEDED: 20,
   //Number of days of leeway given when generating deadline.
