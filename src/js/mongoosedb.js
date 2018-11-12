@@ -64,9 +64,7 @@ module.exports = {
   deleteAllTasks: function(user, callback){
     //Empty query to get every task
     var search = { user_id: user._id};
-    console.log('supertest');
     tasks.deleteMany(search, function(){
-      console.log('test');
       return callback();
     });
   },
