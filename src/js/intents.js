@@ -217,21 +217,28 @@ module.exports = {
           newTime.setHours(config.DAY_START_TIME);
           database.updateProjectTime(project._id, newTime);
           
-          //Build Message
-          var satisfactionRating = scoreSatisfaction();
-          var productivityRating = scoreProductivity(user);
-          //console.log("IN INTENTS!!" + user);
-          speechText = '<speak version="1.0">It is now the end of the day <break strength="weak"></break>. Here is your rating for the day';
-          speechText +=' <break strength="medium"></break> It is now ' + config.DAY_START_TIME + ' AM on ' + newTime.getMonth() + '\\' + newTime.getDate() + '</speak>';
-          returnMessage = 'It is the end of the day. Here is your rating for the day:<br>'
-            + '&ensp;Productivity Rating: ' + productivityRating + '<br>'
-            + '&ensp;Satisfaction Rating: ' + satisfactionRating + '<br>'
-            + '&ensp;Agile Rating: ' + agileRating.EODAnalysis(user) + '<br>'
-            + '<br>'
-            + 'It is now ' + config.DAY_START_TIME + ' AM on ' 
-            + newTime.getMonth() + '\\' + newTime.getDate();
+          if(newTime.getTime() > project.deadline.getTime()){
+            //deadline has been exceeded
+            returnMessage = "Sorry, you have exceeded the deadline, and have been terminated for your incompetence. You can try again by clicking the \'New Project\' button";
+            speechText = null;
+            
+          }else{
+            //Build Message
+            var satisfactionRating = scoreSatisfaction();
+            var productivityRating = scoreProductivity(user);
+            //console.log("IN INTENTS!!" + user);
+            speechText = '<speak version="1.0">It is now the end of the day <break strength="weak"></break>. Here is your rating for the day';
+            speechText +=' <break strength="medium"></break> It is now ' + config.DAY_START_TIME + ' AM on ' + newTime.getMonth() + '\\' + newTime.getDate() + '</speak>';
+            returnMessage = 'It is the end of the day. Here is your rating for the day:<br>'
+              + '&ensp;Productivity Rating: ' + productivityRating + '<br>'
+              + '&ensp;Satisfaction Rating: ' + satisfactionRating + '<br>'
+              + '&ensp;Agile Rating: ' + agileRating.EODAnalysis(user) + '<br>'
+              + '<br>'
+              + 'It is now ' + config.DAY_START_TIME + ' AM on ' 
+              + newTime.getMonth() + '\\' + newTime.getDate();
+            agileRating.reset();
+          }
           done = true;
-          agileRating.reset();
           
         }else{
           //Next event is an employee finishing their task
