@@ -160,29 +160,23 @@ function reset(){
 }
 
 function deleteOldProject(user){
-  var sync = [false, false, false, false];
+  var sync = false;
   console.log('test1');
-  mongoosedb.deleteAllRelations(user, function(){
-    sync[0] = true;
-    console.log(sync);
-    console.log('relation');
-  });
-  mongoosedb.deleteAllTasks(user, function(){
-    sync[1] = true;
-    console.log(sync);
-    console.log('tasks');
-  });
-  mongoosedb.deleteAllEmployees(user, function(){
-    sync[2] = true;
-    console.log(sync);
-    console.log('employees');
-  });
+
   mongoosedb.deleteAllProjects(user, function(){
-    sync[3] = true;
-    console.log(sync);
     console.log('projects');
+    mongoosedb.deleteAllRelations(user, function(){
+      console.log('relation');
+      mongoosedb.deleteAllTasks(user, function(){
+        console.log('tasks');
+        mongoosedb.deleteAllEmployees(user, function(){
+          console.log('employees');
+          sync = true;
+        });
+      });
+    });
   });
-  deasync.loopWhile(function(){return sync.indexOf(false) > -1;});
+  deasync.loopWhile(function(){return !sync});
   console.log('test2');
 }
 
@@ -190,8 +184,10 @@ function deleteOldProject(user){
 /*
 Creates a new project for the given user. 
 */
-function initialize(user){
-  deleteOldProject(user);
+function initialize(user, deleteOld){
+  if(deleteOld){
+    deleteOldProject(user);
+  }
   
   var employees = randomizeEmployees(user, config.NUM_EMPLOYEES);
   var taskRetval = generateTasks(user, config.NUM_TASKS);
