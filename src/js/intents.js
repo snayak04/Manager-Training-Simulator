@@ -9,6 +9,10 @@ var config = require('./config');
 
 //console.log(task.getTasks);
 //var agileRating = new AgileRating();
+function getRandomInt(max) {
+  return Math.floor(Math.random() * Math.floor(max));
+}
+
 //returns how long a task will take to finish with current employees.
 //if it will never finish, returns -1.
 //TODO Update
@@ -31,7 +35,7 @@ function calculateFinishTime(task){
 }
 
 function calculateActualFinishTime(user, task){
-  if(task.employeeIds.length == 0){
+  if(task.employeeIds.length == 0 || task.state != 'Testing'){
     return -1;
   }else{
     var skillSum = 0;
@@ -127,6 +131,30 @@ function getNamesFromIds(ids){
 function finishTasks(finishedTasks){
   finishedTasks.forEach(function (task){
     //No one is working on this task
+    if (task.state == 'Incomplete'){
+      testTasks(task); //Send the tasks for testing.
+      speechText = '<speak version="1.0">';
+      finishedTasks.forEach(function(task){
+        returnMessage += 'The task \'' + task.title + '\' is reported to be completed, and has been queued for testing.<br>';
+        speechText += 'The task ' + task.title + ' is reported to be complete, and has been queued for testing. <break strength="weak"></break>';
+    });
+  }else if(task.state == 'Testing'){ //10% chance - returns tasks from testing back to Incomplete with a story point of 2.
+    //TODO: Prompt the User in the text area!
+    var rand = getRandomInt(10);
+    if(rand==9){
+      database.updateTaskState(task._id, 'Incomplete');
+      database.updateTaskStoryPoints(task._id, 2);
+      returnMessage = task.title + " contained a bug, and is pushed back to the backlog by the tester!";
+    }
+    else{
+      finishTasks(finishedTasks);
+      speechText = '<speak version="1.0">';
+      finishedTasks.forEach(function(task){
+        returnMessage += 'The task \'' + task.title + '\' passed all tests, and is marked complete.<br>';
+        speechText += 'The task ' + task.title + ' passed all tests, and is marked complete. <break strength="weak"></break>';
+        });
+    }
+  }
     task.employeeIds.forEach(function(employeeId){
       database.updateEmployeeWorkingOn(employeeId, null);
     });
@@ -134,6 +162,16 @@ function finishTasks(finishedTasks){
     //Task is now complete
     database.updateTaskState(task._id, 'Complete');
   });
+}
+
+function testTasks(task){
+    //No one is working on this task
+    task.employeeIds.forEach(function(employeeId){
+      database.updateEmployeeWorkingOn(employeeId, null);
+    });
+    database.updateTaskWorkers(task._id, ['Test']);
+ 
+    database.updateTaskState(task._id, 'Testing');
 }
 
 function scoreProductivity(user){
@@ -242,13 +280,17 @@ module.exports = {
           database.updateProjectTime(project._id, currentTime);
         //  database.updateProjectRating(project._id, agileRating.getScore());
           returnMessage = '';
-          
           //buildMessage
-          speechText = '<speak version="1.0">';
-          finishedTasks.forEach(function(task){
-            returnMessage += 'The task \'' + task.title + '\' has been completed<br>';
-            speechText += 'The task ' + task.title + ' has been completed. <break strength="weak"></break>';
-          });
+          
+        
+        //else{
+        //   finishTasks(finishedTasks);
+        //   speechText = '<speak version="1.0">';
+        //   finishedTasks.forEach(function(task){
+        //     returnMessage += 'The task \'' + task.title + '\' is completed.<br>';
+        //     speechText += 'The task ' + task.title + ' is completed. <break strength="weak"></break>';
+        // });
+        //}
           var currentHour = currentTime.getHours();
           if(currentHour == 12){
             returnMessage += 'It is now 12 PM';

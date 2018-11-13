@@ -34,6 +34,7 @@ module.exports = {
     database.getProjectState(user, function(result){
       var project = result[0];
       //process.stdout.write("Keys = " + Object.keys(project))
+      var date = new Date(project.currentTime);
       string += '<b>' + project.title + ': </b>';
       string += '<br>Current Time: ' + project.currentTime;
       string += '<br>Deadline: ' + project.deadline;
