@@ -432,6 +432,10 @@ module.exports = {
 	  
 	  var name1 = employee1.value;
 	  var name2 = employee2.value;
+    if(name1 == name2){
+      string = name1 + " has perfectly normal self-confidence";
+      return[string, null];
+    }
 	  var sync = 0;
 	  var forwards;
 	  var backwards;
@@ -459,6 +463,7 @@ module.exports = {
     if(badName){
       return [string, null];
     }
+    
 	  
     var stringPart1 = relationString(name1, name2, forwards);
     var stringPart2 = relationString(name2, name1, backwards);
@@ -527,7 +532,19 @@ module.exports = {
             }else if (alreadyWorking){ //employee already on this task
               returnMessage = employeeObject.name + ' is already working on \'' + taskObject.title + '\'';
             }else if(employeeObject.workingOn != null){ //employee on a different task
-              returnMessage = employeeObject.name + ' is already working on a different task, \'' + employeeObject.workingOn + '\'';
+              database.getTask(user, employeeObject.workingOn, function(oldTask){
+                //remove employee from old task
+                var oldTaskWorkers = oldTask.employeeIds;
+                var workerIndex = oldTaskWorkers.indexOf(employeeObject._id);
+                oldTaskWorkers.splice(workerIndex, 1);
+                database.updateTaskWorkers(oldTask._id, oldTaskWorkers);
+                //Add employee to new tasks
+                workers.push(employeeObject._id);
+                database.updateTaskWorkers(taskObject._id, workers);
+                database.updateEmployeeWorkingOn(employeeObject._id, taskObject.title);
+                //make message
+                returnMessage = employeeObject.name + ' has been moved from \'' + oldTask.title + '\' to \'' + taskObject.title + '\'';
+              });
             }else{
               //Add employee to task
               workers.push(employeeObject._id);
