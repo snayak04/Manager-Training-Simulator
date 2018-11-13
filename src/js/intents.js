@@ -62,8 +62,6 @@ function updateTimeLeft(user, tasks, hours){
 	  var idealSkillSum = 0;
 	  var names = getNamesFromIds(task.employeeIds);
 	  
-	  //TODO employee.skill isn't getting the right skill. Flip name and employee
-	  //I have no idea what you're talking about, past me
 	  task.employeeIds.forEach(function(id){
 		  var employee;
 		  var done;
@@ -176,6 +174,15 @@ function relationString(emp1, emp2, value){
 	}
 }
 
+function nextEvent(now, user){
+	var done = false;
+	database.getNextEvent(now, user, function(evnt){
+		done = true;
+	});
+	deasync.loopWhile(function(){return !done;});
+	return 0;
+}
+
 module.exports = {
   /*Wait Intent
   Goes to the next event, which can be one of the following:
@@ -189,8 +196,19 @@ module.exports = {
     var done = false;
     database.getProjectState(user, function(projects){
       //Get the hours left in the day
+	  console.log("Projects = " + projects);
       var project = projects[0]; //Assuming one project for now
       var currentTime = project.currentTime;
+	  var nextEvnt = nextEvent(currentTime, user);
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  
       var hoursLeftInDay = config.DAY_END_TIME - currentTime.getHours();
      // console.log(projects);
       //Check if any of the tasks will finish before the day ends

@@ -3,6 +3,7 @@ var {projects} = require('../../models/projects');
 var {tasks} = require('../../models/tasks');
 var {employees} = require('../../models/employees');
 var {relations} = require('../../models/relations');
+var {events} = require('../../models/events');
 
 module.exports = {
   getEmployee: function(user, employeeName, callback){
@@ -53,6 +54,13 @@ module.exports = {
     projects.find(search, function(err, result){
       return callback(result);
     });
+  },
+  getNextEvent: function(now, user, callback){
+	  var search = {user_id: user._id};
+	  events.find(search, function(err, result){
+		  console.log(result);
+		  return callback(results);
+	  });
   },
 
 

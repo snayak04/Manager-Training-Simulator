@@ -12,7 +12,8 @@ const tasksSchema  = new Schema({
     state: {type: String, enum: ['Backlog', 'Incomplete', 'Testing', 'Complete']},
     startTime: {type:Date},
     approxEndTime: Date,
-    timeLeft: {type: Number, min: 0}
+    timeLeft: {type: Number, min: 0},
+	hofstadtersFactor: {type: Number, min: 0}
 });
 
 

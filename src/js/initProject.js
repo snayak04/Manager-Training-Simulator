@@ -9,6 +9,7 @@ var config = require('./config');
 var taskController = require('../../controller/task');
 var employeeController = require('../../controller/employee'); 
 var projectController = require('../../controller/project');
+var eventController = require('../../controller/event');
 
 //Data to pull names, tasks, etc. from
 var nameData = require('../../data/names');
@@ -97,9 +98,36 @@ var generateRelations = (user, employees)=>{
 }
 
 /*
+Generates the dates for the random events. What event will be determined later
+*/
+function generateRandomEvents(user, n){
+    startDate = new Date('2018-09-24T09:00:00');
+    deadline = new Date('2018-10-12T17:00:00');
+	var time = deadline - startDate;
+	var events = [];
+	var dates = [];
+	console.log(new Date(deadline - startDate));
+	console.log("The beginning: " + new Date(0));
+	for (i=0; i<n; i++){
+		
+		var evnt = Math.floor(Math.random() * time);
+		date = new Date(startDate.getTime() + evnt)
+		dates [i] = dates;
+		console.log("Iteration " + i);
+		//bug is in here
+		events[i] = eventController.insertNewEvent(user._id, date);
+		console.log("Iteration " + (i + 1));
+		
+		
+	}
+	console.log("Dates = " + dates);
+	return events
+}
+
+/*
 Initializes the project.
 */
-function generateProject (employees, relations, tasks, user, totalHours){
+function generateProject (employees, relations, tasks, events, user, totalHours){
   startDate = new Date('2018-09-24T09:00:00');
   deadline = new Date(startDate.getTime());
   
@@ -134,7 +162,8 @@ function generateProject (employees, relations, tasks, user, totalHours){
   //change deadline time to end of day:
   deadline.setHours(config.DAY_END_TIME);
   
-  newProject = projectController.insertNewProject('Sprint 1', user._id, employees, relations, tasks, startDate, deadline, startDate);
+  newProject = projectController.insertNewProject('Sprint 1', user._id, employees, relations, tasks, events, startDate, deadline, startDate);
+  console.log("project = " + newProject)
   return newProject;
 }
 
@@ -167,7 +196,11 @@ function initialize(user){
   var tasks = taskRetval[0];
   var totalHours = taskRetval[1];
   var relations = generateRelations(user, employees);
-  var project = generateProject(employees, relations, tasks, user, totalHours);
+  var numberOfRandomEvents = 5;
+  var events = generateRandomEvents(user, numberOfRandomEvents);
+  console.log(events);
+  var project = generateProject(employees, relations, tasks, events, user, totalHours);
+  console.log("project = " + project)
   
 }
 

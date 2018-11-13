@@ -16,7 +16,8 @@ const employeesSchema  = new Schema({
     workingOn: String,
     skill: {type: Number, min:1, max:100},
     satisfaction: {type: Number, min:1, max:100},
-    jobTitle: String
+    jobTitle: String,
+	timeOff: {type: Number, min:0}
 });
 
 const employees = mongoose.model('employees', employeesSchema);
