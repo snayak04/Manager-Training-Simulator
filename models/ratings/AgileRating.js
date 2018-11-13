@@ -16,7 +16,10 @@ function AgileRating(user) {
         
 
        AgileRating.prototype.reset= () =>{
-        database.updateProjectRating(this.project._id, 0);
+           var sync;
+            database.updateProjectRating(this.project._id, 0);
+            sync = 1;
+            deasync.loopWhile(function(){return sync == null;});
        } 
     /**
      * 
@@ -24,79 +27,52 @@ function AgileRating(user) {
      */
     AgileRating.prototype.EODAnalysis = (user) =>{
         //Check all employees were assigned tasks.
-        var score = this.project.agileRating;
+        var score = 0;
         console.log(score);
-        
+        var message = "";
         var sync;
+        var totalEmp = 0;
         database.getAllEmployees(user, function(employees){
-            
-           employees.forEach(function(employee){
-                if(employee.workingOn == null)
+            totalEmp = employees.length;
+            employees.forEach(function(employee){
+                if(employee.workingOn == null){
                     score+=10;
+                    message = "Your employees were sitting idle at the end of the day!";
+                }
                 else
                     score+=20;
             });
             sync = 1;
         });
         deasync.loopWhile(function(){return sync == null;});
+        console.log("Employees: " + totalEmp + "SCORE: "+ score);
+
+        score = (score/(totalEmp*20)*100);
+        score = Math.round(score, 0);
         database.updateProjectRating(this.project._id, score);
-      
-        console.log("OUTSIDE PROMISE "+score);
+        console.log("NEW SCORE : " +score);
         return score;
     };
+
+
     });
 
-    //this.score = this.project.agileRating;
     
-      /**
- * Always listens whenever a response is sent by Assistant API.
- * @requires Only one intent.
- * @param {JSON object that is returned by the IBM Assistant} context 
- */
-AgileRating.prototype.listen = (context) => {
-    if(!context.intents[0]){
-      return 0;
-    }
-    var intent;
-    if (context)
-        if(context.intents[0].intent)
-            intent = context.intents[0].intent;
-    var entities = context.entities; //This can have multiple entities.
-    var task = "";
-    var employees = "";
-    //console.log(entities);
-    for(var i  = 0; i< entities.length; i++){
-        // console.log(entities[i]);
-        if (entities[i].entity === 'tasks')
-            task = entities[i].value
-        else  if (entities[i].entity === 'employees')
-            employees = entities[i].value   
-    }
-   // console.log(context);
-    switch(intent){
-        case 'ProjectInfo':
-            //TODO
-        break;
-        case 'EmployeeInfo':
-            //TODO
-        break;
-        case 'AssignTask':
-           // scoreTask(user, task)
-        break;
-    }
-};
+
+    
 }
 
 /**
  * Checks the task object to see if it has a story point, and assigned to an employee, if not deduct score.
  * @param {*} taskName Task name
  */
-function scoreTask(user, taskName){
+function scoreTask(task){
+    var score = this.project.agileRating;
     var task;
-    database.getTask(user, taskName, function(result){
-        task = result;  
-        //console.log("Task Name: " + taskName + "Task: " +task);
+    database.getTask(task._id, function(result){
+        if (task.points == null){
 
+        }
     });
 }
 
