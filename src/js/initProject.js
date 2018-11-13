@@ -189,7 +189,6 @@ function initialize(user, deleteOld){
   var totalHours = taskRetval[1];
   var relations = generateRelations(user, employees);
   var project = generateProject(employees, relations, tasks, user, totalHours);
-  
 }
 
 module.exports = {
