@@ -1,7 +1,7 @@
 var mongoose = require("mongoose");
 var passport = require("passport");
 var User = require("../models/user");
-var initProject = require("../src/js/initProject")
+var initProject = require("../src/js/initProject");
 var root = 'views';
 
 var userController = {};
@@ -29,7 +29,7 @@ userController.doRegister = function(req, res) {
     }
 	
 	//Create a new initial project for the new user
-	initProject.initialize(user);
+	initProject.initialize(user, false);
 
     passport.authenticate('local')(req, res, function () {
      // new AgileRating(req.user);

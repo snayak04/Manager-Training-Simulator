@@ -23,10 +23,24 @@ module.exports = {
       return callback(result);
     });
   },
-  getRelation: function(user, firstName, secondName, callback){
-	var search = {user_id: user._id, firstName: firstName, secondName: secondName};
+  deleteAllEmployees: function(user, callback){
+    //Empty query to get every employee
+    var search = { user_id: user._id};
+    employees.deleteMany(search, function(){
+      return callback();
+    });
+  },
+  getRelation: function(user, firstId, secondId, callback){
+	var search = {user_id: user._id, firstEmp_id: firstId, secondEmp_id: secondId};
 	relations.find(search, function(err, result){
       return callback(result[0]);
+    });
+  },
+  deleteAllRelations: function(user, callback){
+    //Empty query to get every relation
+    var search = { user_id: user._id};
+    relations.deleteMany(search, function(){
+      return callback();
     });
   },
   getTask: function(user, taskTitle, callback){
@@ -47,6 +61,13 @@ module.exports = {
       return callback(result);
     });
   },
+  deleteAllTasks: function(user, callback){
+    //Empty query to get every task
+    var search = { user_id: user._id};
+    tasks.deleteMany(search, function(){
+      return callback();
+    });
+  },
   //For now just assume only one project
   getProjectState: function(user, callback){
     var search = { user_id: user._id};
@@ -54,8 +75,13 @@ module.exports = {
       return callback(result);
     });
   },
-
-
+  deleteAllProjects: function(user, callback){
+    //Empty query to get every task
+    var search = { user_id: user._id};
+    projects.deleteMany(search, function(){
+      return callback();
+    });
+  },
   updateEmployeeSatisfaction: function(employeeId, newSatis){
     var satisfactionInsert = { $set: {satisfaction: newSatis}};
     employees.findByIdAndUpdate(employeeId, satisfactionInsert, function(err){
