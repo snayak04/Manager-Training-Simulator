@@ -36,12 +36,11 @@ function calculateActualFinishTime(user, task){
   }else{
     var skillSum = 0;
 	
-	var coworkerNames = getNamesFromIds(task.employeeIds);
     task.employeeIds.forEach(function(employeeId){
       //get employee from database
       var done = false;
       database.getEmployeeById(employeeId, function(employee){
-        skillSum += employee.skill * employee.skill * calculateSocialFactor(user, employee.name, coworkerNames);
+        skillSum += employee.skill * employee.skill * calculateSocialFactor(user, employee, task.employeeIds);
         done = true;
       });
       deasync.loopWhile(function(){return !done;});
@@ -74,7 +73,7 @@ function updateTimeLeft(user, tasks, hours){
 		  });
 		  deasync.loopWhile(function(){return !done;});
 		 
-		  var socialFactor = calculateSocialFactor(user, employee.name, names);
+		  var socialFactor = calculateSocialFactor(user, employee, task.employeeIds);
 		  skillSum += employee.skill * employee.skill * socialFactor;
 		  idealSkillSum += employee.skill / 100;
 	  });	  
@@ -94,17 +93,17 @@ function updateTimeLeft(user, tasks, hours){
 }
 
 
-function calculateSocialFactor(user, employeeName, coworkerNames){
+function calculateSocialFactor(user, employee, coworkerIds){
 	var socialFactor = 0;
-	coworkerNames.forEach(function(coworkerName){
+	coworkerIds.forEach(function(coworkerId){
 	  var done = false;
-	  database.getRelation(user, employeeName, coworkerName, function(result){
+	  database.getRelation(user, employee._id, coworkerId, function(result){
 		  socialFactor += result.relationStrength;
 		  done = true;
 	  });
 	  deasync.loopWhile(function(){return !done;});
 	});
-	socialFactor /= coworkerNames.length;
+	socialFactor /= coworkerIds.length;
 	return socialFactor;
 }
 
@@ -218,21 +217,28 @@ module.exports = {
           newTime.setHours(config.DAY_START_TIME);
           database.updateProjectTime(project._id, newTime);
           
-          //Build Message
-          var satisfactionRating = scoreSatisfaction();
-          var productivityRating = scoreProductivity(user);
-          //console.log("IN INTENTS!!" + user);
-          speechText = '<speak version="1.0">It is now the end of the day <break strength="weak"></break>. Here is your rating for the day';
-          speechText +=' <break strength="medium"></break> It is now ' + config.DAY_START_TIME + ' AM on ' + newTime.getMonth() + '\\' + newTime.getDate() + '</speak>';
-          returnMessage = 'It is the end of the day. Here is your rating for the day:<br>'
-            + '&ensp;Productivity Rating: ' + productivityRating + '<br>'
-            + '&ensp;Satisfaction Rating: ' + satisfactionRating + '<br>'
-            + '&ensp;Agile Rating: ' + agileRating.EODAnalysis(user) + '<br>'
-            + '<br>'
-            + 'It is now ' + config.DAY_START_TIME + ' AM on ' 
-            + newTime.getMonth() + '\\' + newTime.getDate();
+          if(newTime.getTime() > project.deadline.getTime()){
+            //deadline has been exceeded
+            returnMessage = "Sorry, you have exceeded the deadline, and have been terminated for your incompetence. You can try again by clicking the \'New Project\' button";
+            speechText = null;
+            
+          }else{
+            //Build Message
+            var satisfactionRating = scoreSatisfaction();
+            var productivityRating = scoreProductivity(user);
+            //console.log("IN INTENTS!!" + user);
+            speechText = '<speak version="1.0">It is now the end of the day <break strength="weak"></break>. Here is your rating for the day';
+            speechText +=' <break strength="medium"></break> It is now ' + config.DAY_START_TIME + ' AM on ' + newTime.getMonth() + '\\' + newTime.getDate() + '</speak>';
+            returnMessage = 'It is the end of the day. Here is your rating for the day:<br>'
+              + '&ensp;Productivity Rating: ' + productivityRating + '<br>'
+              + '&ensp;Satisfaction Rating: ' + satisfactionRating + '<br>'
+              + '&ensp;Agile Rating: ' + agileRating.EODAnalysis(user) + '<br>'
+              + '<br>'
+              + 'It is now ' + config.DAY_START_TIME + ' AM on ' 
+              + newTime.getMonth() + '\\' + newTime.getDate();
+            agileRating.reset();
+          }
           done = true;
-          agileRating.reset();
           
         }else{
           //Next event is an employee finishing their task
@@ -243,23 +249,45 @@ module.exports = {
         //  database.updateProjectRating(project._id, agileRating.getScore());
           returnMessage = '';
           
-          //buildMessage
-          speechText = '<speak version="1.0">';
-          finishedTasks.forEach(function(task){
-            returnMessage += 'The task \'' + task.title + '\' has been completed<br>';
-            speechText += 'The task ' + task.title + ' has been completed. <break strength="weak"></break>';
+          finishedTasksIds = [];
+          finishedTasks.forEach(function(finished){
+            finishedTasksIds.push(finished._id);
           });
-          var currentHour = currentTime.getHours();
-          if(currentHour == 12){
-            returnMessage += 'It is now 12 PM';
-          }else if(currentHour > 12){
-            returnMessage += 'It is now ' + (currentHour - 12)+ ' PM';
-            speechText += 'It is now ' + (currentHour - 12) + ' PM </speak>';
-          }else{
-            returnMessage += 'It is now ' + currentHour + ' AM';
-            speechText += 'It is now ' + currentHour + ' AM </speak>';
-          }
-          done = true;
+          
+          //Check if project is completed
+          //get tasks again as they may have been edited
+          database.getAllTasks(user, function(updatedTasks){
+            allTasksDone = true;
+            updatedTasks.forEach(function(task){
+              var index = finishedTasksIds.indexOf(task._id);
+              if(task.state != "Complete" && index == -1){
+                allTasksDone = false;
+              }
+            })
+          
+            if(!allTasksDone){
+              //buildMessage
+              speechText = '<speak version="1.0">';
+              finishedTasks.forEach(function(task){
+                returnMessage += 'The task \'' + task.title + '\' has been completed<br>';
+                speechText += 'The task ' + task.title + ' has been completed. <break strength="weak"></break>';
+              });
+              var currentHour = currentTime.getHours();
+              if(currentHour == 12){
+                returnMessage += 'It is now 12 PM';
+              }else if(currentHour > 12){
+                returnMessage += 'It is now ' + (currentHour - 12)+ ' PM';
+                speechText += 'It is now ' + (currentHour - 12) + ' PM </speak>';
+              }else{
+                returnMessage += 'It is now ' + currentHour + ' AM';
+                speechText += 'It is now ' + currentHour + ' AM </speak>';
+              }
+            }else{
+              returnMessage = "Congrats, you have completed the project! You can start a new one by clicking the \'New Project\' buttton";
+              speechText = null;
+            }
+            done = true;
+          });
         }
       });
     });
@@ -377,7 +405,7 @@ module.exports = {
 	  var employee2;
 	  var entities = response.entities;
 	  entities.forEach(function(entity){
-		  if (entity.entity == 'employees'){ //is this line necessary?
+		  if (entity.entity == 'employees'){
 			  if (!employee1){
 				  employee1 = entity;
 			  } else if (!employee2){
@@ -407,15 +435,30 @@ module.exports = {
 	  var sync = 0;
 	  var forwards;
 	  var backwards;
-	  database.getRelation(user, name1, name2, function(result){
-		  forwards = result.relationStrength;
-		  sync++;
+    var badName = false;
+    database.getEmployee(user, name1, function(emp1obj){
+      database.getEmployee(user, name2, function(emp2obj){
+        if(emp1obj && emp2obj){
+          database.getRelation(user, emp1obj._id, emp2obj._id, function(result){
+            forwards = result.relationStrength;
+            sync++;
+            });
+          database.getRelation(user, emp2obj._id, emp1obj._id, function(result){
+            backwards = result.relationStrength;
+            sync++;
+            });
+        }else{//One of the employees detected is not part of this project
+            //Maybe improve this message in the future
+            badName = true;
+            string = "I think you're inquiring about a relationship, but I don't know either of the employees.";
+            sync = 2;
+        }
       });
-	  database.getRelation(user, name2, name1, function(result){
-		  backwards = result.relationStrength;
-		  sync++;
-      });
+    });
 	  deasync.loopWhile(function(){return sync < 2;});
+    if(badName){
+      return [string, null];
+    }
 	  
     var stringPart1 = relationString(name1, name2, forwards);
     var stringPart2 = relationString(name2, name1, backwards);
@@ -469,28 +512,36 @@ module.exports = {
       //get the full objects so we have all the info we need
       database.getTask(user, task.value, function(taskObject){
         database.getEmployee(user, employee.value, function(employeeObject){
-          var workers = taskObject.employeeIds;
-          //check if employee is already working
-          var alreadyWorking = false;
-          if(workers)
-          workers.forEach(function(employeeId){
-            if(employeeId.toString() == employeeObject._id.toString()){
-              alreadyWorking = true;
+          if(taskObject && employeeObject){
+            var workers = taskObject.employeeIds;
+            //check if employee is already working
+            var alreadyWorking = false;
+            if(workers)
+            workers.forEach(function(employeeId){
+              if(employeeId.toString() == employeeObject._id.toString()){
+                alreadyWorking = true;
+              }
+            });
+            if(taskObject.state == 'Complete'){ //task is complete
+              returnMessage = 'The task \'' + taskObject.title + '\' is already complete';
+            }else if (alreadyWorking){ //employee already on this task
+              returnMessage = employeeObject.name + ' is already working on \'' + taskObject.title + '\'';
+            }else if(employeeObject.workingOn != null){ //employee on a different task
+              returnMessage = employeeObject.name + ' is already working on a different task, \'' + employeeObject.workingOn + '\'';
+            }else{
+              //Add employee to task
+              workers.push(employeeObject._id);
+              database.updateTaskWorkers(taskObject._id, workers);
+              database.updateEmployeeWorkingOn(employeeObject._id, taskObject.title);
+              returnMessage = 'Assigned task \'' + taskObject.title + '\' to ' + employeeObject.name;
             }
-          });
-          if(taskObject.state == 'Complete'){ //task is complete
-            returnMessage = 'The task \'' + taskObject.title + '\' is already complete';
-          }else if (alreadyWorking){ //employee already on this task
-            returnMessage = employeeObject.name + ' is already working on \'' + taskObject.title + '\'';
-          }else if(employeeObject.workingOn != null){ //employee on a different task
-            returnMessage = employeeObject.name + ' is already working on a different task, \'' + employeeObject.workingOn + '\'';
-          }else{
-            //Add employee to task
-            workers.push(employeeObject._id);
-            database.updateTaskWorkers(taskObject._id, workers);
-            database.updateEmployeeWorkingOn(employeeObject._id, taskObject.title);
-            returnMessage = 'Assigned task \'' + taskObject.title + '\' to ' + employeeObject.name;
-          }
+            }else{//entered a name/task that isn't on this project
+              if(!employeeObject){
+                returnMessage = 'That employee does not work on this project';
+              }else{
+                returnMessage = 'That task is not a part of this project';
+              }
+            }
         });
       });
       deasync.loopWhile(function(){return returnMessage == null;});
@@ -519,11 +570,15 @@ module.exports = {
     }else{
       //get the full objects so we have all the info we need
       database.getTask(user, task.value, function(taskObject){
-          if(taskObject.state == 'Backlog' || taskObject.state === 'Incomplete'){ 
-            database.updateTaskStoryPoints(taskObject._id, points);
-            returnMessage = 'The task \'' + taskObject.title + '\' has been assigned ' + points + ' story points';
+          if(taskObject){
+            if(taskObject.state == 'Backlog' || taskObject.state === 'Incomplete'){ 
+              database.updateTaskStoryPoints(taskObject._id, points);
+              returnMessage = 'The task \'' + taskObject.title + '\' has been assigned ' + points + ' story points';
+            }else{
+              returnMessage = 'The task \'' + taskObject.title + '\' is already in progress, testing, or completed!';
+            }
           }else{
-            returnMessage = 'The task \'' + taskObject.title + '\' is already in progress, testing, or completed!';
+            returnMessage = 'That task is not a part of this project';
           }
         });
       
