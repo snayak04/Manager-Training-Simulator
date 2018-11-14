@@ -111,7 +111,6 @@ module.exports = {
       return callback();
     });
   },
-  
   updateEmployeeSatisfaction: function(employeeId, newSatis){
     var satisfactionInsert = { $set: {satisfaction: newSatis}};
     employees.findByIdAndUpdate(employeeId, satisfactionInsert, function(err){

@@ -15,6 +15,9 @@ var eventController = require('../../controller/event');
 //deasync
 var deasync = require('deasync');
 
+//deasync
+var deasync = require('deasync');
+
 //Data to pull names, tasks, etc. from
 var nameData = require('../../data/names');
 var jobTitleData = require('../../data/jobTitles');
@@ -219,7 +222,6 @@ function initialize(user, deleteOld){
   var numberOfRandomEvents = 5;
   var events = generateRandomEvents(user, numberOfRandomEvents, deadline);
   var project = generateProject(employees, relations, tasks, events, user, totalHours, deadline);
-  
 }
 
 module.exports = {

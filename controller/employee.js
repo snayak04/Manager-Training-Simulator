@@ -29,7 +29,7 @@ var insertNewRelation = (user_id, firstId, secondId, value)=>{
 		secondEmp_id: secondId, 
 		relationStrength: value
 	});
-	relation.save(); //??
+	relation.save(); 
 	return relation._id;
 }
   

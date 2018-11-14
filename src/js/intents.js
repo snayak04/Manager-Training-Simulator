@@ -205,14 +205,23 @@ function getShortestFinishTime(user, tasks){
 	return shortestFinishTime;
 }
 
-function getRandomMessage(name, days, type){
+function getRandomMessage(employee, days, type){
 	if (type == 'employee'){
-		message = ["Oh, no! " + name + " has caught fire! They'll be in the hospital for " + days + " days."]
+		var name = employee.name;
+		var more = '';
+		if (employee.daysOff > 0){
+			more = ' more';
+		}
+		messages = ["Oh, no! " + name + " has caught fire! They'll be in the hospital for " + days + more +" days.",
+		name + " was injured in a very improbable foosball accident, they'll need to stay home for " + days + more +" days.",
+		name + " has just came down with an illness. You think they're faking it, but they had a doctor's note, so you can't legally call them out on it. They'll be home for " + days + more +" days.",
+		name + " has suddenly decided to go on a vacation. They'll be back in " + days + more +" days."]
+		var message = messages[Math.floor(Math.random() * messages.length)];
 		return message;
 	} //else
 }
 
-function processRandomEvent(user){
+function processRandomEvent(user, now){
 	var coinFlip = true; //Math.random() > 0.5;
 	var done = false;
 	var returnMessage = '';
@@ -221,16 +230,15 @@ function processRandomEvent(user){
 		database.getAllEmployees(user, function(employees){
 			var random = Math.floor(employees.length * Math.random());
 			var employee = employees[random];
-			var days = Math.floor(Math.random() * 3 + 1);
-			returnMessage = getRandomMessage(employee.name, days, "employee");
+			var days = Math.floor(Math.random() * 3 + 2);
+			returnMessage = getRandomMessage(employee, days, "employee");
 			database.updateEmployeeDaysOff(employee._id, days + employee.daysOff);
 			done = true;
 		});
 		deasync.loopWhile(function(){return !done;});
-	} else {
+	} //else {
 		//task disaster
 		//TODO I might get around to this
-	}
 	
 	return returnMessage; 
 }
@@ -284,28 +292,34 @@ function processEndOfDay(user, tasks, currentTime, hoursLeftInDay, project){
     newTime.setHours(config.DAY_START_TIME);
     database.updateProjectTime(project._id, newTime);
           
+    updateTimeLeft(user, tasks, hoursLeftInDay);
+    var newTime = new Date(currentTime.getTime());
+    newTime.setDate(currentTime.getDate() + 1);
+    newTime.setHours(config.DAY_START_TIME);
+    database.updateProjectTime(project._id, newTime);
+          
     if(newTime.getTime() > project.deadline.getTime()){
-        //deadline has been exceeded
-        returnMessage = "Sorry, you have exceeded the deadline, and have been terminated for your incompetence. You can try again by clicking the \'New Project\' button";
-        speechText = null;
+      //deadline has been exceeded
+      returnMessage = "Sorry, you have exceeded the deadline, and have been terminated for your incompetence. You can try again by clicking the \'New Project\' button";
+      speechText = null;
             
     }else{
-        //Build Message
-        var satisfactionRating = scoreSatisfaction();
-        var productivityRating = scoreProductivity(user);
-        //console.log("IN INTENTS!!" + user);
-        speechText = '<speak version="1.0">It is now the end of the day <break strength="weak"></break>. Here is your rating for the day';
-        speechText +=' <break strength="medium"></break> It is now ' + config.DAY_START_TIME + ' AM on ' + newTime.getMonth() + '\\' + newTime.getDate() + '</speak>';
-        returnMessage = 'It is the end of the day. Here is your rating for the day:<br>'
+      //Build Message
+      var satisfactionRating = scoreSatisfaction();
+      var productivityRating = scoreProductivity(user);
+      //console.log("IN INTENTS!!" + user);
+      speechText = '<speak version="1.0">It is now the end of the day <break strength="weak"></break>. Here is your rating for the day';
+      speechText +=' <break strength="medium"></break> It is now ' + config.DAY_START_TIME + ' AM on ' + newTime.getMonth() + '\\' + newTime.getDate() + '</speak>';
+      returnMessage = 'It is the end of the day. Here is your rating for the day:<br>'
         + '&ensp;Productivity Rating: ' + productivityRating + '<br>'
         + '&ensp;Satisfaction Rating: ' + satisfactionRating + '<br>'
-	    //TODO put back in
         //+ '&ensp;Agile Rating: ' + agileRating.EODAnalysis(user) + '<br>'
         + '<br>'
         + 'It is now ' + config.DAY_START_TIME + ' AM on ' 
         + newTime.getMonth() + '\\' + newTime.getDate();
-        //agileRating.reset();
-	}
+      //agileRating.reset();
+    }
+	
 	updateDaysOff(user);
 	returnMessage += getEventsFromOffHours(user, prevTime, newTime);
 	return [returnMessage, speechText];
@@ -380,7 +394,8 @@ module.exports = {
       var project = projects[0]; //Assuming one project for now
       var currentTime = project.currentTime;
 	  var nextEvent = getNextEvent(user, currentTime);
-	  nextEvent.setHours(date.getHours() + Math.round(date.getMinutes()/60));
+	  //round the event to the next hour
+	  nextEvent.setHours(nextEvent.getHours() + 1);
       nextEvent.setMinutes(0);
 	  nextEvent.setSeconds(0);
 	  nextEvent.setMilliseconds(0);
@@ -392,14 +407,25 @@ module.exports = {
       var hoursLeftInDay = config.DAY_END_TIME - currentTime.getHours();
       //Check if any of the tasks will finish before the day ends
       database.getAllTasks(user, function(tasks) {
+		console.log(tasks);
         var shortestFinishTime = getShortestFinishTime(user, tasks);
 		
 		if ((nextEvent != null) && hoursUntilNextEvent < hoursLeftInDay && (hoursUntilNextEvent < shortestFinishTime || shortestFinishTime == null)){
 			//Next event is a random event
-			updateTimeLeft(user, tasks, hoursUntilNextEvent); //not perfectly exact, ignores minutes
-			returnMessage = processRandomEvent(user);
-			speachText = returnMessage;
 			database.updateProjectTime(project._id, nextEvent);
+			updateTimeLeft(user, tasks, hoursUntilNextEvent); 
+			returnMessage = processRandomEvent(user);
+			var time = nextEvent.getHours();
+			var M = ' AM'
+			if (time >= 12){
+				M = ' PM'
+			}
+			if (time > 12){
+				time -= 12;
+			}
+			
+			returnMessage += '<br>It is now ' + time + M + '<br>';
+			speachText = returnMessage;
 			done = true;
 		} else if(shortestFinishTime == null || shortestFinishTime > hoursLeftInDay){
           //Next event is end of day		  
@@ -558,6 +584,10 @@ module.exports = {
 	  
 	  var name1 = employee1.value;
 	  var name2 = employee2.value;
+    if(name1 == name2){
+      string = name1 + " has perfectly normal self-confidence";
+      return[string, null];
+    }
 	  var sync = 0;
 	  var forwards;
 	  var backwards;
@@ -585,6 +615,7 @@ module.exports = {
     if(badName){
       return [string, null];
     }
+    
 	  
     var stringPart1 = relationString(name1, name2, forwards);
     var stringPart2 = relationString(name2, name1, backwards);
@@ -653,7 +684,19 @@ module.exports = {
             }else if (alreadyWorking){ //employee already on this task
               returnMessage = employeeObject.name + ' is already working on \'' + taskObject.title + '\'';
             }else if(employeeObject.workingOn != null){ //employee on a different task
-              returnMessage = employeeObject.name + ' is already working on a different task, \'' + employeeObject.workingOn + '\'';
+              database.getTask(user, employeeObject.workingOn, function(oldTask){
+                //remove employee from old task
+                var oldTaskWorkers = oldTask.employeeIds;
+                var workerIndex = oldTaskWorkers.indexOf(employeeObject._id);
+                oldTaskWorkers.splice(workerIndex, 1);
+                database.updateTaskWorkers(oldTask._id, oldTaskWorkers);
+                //Add employee to new tasks
+                workers.push(employeeObject._id);
+                database.updateTaskWorkers(taskObject._id, workers);
+                database.updateEmployeeWorkingOn(employeeObject._id, taskObject.title);
+                //make message
+                returnMessage = employeeObject.name + ' has been moved from \'' + oldTask.title + '\' to \'' + taskObject.title + '\'';
+              });
             }else{
               //Add employee to task
               workers.push(employeeObject._id);
