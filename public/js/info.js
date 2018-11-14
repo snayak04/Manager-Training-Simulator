@@ -20,7 +20,8 @@ var InfoPanel = (function () {
   // Publicly accessible methods defined
   return {
     init: init,
-    showdata: showdata
+    showdata: showdata,
+    showhelp: showhelp
   };
 
   function init() {
@@ -50,9 +51,22 @@ var InfoPanel = (function () {
       if (latestResponse) {
         context = latestResponse.context;
       }
+      openMenu = menu;
 
       // Send the user message
       Api.getRequest(menu, context);
+  }
+
+  function showhelp(){
+    document.getElementById("info").innerHTML = '<h2>Help</h2><div class=\"help\">'
+              + '<p>Use the menu above to see employees and status of current project</p>'
+              + '<p><strong>Waiting</strong>'
+              + '<br>If you wish to jump to the end of a day or wait until employees finish a task, use:<br> wait</p>'
+              + '<p><strong>Assigning tasks</strong>'
+              + '<br>Employees can be assigned to tasks using commands such as:<br> Assign &ltemployee&gt to &lttask&gt</p>'
+              + '<p><strong>Relations</strong>'
+              + '<br>You can see how two employees work together using commands such as:<br> How do &ltemployee&gt and &ltemployee&gt get along?</p>'
+              + '</div>';
   }
 
   // Display a user or Watson message that has just been sent/received
