@@ -6,10 +6,14 @@ const assistant = require('./assistant');
 var config = require('./config');
 
 //Database Model controllers
+var mongoosedb = require('./mongoosedb');
 var taskController = require('../../controller/task');
 var employeeController = require('../../controller/employee'); 
 var projectController = require('../../controller/project');
 var eventController = require('../../controller/event');
+
+//deasync
+var deasync = require('deasync');
 
 //Data to pull names, tasks, etc. from
 var nameData = require('../../data/names');
@@ -31,9 +35,11 @@ function randomizeEmployees(user, num){
   var nameIndex;
   var title;
   var titleIndex;
+  //daysLeft is the number of days the employee is unable to work. 
+  var daysOff = 0;
   while(i < num){
     //skill and satisfaciton is a random int between 1 and 100, inclusive
-    skill = Math.floor(Math.random() * 100 + 1);
+    skill = Math.floor(Math.random() * 100 + 1); 
     satisfaction = Math.floor(Math.random() * 100 + 1);
     //name is a random name from the list of names we have. Remove after using so we don't repeat
     nameIndex = Math.floor(Math.random() * nameList.length);
@@ -42,9 +48,10 @@ function randomizeEmployees(user, num){
     //jobTitle is a random title from title list. Can be repeated
     titleIndex = Math.floor(Math.random() * titleList.length);
     title = titleList[titleIndex];
+	
     
     //Add to database and add new employee id into return value
-    retVal.push(employeeController.insertNewEmployee(name, user._id, null, title, skill, satisfaction));
+    retVal.push(employeeController.insertNewEmployee(name, user._id, null, title, skill, satisfaction, daysOff));
     i++;
   }
   return retVal;
@@ -96,43 +103,29 @@ var generateRelations = (user, employees)=>{
 	});	
 	return relationArray;
 }
-
 /*
-Generates the dates for the random events. What event will be determined later
+Generates n number of random events, just dates with a user id at this point
 */
-function generateRandomEvents(user, n){
+function generateRandomEvents(user, n, deadline){
     startDate = new Date('2018-09-24T09:00:00');
-    deadline = new Date('2018-10-12T17:00:00');
 	var time = deadline - startDate;
 	var events = [];
 	var dates = [];
-	console.log(new Date(deadline - startDate));
-	console.log("The beginning: " + new Date(0));
 	for (i=0; i<n; i++){
 		
 		var evnt = Math.floor(Math.random() * time);
 		date = new Date(startDate.getTime() + evnt)
-		dates [i] = dates;
-		console.log("Iteration " + i);
-		//bug is in here
-		events[i] = eventController.insertNewEvent(user._id, date);
-		console.log("Iteration " + (i + 1));
-		
-		
+		dates [i] = date;
+		events[i] = eventController.insertNewEvent(user._id, date);		
 	}
-	console.log("Dates = " + dates);
+	//console.log(dates)
 	return events
 }
 
-/*
-Initializes the project.
-*/
-function generateProject (employees, relations, tasks, events, user, totalHours){
+function getDeadline(totalHours){
+  //Make a reasonable deadline based on how many total hours of work there are
   startDate = new Date('2018-09-24T09:00:00');
   deadline = new Date(startDate.getTime());
-  
-  
-  //Make a reasonable deadline based on how many total hours of work there are
   var days = 0;
   var dayOfWeek = startDate.getDay();
   while(totalHours > 0){
@@ -161,9 +154,15 @@ function generateProject (employees, relations, tasks, events, user, totalHours)
   
   //change deadline time to end of day:
   deadline.setHours(config.DAY_END_TIME);
-  
+  return deadline;
+}
+
+/*
+Initializes the project.
+*/
+function generateProject (employees, relations, tasks, events, user, totalHours, deadline){
+  startDate = new Date('2018-09-24T09:00:00');
   newProject = projectController.insertNewProject('Sprint 1', user._id, employees, relations, tasks, events, startDate, deadline, startDate);
-  console.log("project = " + newProject)
   return newProject;
 }
 
@@ -171,36 +170,55 @@ function generateProject (employees, relations, tasks, events, user, totalHours)
 Flushes the database, should probably be somewhere else be somewhere else
 */
 function reset(){
-  var deasync = require('deasync');
   var database = require('./DBUtils');
 
-  var asyncDone = [false, false, false, false, false];
+  var asyncDone = [false, false, false, false, false, false];
   //Reset all collections in database
   asyncDone[0] = database.resetCollection('employees');
   asyncDone[1] = database.resetCollection('tasks');
   asyncDone[2] = database.resetCollection('projects');
   asyncDone[3] = database.resetCollection('users');
   asyncDone[4] = database.resetCollection('relations');
+  asyncDone[5] = database.resetCollection('events');
   
   deasync.loopWhile(function(){return asyncDone.indexOf(false) > -1;});
+}
+
+function deleteOldProject(user){
+  var sync = false;
+
+  mongoosedb.deleteAllProjects(user, function(){
+    mongoosedb.deleteAllRelations(user, function(){
+      mongoosedb.deleteAllTasks(user, function(){
+        mongoosedb.deleteAllEmployees(user, function(){
+		  mongoosedb.deleteAllEvents(user, function(){
+			sync = true;  
+		  });
+        });
+      });
+    });
+  });
+  deasync.loopWhile(function(){return !sync});
 }
 
 
 /*
 Creates a new project for the given user. 
-TODO: Deletes the user's old project, if there is one.
 */
-function initialize(user){
+function initialize(user, deleteOld){
+  if(deleteOld){
+    deleteOldProject(user);
+  }
+  
   var employees = randomizeEmployees(user, config.NUM_EMPLOYEES);
   var taskRetval = generateTasks(user, config.NUM_TASKS);
   var tasks = taskRetval[0];
   var totalHours = taskRetval[1];
   var relations = generateRelations(user, employees);
+  var deadline = getDeadline(totalHours);
   var numberOfRandomEvents = 5;
-  var events = generateRandomEvents(user, numberOfRandomEvents);
-  console.log(events);
-  var project = generateProject(employees, relations, tasks, events, user, totalHours);
-  console.log("project = " + project)
+  var events = generateRandomEvents(user, numberOfRandomEvents, deadline);
+  var project = generateProject(employees, relations, tasks, events, user, totalHours, deadline);
   
 }
 

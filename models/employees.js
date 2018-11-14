@@ -11,13 +11,13 @@ const Schema = mongoose.Schema;
 */
 const employeesSchema  = new Schema({
     _id: Schema.Types.ObjectId,
-	user_id: {type: mongoose.Schema.Types.ObjectId, ref: 'user'},
+    user_id: {type: mongoose.Schema.Types.ObjectId, ref: 'user'},
     name: String,
     workingOn: String,
-    skill: {type: Number, min:1, max:100},
+    skill: {type: Number, min:1, max:100}, 
     satisfaction: {type: Number, min:1, max:100},
     jobTitle: String,
-	timeOff: {type: Number, min:0}
+	daysOff: {type: Number, min:0}
 });
 
 const employees = mongoose.model('employees', employeesSchema);

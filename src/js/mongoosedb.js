@@ -24,10 +24,24 @@ module.exports = {
       return callback(result);
     });
   },
+  deleteAllEmployees: function(user, callback){
+    //Empty query to get every employee
+    var search = { user_id: user._id};
+    employees.deleteMany(search, function(){
+      return callback();
+    });
+  },
   getRelation: function(user, firstId, secondId, callback){
 	var search = {user_id: user._id, firstEmp_id: firstId, secondEmp_id: secondId};
 	relations.find(search, function(err, result){
       return callback(result[0]);
+    });
+  },
+  deleteAllRelations: function(user, callback){
+    //Empty query to get every relation
+    var search = { user_id: user._id};
+    relations.deleteMany(search, function(){
+      return callback();
     });
   },
   getTask: function(user, taskTitle, callback){
@@ -48,6 +62,13 @@ module.exports = {
       return callback(result);
     });
   },
+  deleteAllTasks: function(user, callback){
+    //Empty query to get every task
+    var search = { user_id: user._id};
+    tasks.deleteMany(search, function(){
+      return callback();
+    });
+  },
   //For now just assume only one project
   getProjectState: function(user, callback){
     var search = { user_id: user._id};
@@ -55,15 +76,42 @@ module.exports = {
       return callback(result);
     });
   },
+  deleteAllProjects: function(user, callback){
+    //Empty query to get every task
+    var search = { user_id: user._id};
+    projects.deleteMany(search, function(){
+      return callback();
+    });
+  },
+  getAllEvents: function(user, callback){
+	  var search = {user_id: user._id};
+	  events.find(search, function(err, result){
+		  return callback(result);
+	  });
+  },
   getNextEvent: function(now, user, callback){
 	  var search = {user_id: user._id};
 	  events.find(search, function(err, result){
-		  console.log(result);
-		  return callback(results);
+		  var currentBest;
+		  var chosenDate;
+		  result.forEach(function(evnt){
+			  var timeLeft = evnt.date - now;
+			  if (timeLeft > 0 && (timeLeft < currentBest || currentBest == null)){
+				  currentBest = timeLeft;
+				  chosenDate = evnt.date;
+			  }
+		  });
+		  return callback(chosenDate);
 	  });
   },
-
-
+  deleteAllEvents: function(user, callback){
+    //Empty query to get every event
+    var search = { user_id: user._id};
+    events.deleteMany(search, function(){
+      return callback();
+    });
+  },
+  
   updateEmployeeSatisfaction: function(employeeId, newSatis){
     var satisfactionInsert = { $set: {satisfaction: newSatis}};
     employees.findByIdAndUpdate(employeeId, satisfactionInsert, function(err){
@@ -73,6 +121,12 @@ module.exports = {
   updateEmployeeWorkingOn: function(employeeId, newTask){
     var workingOnInsert = { $set: {workingOn: newTask}};
     employees.findByIdAndUpdate(employeeId, workingOnInsert, function(err){
+      if(err) throw err;
+    });
+  },
+  updateEmployeeDaysOff: function(employeeId, daysOff){
+    var daysOffInsert = { $set: {daysOff: daysOff}};
+    employees.findByIdAndUpdate(employeeId, daysOffInsert, function(err){
       if(err) throw err;
     });
   },

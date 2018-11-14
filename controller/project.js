@@ -1,9 +1,6 @@
 var {projects} = require('../models/projects');
 var {tasks} = require('../models/tasks');
 var {employees} = require('../models/employees'); 
-var {relations} = require('../models/relations');  //I didn't include this in the last sprint, so I'm not sure it's necessary. 
-var {events} = require('../models/events');
-
 const mongoose = require('mongoose');
 
 //Assuming there is only 1 project at a time.
@@ -18,7 +15,7 @@ var getProject = projects.findOne((err, res) =>{
     return res;
 })
 
-insertNewProject = (title, user_id, employeeIds, relationIds, taskIds, events, startDate, deadline, currentTime) => {
+insertNewProject = (title, user_id, employeeIds, relationIds, taskIds, eventIds, startDate, deadline, currentTime) => {
     var newProject = new projects({
       _id: mongoose.Types.ObjectId(),
       title: title,
@@ -26,7 +23,7 @@ insertNewProject = (title, user_id, employeeIds, relationIds, taskIds, events, s
       employees: employeeIds,
 	  relations: relationIds,
       tasks: taskIds,
-	  events: events,
+	  events: eventIds,
       startDate: startDate,
       deadline: deadline,
       currentTime: currentTime,

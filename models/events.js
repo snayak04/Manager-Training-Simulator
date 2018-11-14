@@ -6,6 +6,7 @@ const projects = require('./projects.js');
 const Schema = mongoose.Schema;
 
 const eventsSchema  = new Schema({
+	_id: Schema.Types.ObjectId,
 	user_id: {type: mongoose.Schema.Types.ObjectId, ref: 'user'},
     date: Date
 });

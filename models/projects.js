@@ -12,6 +12,7 @@ const projectsSchema  = new Schema({
     employees: [{type: mongoose.Schema.Types.ObjectId, ref: 'employees'}],
 	relations: [{type: mongoose.Schema.Types.ObjectId, ref: 'relations'}],
     tasks: [{type: mongoose.Schema.Types.ObjectId, ref: 'tasks'}],
+	events: [{type: mongoose.Schema.Types.ObjectId, ref: 'events'}],
     startDate: Date,
     deadline: Date,
     currentTime: Date,

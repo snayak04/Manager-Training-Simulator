@@ -17,6 +17,10 @@ module.exports = {
           if(job != null){
            string += '<br>Working on: ' + job;
           }
+		  var timeOff = employee.daysOff; 
+		  if( timeOff > 0){
+			string += '<br>Days off: ' + timeOff;
+		  }
 
           string += '</div>';
         });

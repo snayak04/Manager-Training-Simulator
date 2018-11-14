@@ -5,7 +5,7 @@ const {employees} = require('../models/employees');
 const {relations} = require('../models/relations');
 const assistant = require('../src/js/assistant.js');
 
-var insertNewEmployee = (name, user_id, workingOn, position, skill, satisfaction)=>{
+var insertNewEmployee = (name, user_id, workingOn, position, skill, satisfaction, daysOff)=>{
     employee = new employees({
       _id:mongoose.Types.ObjectId(),
       user_id: user_id,
@@ -13,7 +13,8 @@ var insertNewEmployee = (name, user_id, workingOn, position, skill, satisfaction
       workingOn: workingOn,
       jobTitle: position,
       skill: skill,
-      satisfaction: satisfaction
+      satisfaction: satisfaction,
+	  daysOff: daysOff
     });
     employee.save();
     assistant.addEmployee(employee.name);
@@ -28,7 +29,7 @@ var insertNewRelation = (user_id, firstId, secondId, value)=>{
 		secondEmp_id: secondId, 
 		relationStrength: value
 	});
-	relation.save(); 
+	relation.save(); //??
 	return relation._id;
 }
   

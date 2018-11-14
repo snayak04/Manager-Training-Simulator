@@ -26,9 +26,16 @@
           <ul>
             <li onclick="InfoPanel.showdata('tasks')">Projects</li>
             <li onclick="InfoPanel.showdata('employees')">Employees</li>
-            <form action="/logout" method="get">
-              <button type="submit" class="logoutButton">Logout</button>
-            </form>
+            <li class = "buttonList">
+              <form action="/logout" method="get">
+                <button type="submit" class="logoutButton">Logout</button>
+              </form>
+            </li>
+            <li class = "buttonList">
+              <form action="/startNew" method="get">
+                <button type="submit" class="logoutButton">New Project</button>
+              </form>
+            </li>
           </ul>
           <div id="info" class="info-column" >
           </div>

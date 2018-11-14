@@ -62,6 +62,8 @@ function updateTimeLeft(user, tasks, hours){
 	  var idealSkillSum = 0;
 	  var names = getNamesFromIds(task.employeeIds);
 	  
+	  //TODO employee.skill isn't getting the right skill. Flip name and employee
+	  //I have no idea what you're talking about, past me
 	  task.employeeIds.forEach(function(id){
 		  var employee;
 		  var done;
@@ -71,9 +73,11 @@ function updateTimeLeft(user, tasks, hours){
 		  });
 		  deasync.loopWhile(function(){return !done;});
 		 
-		  var socialFactor = calculateSocialFactor(user, employee, task.employeeIds);
-		  skillSum += employee.skill * employee.skill * socialFactor;
-		  idealSkillSum += employee.skill / 100;
+		  if (employee.daysOff == 0){
+			  var socialFactor = calculateSocialFactor(user, employee, task.employeeIds);
+		      skillSum += employee.skill * employee.skill * socialFactor;
+		      idealSkillSum += employee.skill / 100;
+		  }
 	  });	  
 	  
 	  
@@ -174,13 +178,190 @@ function relationString(emp1, emp2, value){
 	}
 }
 
-function nextEvent(now, user){
+function getNextEvent(user, now){
+	var nextEvent;
 	var done = false;
-	database.getNextEvent(now, user, function(evnt){
+	database.getNextEvent(now, user, function(result){
+		nextEvent = result;
 		done = true;
 	});
 	deasync.loopWhile(function(){return !done;});
-	return 0;
+	return nextEvent;
+}
+
+function getShortestFinishTime(user, tasks){
+	var shortestFinishTime = null;
+    tasks.forEach(function(task){
+      //Don't care about complete tasks
+      if(task.state != 'Complete'){
+        var timeLeft = calculateActualFinishTime(user, task);
+        if(!shortestFinishTime || timeLeft < shortestFinishTime){
+          if(timeLeft != -1){
+            shortestFinishTime = timeLeft;
+          } 
+        }
+      }
+    });
+	return shortestFinishTime;
+}
+
+function getRandomMessage(name, days, type){
+	if (type == 'employee'){
+		message = ["Oh, no! " + name + " has caught fire! They'll be in the hospital for " + days + " days."]
+		return message;
+	} //else
+}
+
+function processRandomEvent(user){
+	var coinFlip = true; //Math.random() > 0.5;
+	var done = false;
+	var returnMessage = '';
+	if (coinFlip){
+		//employee disaster
+		database.getAllEmployees(user, function(employees){
+			var random = Math.floor(employees.length * Math.random());
+			var employee = employees[random];
+			var days = Math.floor(Math.random() * 3 + 1);
+			returnMessage = getRandomMessage(employee.name, days, "employee");
+			database.updateEmployeeDaysOff(employee._id, days + employee.daysOff);
+			done = true;
+		});
+		deasync.loopWhile(function(){return !done;});
+	} else {
+		//task disaster
+		//TODO I might get around to this
+	}
+	
+	return returnMessage; 
+}
+
+function updateDaysOff(user){
+	var done = false;
+	database.getAllEmployees(user, function(employees){
+		employees.forEach(function(employee){
+			if (employee.daysOff > 0){
+				database.updateEmployeeDaysOff(employee._id, employee.daysOff - 1);
+			}
+		});
+		done = true
+	});
+	deasync.loopWhile(function(){return !done;});
+}
+
+function getEventsFromOffHours(user, prevTime, currentTime){
+	var done = false;
+	var first = true;
+	var eventMessage = '';
+	var endOfLastDay = new Date(currentTime.getTime());
+	endOfLastDay.setDate(currentTime.getDate() - 1);
+	endOfLastDay.setHours(config.DAY_END_TIME);
+	
+	database.getAllEvents(user, function(events){
+		events.forEach(function(evnt){
+			if (endOfLastDay < evnt.date && evnt.date < currentTime){
+				if (first){
+					eventMessage += "<br>The following events happened while you were away:<br>";
+					first = false;
+				}
+				eventMessage += processRandomEvent(user) + "<br>";			
+			}
+		});		
+		done = true;
+	});
+	
+	deasync.loopWhile(function(){return !done;});
+	return eventMessage;
+}
+
+function processEndOfDay(user, tasks, currentTime, hoursLeftInDay, project){
+	var returnMessage;
+	var speachText;
+	
+	updateTimeLeft(user, tasks, hoursLeftInDay);
+	var prevTime = new Date(currentTime.getTime());
+    var newTime = new Date(currentTime.getTime());
+    newTime.setDate(currentTime.getDate() + 1); 
+    newTime.setHours(config.DAY_START_TIME);
+    database.updateProjectTime(project._id, newTime);
+          
+    if(newTime.getTime() > project.deadline.getTime()){
+        //deadline has been exceeded
+        returnMessage = "Sorry, you have exceeded the deadline, and have been terminated for your incompetence. You can try again by clicking the \'New Project\' button";
+        speechText = null;
+            
+    }else{
+        //Build Message
+        var satisfactionRating = scoreSatisfaction();
+        var productivityRating = scoreProductivity(user);
+        //console.log("IN INTENTS!!" + user);
+        speechText = '<speak version="1.0">It is now the end of the day <break strength="weak"></break>. Here is your rating for the day';
+        speechText +=' <break strength="medium"></break> It is now ' + config.DAY_START_TIME + ' AM on ' + newTime.getMonth() + '\\' + newTime.getDate() + '</speak>';
+        returnMessage = 'It is the end of the day. Here is your rating for the day:<br>'
+        + '&ensp;Productivity Rating: ' + productivityRating + '<br>'
+        + '&ensp;Satisfaction Rating: ' + satisfactionRating + '<br>'
+	    //TODO put back in
+        //+ '&ensp;Agile Rating: ' + agileRating.EODAnalysis(user) + '<br>'
+        + '<br>'
+        + 'It is now ' + config.DAY_START_TIME + ' AM on ' 
+        + newTime.getMonth() + '\\' + newTime.getDate();
+        //agileRating.reset();
+	}
+	updateDaysOff(user);
+	returnMessage += getEventsFromOffHours(user, prevTime, newTime);
+	return [returnMessage, speechText];
+}
+
+function processFinishedTask(user, tasks, currentTime, shortestFinishTime, project){
+    var finishedTasks = updateTimeLeft(user, tasks, shortestFinishTime);
+    finishTasks(finishedTasks);
+    currentTime.setHours(currentTime.getHours() + shortestFinishTime);
+    database.updateProjectTime(project._id, currentTime);
+    //database.updateProjectRating(project._id, agileRating.getScore());
+    var returnMessage = '';
+	var speechText = '';
+	var done = false;
+         
+    finishedTasksIds = [];
+    finishedTasks.forEach(function(finished){
+        finishedTasksIds.push(finished._id);
+    });
+          
+    //Check if project is completed
+    //get tasks again as they may have been edited
+    database.getAllTasks(user, function(updatedTasks){
+        allTasksDone = true;
+        updatedTasks.forEach(function(task){
+            var index = finishedTasksIds.indexOf(task._id);
+            if(task.state != "Complete" && index == -1){
+                allTasksDone = false;
+            }
+        });
+          
+        if(!allTasksDone){
+            //buildMessage
+            speechText = '<speak version="1.0">';
+            finishedTasks.forEach(function(task){
+                returnMessage += 'The task \'' + task.title + '\' has been completed<br>';
+                speechText += 'The task ' + task.title + ' has been completed. <break strength="weak"></break>';
+            });
+            var currentHour = currentTime.getHours();
+            if(currentHour == 12){
+                returnMessage += 'It is now 12 PM';
+            }else if(currentHour > 12){
+                returnMessage += 'It is now ' + (currentHour - 12)+ ' PM';
+                speechText += 'It is now ' + (currentHour - 12) + ' PM </speak>';
+            }else{
+                returnMessage += 'It is now ' + currentHour + ' AM';
+                speechText += 'It is now ' + currentHour + ' AM </speak>';
+            }
+        }else{
+            returnMessage = "Congrats, you have completed the project! You can start a new one by clicking the \'New Project\' buttton";
+            speechText = null;
+        }
+		done = true;
+    });
+	deasync.loopWhile(function(){return !done;});
+	return [returnMessage, speechText];
 }
 
 module.exports = {
@@ -196,88 +377,40 @@ module.exports = {
     var done = false;
     database.getProjectState(user, function(projects){
       //Get the hours left in the day
-	  console.log("Projects = " + projects);
       var project = projects[0]; //Assuming one project for now
       var currentTime = project.currentTime;
-	  var nextEvnt = nextEvent(currentTime, user);
-	  
-	  
-	  
-	  
-	  
-	  
-	  
-	  
+	  var nextEvent = getNextEvent(user, currentTime);
+	  nextEvent.setHours(date.getHours() + Math.round(date.getMinutes()/60));
+      nextEvent.setMinutes(0);
+	  nextEvent.setSeconds(0);
+	  nextEvent.setMilliseconds(0);
+	  var hoursUntilNextEvent
+	  if (nextEvent != null){
+		hoursUntilNextEvent = Math.floor((nextEvent - currentTime) / (1000*3600));
+	  }
 	  
       var hoursLeftInDay = config.DAY_END_TIME - currentTime.getHours();
-     // console.log(projects);
       //Check if any of the tasks will finish before the day ends
       database.getAllTasks(user, function(tasks) {
-        var shortestFinishTime = null;
-        tasks.forEach(function(task){
-          //Don't care about complete tasks
-          if(task.state != 'Complete'){
-            var timeLeft = calculateActualFinishTime(user, task);
-            if(!shortestFinishTime || timeLeft < shortestFinishTime){
-              if(timeLeft != -1){
-                shortestFinishTime = timeLeft;
-              } 
-            }
-          }
-        });
-        
-        if(shortestFinishTime == null || shortestFinishTime > hoursLeftInDay){
+        var shortestFinishTime = getShortestFinishTime(user, tasks);
+		
+		if ((nextEvent != null) && hoursUntilNextEvent < hoursLeftInDay && (hoursUntilNextEvent < shortestFinishTime || shortestFinishTime == null)){
+			//Next event is a random event
+			updateTimeLeft(user, tasks, hoursUntilNextEvent); //not perfectly exact, ignores minutes
+			returnMessage = processRandomEvent(user);
+			speachText = returnMessage;
+			database.updateProjectTime(project._id, nextEvent);
+			done = true;
+		} else if(shortestFinishTime == null || shortestFinishTime > hoursLeftInDay){
           //Next event is end of day		  
           //Update time to next morning
-          updateTimeLeft(user, tasks, hoursLeftInDay);
-          var newTime = new Date(currentTime.getTime());
-          newTime.setDate(currentTime.getDate() + 1);
-          newTime.setHours(config.DAY_START_TIME);
-          database.updateProjectTime(project._id, newTime);
-          
-          //Build Message
-          var satisfactionRating = scoreSatisfaction();
-          var productivityRating = scoreProductivity(user);
-          //console.log("IN INTENTS!!" + user);
-          speechText = '<speak version="1.0">It is now the end of the day <break strength="weak"></break>. Here is your rating for the day';
-          speechText +=' <break strength="medium"></break> It is now ' + config.DAY_START_TIME + ' AM on ' + newTime.getMonth() + '\\' + newTime.getDate() + '</speak>';
-          returnMessage = 'It is the end of the day. Here is your rating for the day:<br>'
-            + '&ensp;Productivity Rating: ' + productivityRating + '<br>'
-            + '&ensp;Satisfaction Rating: ' + satisfactionRating + '<br>'
-            + '&ensp;Agile Rating: ' + agileRating.EODAnalysis(user) + '<br>'
-            + '<br>'
-            + 'It is now ' + config.DAY_START_TIME + ' AM on ' 
-            + newTime.getMonth() + '\\' + newTime.getDate();
-          done = true;
-          agileRating.reset();
-          
+		  [returnMessage, speechText] = processEndOfDay(user, tasks, currentTime, hoursLeftInDay, project);
+          done = true;          
         }else{
           //Next event is an employee finishing their task
-          var finishedTasks = updateTimeLeft(user, tasks, shortestFinishTime);
-          finishTasks(finishedTasks);
-          currentTime.setHours(currentTime.getHours() + shortestFinishTime);
-          database.updateProjectTime(project._id, currentTime);
-        //  database.updateProjectRating(project._id, agileRating.getScore());
-          returnMessage = '';
-          
-          //buildMessage
-          speechText = '<speak version="1.0">';
-          finishedTasks.forEach(function(task){
-            returnMessage += 'The task \'' + task.title + '\' has been completed<br>';
-            speechText += 'The task ' + task.title + ' has been completed. <break strength="weak"></break>';
-          });
-          var currentHour = currentTime.getHours();
-          if(currentHour == 12){
-            returnMessage += 'It is now 12 PM';
-          }else if(currentHour > 12){
-            returnMessage += 'It is now ' + (currentHour - 12)+ ' PM';
-            speechText += 'It is now ' + (currentHour - 12) + ' PM </speak>';
-          }else{
-            returnMessage += 'It is now ' + currentHour + ' AM';
-            speechText += 'It is now ' + currentHour + ' AM </speak>';
-          }
+		  [returnMessage, speechText] = processFinishedTask(user, tasks, currentTime, shortestFinishTime, project);
           done = true;
-        }
+        } 
       });
     });
     
@@ -373,6 +506,10 @@ module.exports = {
       
         string += '<br>&ensp;Skill: '+employee.skill;
         string += '<br>&ensp;Satisfaction: '+employee.satisfaction;
+		var days = employee.daysOff;
+		if (days > 0){
+			string += '<br>&ensp;Days off: '+days;
+		}
         string += '<br><br>';
       });
       sync = 1;

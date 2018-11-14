@@ -3,16 +3,17 @@ const mongoose = require('mongoose');
 const {tasks} = require('../models/tasks');
 const {employees} = require('../models/employees'); 
 const {relations} = require('../models/relations');
+const {events} = require('../models/events');
 const assistant = require('../src/js/assistant.js');
 
-var insertNewEvent = (date, user_id)=>{
-	console.log("Date = " + date);
-    evnt = new evnt({
+var insertNewEvent = (user_id, date)=>{
+    var newEvent = new events({
+	  _id: mongoose.Types.ObjectId(),
       user_id: user_id,
       date: date	  
     });
-    evnt.save();
-    return evnt;
+    newEvent.save();
+    return newEvent;
 };
 
 module.exports = {insertNewEvent};
