@@ -26,6 +26,7 @@
           <ul>
             <li onclick="InfoPanel.showdata('tasks')">Projects</li>
             <li onclick="InfoPanel.showdata('employees')">Employees</li>
+            <li onclick="InfoPanel.showhelp()">Help</li>
             <li class = "buttonList">
               <form action="/logout" method="get">
                 <button type="submit" class="logoutButton">Logout</button>
@@ -37,7 +38,18 @@
               </form>
             </li>
           </ul>
-          <div id="info" class="info-column" >
+          
+          <div id="info" class="info-column">
+            <h2>Help</h2>
+            <div class="help">
+              <p>Use the menu above to see employees and status of current project</p>
+              <p><strong>Waiting</strong>
+              <br>If you wish to jump to the end of a day or wait until employees finish a task, use:<br> wait</p>
+              <p><strong>Assigning tasks</strong>
+              <br>Employees can be assigned to tasks using commands such as:<br> Assign &ltemployee&gt to &lttask&gt</p>
+              <p><strong>Relations</strong>
+              <br>You can see how two employees work together using commands such as:<br> How do &ltemployee&gt and &ltemployee&gt get along?</p>
+            </div>
           </div>
         </div>
         
@@ -46,6 +58,7 @@
           <label for="textInput" class="inputOutline">
             <input id="textInput" class="input responsive-column" placeholder="Type something" type="text" onkeydown="ConversationPanel.inputKeyDown(event, this)" autofocus>
           </label>
+          <input type="checkbox" name="textToSpeech" id="Speak" value="male">Enable TTS<br>
         </div>
 
       </div>
@@ -60,8 +73,6 @@
       <audio autoPlay="true" style="display:none" id="audio" controls="controls">
               Your browser does not support the audio element.
       </audio>
-      <input type="radio" name="textToSpeech" id="Speak" value="male"> Speak<br>
-	  <input type="radio" name="textToSpeech" id="Do not Speak" value="female"> Don't speak<br>
     </div>
   
   
