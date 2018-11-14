@@ -146,7 +146,6 @@ app.get('/api/message', function (req, res) {
   } else {
     query = infoMenu.projects(req.user);    
   }
-  agileRating = new AgileRating(req.user);
 
   res.json(query);
 });
@@ -163,6 +162,9 @@ app.get('/api/message', function (req, res) {
  * @return {Object}          The response with the updated message
  */
 function updateMessage(input, response, user) {
+  if(agileRating == null){
+      agileRating = new AgileRating(user);
+  }
   var responseText = null;
   if (!response.output) {
     response.output = {};

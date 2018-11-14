@@ -9,8 +9,8 @@ const Schema = mongoose.Schema;
 const relationsSchema  = new Schema({
     _id: Schema.Types.ObjectId, //??
 	user_id: {type: mongoose.Schema.Types.ObjectId, ref: 'user'},
-	firstName: String, 
-	secondName: String, 
+	firstEmp_id: {type: mongoose.Schema.Types.ObjectId, ref: 'employees'}, 
+	secondEmp_id: {type: mongoose.Schema.Types.ObjectId, ref: 'employees'},
 	relationStrength: {type: Number, min:0, max:1}
 });
 

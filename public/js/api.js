@@ -61,7 +61,9 @@ var Api = (function() {
   	  	str = str.replace(/<br>/gi, '');  //removing html tags to avoid issues
   	  	str = str.replace(/&ensp;/gi, '');
   	  	var speak = document.getElementById('Speak');
-  	  	if(speak && speak.checked == true){
+        console.log(speak.checked);
+  	  	if(speak.checked == true){
+          console.log(speak);
   	  		if(reponseJson.output.textToSpeechFlag != 'N'){
   	  			if(reponseJson.output.speechText){
   	  				sendRequestToTextToSpeechApi(reponseJson.output.speechText);
@@ -104,8 +106,6 @@ var Api = (function() {
         Api.setResponsePayload(http.responseText);
       }
     };
-
-    var params = JSON.stringify(param);
 
     // Send request
     http.send(param);
