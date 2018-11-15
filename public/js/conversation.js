@@ -38,12 +38,17 @@ var ConversationPanel = (function () {
     Api.setRequestPayload = function (newPayloadStr) {
       currentRequestPayloadSetter.call(Api, newPayloadStr);
       displayMessage(JSON.parse(newPayloadStr), settings.authorTypes.user);
+      //Disable input until response is received to prevent spamming
+      document.getElementById("textInput").disabled = true;
     };
 
     var currentResponsePayloadSetter = Api.setResponsePayload;
     Api.setResponsePayload = function (newPayloadStr) {
       currentResponsePayloadSetter.call(Api, newPayloadStr);
       displayMessage(JSON.parse(newPayloadStr), settings.authorTypes.watson);
+      //reenable input and set focus
+      document.getElementById("textInput").disabled = false;
+      document.getElementById("textInput").focus();
     };
   }
 
