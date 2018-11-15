@@ -29,7 +29,7 @@ userController.doRegister = function(req, res) {
     }
 	
     //Create a new initial project for the new user
-    initProject.initialize(user, false);
+    initProject.initialize(user, false, null);
 
     passport.authenticate('local')(req, res, function () {
      // new AgileRating(req.user);
