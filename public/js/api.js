@@ -54,6 +54,11 @@ var Api = (function() {
     http.onreadystatechange = function() {
       if (http.readyState === 4 && http.status === 200 && http.responseText) {
         Api.setResponsePayload(http.responseText);
+        /*if(responseJson.output.toggleInput == 'off'){
+          document.getElementById("textInput").disabled = true;
+        }else if(responseJson.output.toggleInput == 'on'){
+          document.getElementById("myText").disabled = false;
+        }*/
         //Parsing and Sending the result obtained from server to TEXT TO SPEECH API
         var reponseJson = JSON.parse(http.responseText);
         var str = reponseJson.output.text;
