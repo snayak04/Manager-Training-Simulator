@@ -7,7 +7,8 @@ var Common = (function () {
   return {
     buildDomElement: buildDomElementFromJson,
     fireEvent: fireEvent,
-    listForEach: listForEach
+    listForEach: listForEach,
+    submitNewProject: submitNewProject
   };
 
   // Take in JSON object and build a DOM element out of it
@@ -77,4 +78,11 @@ var Common = (function () {
       callback.call(null, list[i]);
     }
   }
+  
+  function submitNewProject(){
+    document.getElementById('newProjectButton').disabled = true;
+    document.getElementById('newProjectForm').submit();
+    console.log('buttonClicked');
+  }
+  
 }());

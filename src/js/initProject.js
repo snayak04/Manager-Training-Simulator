@@ -179,16 +179,16 @@ function deleteOldProject(user){
 Creates a new project for the given user. 
 */
 function initialize(user, deleteOld){
-  if(deleteOld){
-    deleteOldProject(user);
-  }
-  
-  var employees = randomizeEmployees(user, config.NUM_EMPLOYEES);
-  var taskRetval = generateTasks(user, config.NUM_TASKS);
-  var tasks = taskRetval[0];
-  var totalHours = taskRetval[1];
-  var relations = generateRelations(user, employees);
-  var project = generateProject(employees, relations, tasks, user, totalHours);
+    if(deleteOld){
+      deleteOldProject(user);
+    }
+    
+    var employees = randomizeEmployees(user, config.NUM_EMPLOYEES);
+    var taskRetval = generateTasks(user, config.NUM_TASKS);
+    var tasks = taskRetval[0];
+    var totalHours = taskRetval[1];
+    var relations = generateRelations(user, employees);
+    var project = generateProject(employees, relations, tasks, user, totalHours);
 }
 
 module.exports = {
