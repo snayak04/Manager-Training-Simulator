@@ -221,7 +221,7 @@ module.exports = {
             //deadline has been exceeded
             returnMessage = "Sorry, you have exceeded the deadline, and have been terminated for your incompetence. You can try again by clicking the \'New Project\' button";
             speechText = null;
-            
+            database.updateProjectCompletion(project._id, true);
           }else{
             //Build Message
             var satisfactionRating = scoreSatisfaction();
@@ -231,7 +231,7 @@ module.exports = {
             speechText +=' <break strength="medium"></break> It is now ' + config.DAY_START_TIME + ' AM on ' + newTime.getMonth() + '\\' + newTime.getDate() + '</speak>';
             returnMessage = 'It is the end of the day. Here is your rating for the day:<br>'
               + '&ensp;Productivity Rating: ' + productivityRating + '<br>'
-              + '&ensp;Satisfaction Rating: ' + satisfactionRating + '<br>'
+              //+ '&ensp;Satisfaction Rating: ' + satisfactionRating + '<br>'
               + '&ensp;Agile Rating: ' + agileRating.EODAnalysis(user) + '<br>'
               + '<br>'
               + 'It is now ' + config.DAY_START_TIME + ' AM on ' 
@@ -285,6 +285,7 @@ module.exports = {
             }else{
               returnMessage = "Congrats, you have completed the project! You can start a new one by clicking the \'New Project\' buttton";
               speechText = null;
+              database.updateProjectCompletion(project._id, true);
             }
             done = true;
           });
@@ -334,7 +335,7 @@ module.exports = {
           }
           var eta = calculateFinishTime(task);
           if(eta == -1){eta = 'never';}
-          string += '<br>&ensp;ETA: ' + eta;
+          //string += '<br>&ensp;ETA: ' + eta;
           
           string += '<br>';
         }
@@ -382,8 +383,8 @@ module.exports = {
         if(job == null){job = 'nothing';}
         string += '<br>&ensp;Working on: ' + job;
       
-        string += '<br>&ensp;Skill: '+employee.skill;
-        string += '<br>&ensp;Satisfaction: '+employee.satisfaction;
+        //string += '<br>&ensp;Skill: '+employee.skill;
+        //string += '<br>&ensp;Satisfaction: '+employee.satisfaction;
         string += '<br><br>';
       });
       sync = 1;
