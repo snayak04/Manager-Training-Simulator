@@ -178,7 +178,7 @@ function deleteOldProject(user){
 /*
 Creates a new project for the given user. 
 */
-function initialize(user, deleteOld){
+function initialize(user, deleteOld, callback){
     if(deleteOld){
       deleteOldProject(user);
     }
@@ -189,6 +189,10 @@ function initialize(user, deleteOld){
     var totalHours = taskRetval[1];
     var relations = generateRelations(user, employees);
     var project = generateProject(employees, relations, tasks, user, totalHours);
+    
+    if(callback){
+      return callback();
+    }
 }
 
 module.exports = {
