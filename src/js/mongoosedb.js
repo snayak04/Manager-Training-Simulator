@@ -107,6 +107,13 @@ module.exports = {
       if (err) throw err;
     })
   },
+  
+  updateProjectCompletion: function(projectId, done){
+    var stateInsert = { $set: {projectDone: done}};
+    projects.findByIdAndUpdate(projectId, stateInsert, function(err){
+      if(err) throw err;
+    });
+  },
 
   updateTaskWorkers: function(taskId, newWorkerArray){
     var workingInsert = { $set: {employeeIds: newWorkerArray}};

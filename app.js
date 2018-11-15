@@ -23,7 +23,8 @@ var bodyParser = require('body-parser'); // parser for post requests
 var AssistantV1 = require('watson-developer-cloud/assistant/v1'); // watson sdk
 var TextToSpeechV1 = require('watson-developer-cloud/text-to-speech/v1');
 const mongoose = require('mongoose');
-
+var database = require('./src/js/mongoosedb');
+var deasync = require('deasync');
 var infoMenu = require('./src/js/infoMenu');
 
 mongoose.connect(String(process.env.DATABASE_URI), { useNewUrlParser: true }, 
@@ -172,6 +173,25 @@ function updateMessage(input, response, user) {
   
   response.output.textToSpeechFlag = "Y"; //flag to enable Text to Speech
   
+  //Check if the project is done and send a different message it is. This is kind of hacky, should probably fix later.
+  var sync = false;
+  var projectIsDone = false;
+  database.getProjectState(user, function(projects){
+    var project = projects[0];
+    if(project.projectDone == true){
+      projectIsDone = true;
+      response.output.speechText = null;
+      response.output.text = "You can no longer work on this project. Click the 'New Project' button to start a new project";
+    }
+    sync = true;
+  });
+  deasync.loopWhile(function(){return !sync;});
+  if(projectIsDone){
+    return response;
+  }
+  
+  
+  
   var intent;
   if (response.intents && response.intents[0]) {
     intent = response.intents[0];
@@ -184,6 +204,9 @@ function updateMessage(input, response, user) {
     response.output.text = 'I don\'t understand that. Could you try rephrasing?';
     return response;
   }
+  
+  
+
   
   
   //console.log(intent.intent);
