@@ -42,6 +42,7 @@ var app = express();
 
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
+var flash = require('connect-flash');
 
 app.use(require('express-session')({
     secret: 'keyboard cat',
@@ -65,6 +66,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static('./public')); // load UI from public folder
 app.use(require('./routes'));
+app.use(flash());
 
 
 
