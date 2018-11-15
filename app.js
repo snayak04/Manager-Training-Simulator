@@ -184,7 +184,6 @@ function updateMessage(input, response, user) {
   }
   
   
-  //console.log(intent.intent);
   switch(intent.intent){
   case 'Wait':
     responseText = intentHandlers.wait(user, agileRating);
@@ -209,6 +208,9 @@ function updateMessage(input, response, user) {
   case 'AssignStoryPoints':
     responseText = intentHandlers.assignStoryPoints(user, response);
     break;
+  case 'IndividualTasks':
+	responseText = intentHandlers.getTaskByEmpName(user, response);
+	break;
   default:
     //Do nothing
     break;

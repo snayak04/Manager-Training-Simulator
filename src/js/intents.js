@@ -154,8 +154,51 @@ function scoreProductivity(user){
   return score;
 }
 
-function scoreSatisfaction(){
-  //TODO Write this
+function scoreSatisfaction(user){
+  /*//TODO Write this
+	//if they are working on the same tasks, based on their relation, satisfation changes;
+	//iterate through all employees, group them based on their tasks
+	database.getAllTasks(user, function(tasks) {
+        var shortestFinishTime = null;
+        var emptaskmap = new Map();
+        tasks.forEach(function(task){
+          //Don't care about complete tasks
+          if(task.state != 'Complete'){
+        	  
+        	  var done = false;
+        	  var employeesWorking;
+        	  database.getAllEmployees(user, function(employees){
+        	    employeesWorking = employees;
+        	    done = true;
+        	  });
+        	  deasync.loopWhile(function(){return !done;});
+        	  var i;
+        	  for(i = 0; i<employeesWorking.length;i++){
+        		  var j;
+        		  var sumRes = 0;
+        		  for( j = i+1; j<employeesWorking.length;j++){
+        			  console.log(employeesWorking[i].name);
+        			  var done1 = false;
+        			  database.getRelation(user, employeesWorking[i].name, employeesWorking[j].name, function(result){
+        				  sumRes += result.relationStrength;
+        				  done1 = true;
+        			  });
+        			  deasync.loopWhile(function(){return !done1;});
+        			  var avg = sumRes/(employeesWorking.length-i);
+        			  console.log(avg);
+        		  }
+        		  database.updateEmployeeSatisfaction(employeesWorking[i]._id, avg);
+        		  var taskCnt = emptaskmap.get(employeesWorking[i].name);
+        		  if(taskCnt)
+        			  emptaskmap.set(employeesWorking[i].name, taskCnt+1);
+        		  else
+        			  emptaskmap.set(employeesWorking[i].name, 1);
+        	  }
+        	  
+          }
+        });
+	});*/
+	
   return 75;
 }
 
@@ -219,7 +262,7 @@ module.exports = {
           database.updateProjectTime(project._id, newTime);
           
           //Build Message
-          var satisfactionRating = scoreSatisfaction();
+          var satisfactionRating = scoreSatisfaction(user);
           var productivityRating = scoreProductivity(user);
           //console.log("IN INTENTS!!" + user);
           speechText = '<speak version="1.0">It is now the end of the day <break strength="weak"></break>. Here is your rating for the day';
@@ -531,6 +574,49 @@ module.exports = {
     }
     
     return [returnMessage, null];
-  }
+  },
   
-};
+  // function to get the task of a given employee.
+  getTaskByEmpName: function(user, response){
+	  
+	  	var returnMessage;
+	    var employee;
+	    var entities = response.entities;
+	    entities.forEach(function(entity){
+	      //console.log(entity.entity);
+	      if (entity.entity == 'employees'){
+	        if(!employee){
+	          employee = entity;
+	        }else if(entity.confidence > employee.confidence){
+	          //new value has higher confidence, replace old one.
+	          employee = entity;
+	        }
+	      }
+	      
+	    });
+	    
+	    if(!employee){
+	        returnMessage = 'I don\'t think such an employee exists';
+	      }
+	    else{
+	    	console.log(employee.value)
+	    	var done = false;
+	    	database.getEmployee(user, employee.value, function(employeeObject){
+	    		if(employeeObject && employeeObject.workingOn){
+	    			returnMessage = employee.value + ' is working on ' + employeeObject.workingOn;
+	    		}
+	    		else if(employeeObject){
+	    			returnMessage = employee.value + ' is not working on anything';	
+	    		}
+	    		done = true;
+	    	});
+	    	deasync.loopWhile(function(){return !done;});
+	    	
+	    }
+	    
+	    return [returnMessage, null];
+	    }
+	  
+  };
+  
+//};
