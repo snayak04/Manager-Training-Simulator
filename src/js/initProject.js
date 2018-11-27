@@ -208,7 +208,7 @@ function deleteOldProject(user){
 /*
 Creates a new project for the given user. 
 */
-function initialize(user, deleteOld){
+function initialize(user, deleteOld, callback){
   if(deleteOld){
     deleteOldProject(user);
   }
@@ -222,6 +222,10 @@ function initialize(user, deleteOld){
   var numberOfRandomEvents = 5;
   var events = generateRandomEvents(user, numberOfRandomEvents, deadline);
   var project = generateProject(employees, relations, tasks, events, user, totalHours, deadline);
+
+  if(callback){
+    return callback();
+  }
 }
 
 module.exports = {

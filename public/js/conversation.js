@@ -3,6 +3,7 @@
 /* eslint no-unused-vars: "off" */
 /* global Api: true, Common: true*/
 var update = 0;
+var openMenu = 'tasks'
 
 var ConversationPanel = (function () {
   var settings = {
@@ -37,12 +38,17 @@ var ConversationPanel = (function () {
     Api.setRequestPayload = function (newPayloadStr) {
       currentRequestPayloadSetter.call(Api, newPayloadStr);
       displayMessage(JSON.parse(newPayloadStr), settings.authorTypes.user);
+      //Disable input until response is received to prevent spamming
+      document.getElementById("textInput").disabled = true;
     };
 
     var currentResponsePayloadSetter = Api.setResponsePayload;
     Api.setResponsePayload = function (newPayloadStr) {
       currentResponsePayloadSetter.call(Api, newPayloadStr);
       displayMessage(JSON.parse(newPayloadStr), settings.authorTypes.watson);
+      //reenable input and set focus
+      document.getElementById("textInput").disabled = false;
+      document.getElementById("textInput").focus();
     };
   }
 
@@ -140,7 +146,7 @@ var ConversationPanel = (function () {
       // Move chat to the most recent messages when new messages are added
       scrollToChatBottom();
       if(update == 1){
-        showdata('tasks')
+        showdata(openMenu);
         update = 0;
       } else if (update == 0) {
         update = 1;
@@ -200,26 +206,52 @@ var ConversationPanel = (function () {
 
     textArray.forEach(function (currentText) {
       if (currentText) {
-        var messageJson = {
-          // <div class='segments'>
-          'tagName': 'div',
-          'classNames': ['segments'],
-          'children': [{
-            // <div class='from-user/from-watson latest'>
+        if(isUser){
+          outputText = currentText.replace(/&/g, '&amp');
+          outputText = outputText.replace(/</g, '&lt');
+          outputText = outputText.replace(/>/g, '&gt');
+          var messageJson = {
+            // <div class='segments'>
             'tagName': 'div',
-            'classNames': [(isUser ? 'from-user' : 'from-watson'), 'latest', ((messageArray.length === 0) ? 'top' : 'sub')],
+            'classNames': ['segments'],
             'children': [{
-              // <div class='message-inner'>
+              // <div class='from-user/from-watson latest'>
               'tagName': 'div',
-              'classNames': ['message-inner'],
+              'classNames': ['from-user', 'latest', ((messageArray.length === 0) ? 'top' : 'sub')],
               'children': [{
-                // <p>{messageText}</p>
-                'tagName': 'p',
-                'text': currentText
+                // <div class='message-inner'>
+                'tagName': 'div',
+                'classNames': ['message-inner'],
+                'children': [{
+                  // <p>{messageText}</p>
+                  'tagName': 'p',
+                  'text': outputText
+                }]
               }]
             }]
-          }]
-        };
+          };
+        } else {
+          var messageJson = {
+            // <div class='segments'>
+            'tagName': 'div',
+            'classNames': ['segments'],
+            'children': [{
+              // <div class='from-user/from-watson latest'>
+              'tagName': 'div',
+              'classNames': ['from-watson', 'latest', ((messageArray.length === 0) ? 'top' : 'sub')],
+              'children': [{
+                // <div class='message-inner'>
+                'tagName': 'div',
+                'classNames': ['message-inner'],
+                'children': [{
+                  // <p>{messageText}</p>
+                  'tagName': 'p',
+                  'text': currentText
+                }]
+              }]
+            }]
+          };
+        }
         messageArray.push(Common.buildDomElement(messageJson));
       }
     });

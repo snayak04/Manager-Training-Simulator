@@ -29,7 +29,7 @@ userController.doRegister = function(req, res) {
     }
 	
     //Create a new initial project for the new user
-    initProject.initialize(user, false);
+    initProject.initialize(user, false, null);
 
     passport.authenticate('local')(req, res, function () {
      // new AgileRating(req.user);
@@ -45,7 +45,7 @@ userController.login = function(req, res) {
 
 // Post login
 userController.doLogin = function(req, res) {
-  passport.authenticate('local')(req, res, function () {
+  passport.authenticate('local', {failureRedirect: '/login'})(req, res, function () {
     res.redirect('/');
   });
 };

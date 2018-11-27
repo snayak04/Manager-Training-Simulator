@@ -16,7 +16,8 @@ const projectsSchema  = new Schema({
     startDate: Date,
     deadline: Date,
     currentTime: Date,
-    agileRating: {type: Number}
+    agileRating: {type: Number},
+    projectDone: Boolean
 
 });
 
