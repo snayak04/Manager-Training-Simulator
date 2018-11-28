@@ -428,16 +428,88 @@ module.exports = {
 			speachText = returnMessage;
 			done = true;
 		} else if(shortestFinishTime == null || shortestFinishTime > hoursLeftInDay){
-          //Next event is end of day		  
+		  //Next event is end of day		  
           //Update time to next morning
-		  [returnMessage, speechText] = processEndOfDay(user, tasks, currentTime, hoursLeftInDay, project, agileRating);
-          done = true;          
+          updateTimeLeft(user, tasks, hoursLeftInDay);
+          var newTime = new Date(currentTime.getTime());
+          newTime.setDate(currentTime.getDate() + 1);
+          newTime.setHours(config.DAY_START_TIME);
+          database.updateProjectTime(project._id, newTime);
+          
+          if(newTime.getTime() > project.deadline.getTime()){
+            //deadline has been exceeded
+            returnMessage = "Sorry, you have exceeded the deadline, and have been terminated for your incompetence. You can try again by clicking the \'New Project\' button";
+            speechText = null;
+            database.updateProjectCompletion(project._id, true);
+          }else{
+            //Build Message
+            var satisfactionRating = scoreSatisfaction();
+            var productivityRating = scoreProductivity(user);
+            //console.log("IN INTENTS!!" + user);
+            speechText = '<speak version="1.0">It is now the end of the day <break strength="weak"></break>. Here is your rating for the day';
+            speechText +=' <break strength="medium"></break> It is now ' + config.DAY_START_TIME + ' AM on ' + newTime.getMonth() + '\\' + newTime.getDate() + '</speak>';
+            returnMessage = 'It is the end of the day. Here is your rating for the day:<br>'
+              + '&ensp;Productivity Rating: ' + productivityRating + '<br>'
+              //+ '&ensp;Satisfaction Rating: ' + satisfactionRating + '<br>'
+              + '&ensp;Agile Rating: ' + agileRating.EODAnalysis(user) + '<br>'
+              + '<br>'
+              + 'It is now ' + config.DAY_START_TIME + ' AM on ' 
+              + newTime.getMonth() + '\\' + newTime.getDate();
+            agileRating.reset();
+          }
+          done = true;
+          
         }else{
           //Next event is an employee finishing their task
-		  [returnMessage, speechText] = processFinishedTask(user, tasks, currentTime, shortestFinishTime, project, agileRating);
-          done = true;
-        } 
-       });
+          var finishedTasks = updateTimeLeft(user, tasks, shortestFinishTime);
+          finishTasks(finishedTasks);
+          currentTime.setHours(currentTime.getHours() + shortestFinishTime);
+          database.updateProjectTime(project._id, currentTime);
+        //  database.updateProjectRating(project._id, agileRating.getScore());
+          returnMessage = '';
+          
+          finishedTasksIds = [];
+          finishedTasks.forEach(function(finished){
+            finishedTasksIds.push(finished._id);
+          });
+          
+          //Check if project is completed
+          //get tasks again as they may have been edited
+          database.getAllTasks(user, function(updatedTasks){
+            allTasksDone = true;
+            updatedTasks.forEach(function(task){
+              var index = finishedTasksIds.indexOf(task._id);
+              if(task.state != "Complete" && index == -1){
+                allTasksDone = false;
+              }
+            })
+          
+            if(!allTasksDone){
+              //buildMessage
+              speechText = '<speak version="1.0">';
+              finishedTasks.forEach(function(task){
+                returnMessage += 'The task \'' + task.title + '\' has been completed<br>';
+                speechText += 'The task ' + task.title + ' has been completed. <break strength="weak"></break>';
+              });
+              var currentHour = currentTime.getHours();
+              if(currentHour == 12){
+                returnMessage += 'It is now 12 PM';
+              }else if(currentHour > 12){
+                returnMessage += 'It is now ' + (currentHour - 12)+ ' PM';
+                speechText += 'It is now ' + (currentHour - 12) + ' PM </speak>';
+              }else{
+                returnMessage += 'It is now ' + currentHour + ' AM';
+                speechText += 'It is now ' + currentHour + ' AM </speak>';
+              }
+            }else{
+              returnMessage = "Congrats, you have completed the project! You can start a new one by clicking the \'New Project\' buttton";
+              speechText = null;
+              database.updateProjectCompletion(project._id, true);
+            }
+            done = true;
+          });
+        }
+      });
     });
     
     //wait for message to be built
