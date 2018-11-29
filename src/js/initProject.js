@@ -219,7 +219,7 @@ function initialize(user, deleteOld, callback){
   var totalHours = taskRetval[1];
   var relations = generateRelations(user, employees);
   var deadline = getDeadline(totalHours);
-  var numberOfRandomEvents = 50;
+  var numberOfRandomEvents = 5;
   var events = generateRandomEvents(user, numberOfRandomEvents, deadline);
   var project = generateProject(employees, relations, tasks, events, user, totalHours, deadline);
 
