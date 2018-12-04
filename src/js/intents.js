@@ -344,6 +344,9 @@ module.exports = {
           newTime.setHours(config.DAY_START_TIME);
           database.updateProjectTime(project._id, newTime);
           
+          //update employees days off
+          updateDaysOff(user);
+          
           if(newTime.getTime() > project.deadline.getTime()){
             //deadline has been exceeded
             returnMessage = "Sorry, you have exceeded the deadline, and have been terminated for your incompetence. You can try again by clicking the \'New Project\' button";
