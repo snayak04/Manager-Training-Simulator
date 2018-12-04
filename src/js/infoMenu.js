@@ -19,7 +19,7 @@ module.exports = {
           }
 		  var timeOff = employee.daysOff; 
 		  if( timeOff > 0){
-			string += '<br>Days off: ' + timeOff;
+        string += '<br>Days off: ' + timeOff;
 		  }
 
           string += '</div>';
@@ -76,9 +76,15 @@ module.exports = {
               database.getEmployeeById(id, function(employee){
                 if(firstEmployee){
                   string += employee.name;
+                  if(employee.daysOff > 0){
+                    string += '(OOO)';
+                  }
                   firstEmployee = false;
                 }else{
                   string += ', ' + employee.name;
+                  if(employee.daysOff > 0){
+                    string += '(OOO)';
+                  }
                 }
                 done = true;
               });
